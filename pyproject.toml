@@ -1,0 +1,26 @@
+[project]
+name = "ssrf-link-preview-lab"
+version = "0.1.0"
+description = "Controlled experiments for SSRF defenses in a link preview service"
+readme = "README.md"
+authors = [
+    { name = "djh592", email = "dingjh21@outlook.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.143.2",
+]
+
+[project.scripts]
+ssrf-link-preview-lab = "ssrf_link_preview_lab:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.17.0",
+    "ty>=0.0.88",
+]
