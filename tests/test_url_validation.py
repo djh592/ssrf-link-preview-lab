@@ -1,0 +1,32 @@
+import pytest
+
+from ssrf_link_preview_lab.fetching.errors import InvalidUrlError
+from ssrf_link_preview_lab.fetching.url import validate_http_url
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "ftp://example.test/file",
+        "http://user:password@example.test/",
+        "http://[::1]/",
+        "http://example.test/\nheader",
+        "http:///missing-host",
+        "http://example.test:99999/",
+    ],
+)
+def test_rejects_urls_outside_common_fetching_contract(url: str) -> None:
+    with pytest.raises(InvalidUrlError):
+        validate_http_url(url)
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.test/",
+        "https://example.test:8443/path?value=1#fragment",
+        "http://127.0.0.1/internal",
+    ],
+)
+def test_accepts_http_urls_for_the_unfiltered_baseline(url: str) -> None:
+    assert validate_http_url(url) == url

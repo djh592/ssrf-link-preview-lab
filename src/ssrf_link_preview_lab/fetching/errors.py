@@ -1,0 +1,42 @@
+class FetchError(Exception):
+    """Base class for expected failures while fetching an upstream page."""
+
+
+class FetchingDisabledError(FetchError):
+    def __init__(self) -> None:
+        super().__init__(
+            "Network fetching is disabled; choose a lab fetch policy explicitly."
+        )
+
+
+class InvalidUrlError(FetchError):
+    """Raised when a URL is outside the common HTTP(S) input contract."""
+
+
+class ResponseTooLargeError(FetchError):
+    def __init__(self, limit: int) -> None:
+        super().__init__(f"The upstream response exceeded the {limit}-byte limit.")
+
+
+class FetchTimeoutError(FetchError):
+    def __init__(self, timeout_seconds: float) -> None:
+        super().__init__(
+            f"The upstream request exceeded the {timeout_seconds:g}-second timeout."
+        )
+
+
+class TooManyRedirectsError(FetchError):
+    def __init__(self, max_redirects: int) -> None:
+        super().__init__(f"The upstream request exceeded {max_redirects} redirects.")
+
+
+class UpstreamHttpError(FetchError):
+    def __init__(self, status_code: int) -> None:
+        self.status_code = status_code
+        super().__init__(f"The upstream server returned HTTP {status_code}.")
+
+
+class TransportError(FetchError):
+    def __init__(self, curl_code: int, message: str) -> None:
+        self.curl_code = curl_code
+        super().__init__(f"The upstream request failed: {message}")
