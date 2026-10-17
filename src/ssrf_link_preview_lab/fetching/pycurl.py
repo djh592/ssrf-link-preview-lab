@@ -6,12 +6,10 @@ from ssrf_link_preview_lab.fetching.errors import (
     FetchError,
     FetchTimeoutError,
     ResponseTooLargeError,
-    TooManyRedirectsError,
     TransportError,
-    UpstreamHttpError,
 )
-from ssrf_link_preview_lab.fetching.models import FetchedPage, FetchLimits
-from ssrf_link_preview_lab.fetching.url import validate_http_url
+from ssrf_link_preview_lab.fetching.models import TransportRequest, TransportResponse
+from ssrf_link_preview_lab.tracing import TRIAL_ID_HEADER
 
 _HTTP_PROTOCOLS = pycurl.PROTO_HTTP | pycurl.PROTO_HTTPS
 
@@ -31,70 +29,111 @@ class _LimitedBody:
         return len(chunk)
 
 
-class PycurlFetcher:
-    def __init__(self, limits: FetchLimits | None = None) -> None:
-        self._limits = limits or FetchLimits()
+@dataclass(slots=True)
+class _ResponseHeaders:
+    values: dict[str, str] = field(default_factory=dict)
 
-    def fetch(self, url: str) -> FetchedPage:
-        validated_url = validate_http_url(url)
-        body = _LimitedBody(self._limits.max_body_bytes)
+    def write(self, line: bytes) -> int:
+        decoded = line.decode("iso-8859-1")
+        if decoded.startswith("HTTP/"):
+            self.values.clear()
+        elif ":" in decoded:
+            name, value = decoded.split(":", maxsplit=1)
+            self.values[name.strip().casefold()] = value.strip()
+        return len(line)
+
+    def get(self, name: str) -> str | None:
+        return self.values.get(name.casefold())
+
+
+class PycurlTransport:
+    """Perform one HTTP(S) request without following redirects.
+
+    A supplied address binding is passed to libcurl's RESOLVE option so the
+    connection uses that IP while the original hostname remains in the URL.
+    """
+
+    def send(self, request: TransportRequest) -> TransportResponse:
+        body = _LimitedBody(request.max_body_bytes)
+        headers = _ResponseHeaders()
         curl = pycurl.Curl()
 
         try:
-            self._configure(curl, validated_url, body)
+            self._configure(curl, request, body, headers)
             try:
                 curl.perform()
             except pycurl.error as error:
-                raise self._translate_error(error, body.exceeded) from error
+                raise _translate_error(
+                    error,
+                    body_exceeded=body.exceeded,
+                    timeout_seconds=request.timeout_seconds,
+                    max_body_bytes=request.max_body_bytes,
+                ) from error
 
-            status_code = int(curl.getinfo(pycurl.RESPONSE_CODE))
-            if not 200 <= status_code < 300:
-                raise UpstreamHttpError(status_code)
-
-            return FetchedPage(
-                requested_url=validated_url,
-                final_url=str(curl.getinfo(pycurl.EFFECTIVE_URL)),
-                status_code=status_code,
+            return TransportResponse(
+                url=str(curl.getinfo(pycurl.EFFECTIVE_URL)),
+                status_code=int(curl.getinfo(pycurl.RESPONSE_CODE)),
                 content_type=_optional_string(curl.getinfo(pycurl.CONTENT_TYPE)),
+                location=headers.get("location"),
                 peer_ip=_optional_string(curl.getinfo(pycurl.PRIMARY_IP)),
                 body=bytes(body.data),
             )
         finally:
             curl.close()
 
-    def _configure(self, curl: pycurl.Curl, url: str, body: _LimitedBody) -> None:
-        timeout_ms = round(self._limits.timeout_seconds * 1_000)
+    def _configure(
+        self,
+        curl: pycurl.Curl,
+        request: TransportRequest,
+        body: _LimitedBody,
+        headers: _ResponseHeaders,
+    ) -> None:
+        timeout_ms = max(1, round(request.timeout_seconds * 1_000))
 
-        curl.setopt(pycurl.URL, url)
+        curl.setopt(pycurl.URL, request.url)
         curl.setopt(pycurl.WRITEFUNCTION, body.write)
+        curl.setopt(pycurl.HEADERFUNCTION, headers.write)
+        curl.setopt(pycurl.HTTPHEADER, [f"{TRIAL_ID_HEADER}: {request.trial_id}"])
         curl.setopt(pycurl.USERAGENT, "ssrf-link-preview-lab/0.1")
         curl.setopt(pycurl.ACCEPT_ENCODING, "")
         curl.setopt(pycurl.NOSIGNAL, 1)
         curl.setopt(pycurl.TIMEOUT_MS, timeout_ms)
         curl.setopt(pycurl.CONNECTTIMEOUT_MS, timeout_ms)
-        curl.setopt(pycurl.MAXFILESIZE_LARGE, self._limits.max_body_bytes)
-        curl.setopt(pycurl.FOLLOWLOCATION, 1)
-        curl.setopt(pycurl.MAXREDIRS, self._limits.max_redirects)
+        curl.setopt(pycurl.MAXFILESIZE_LARGE, request.max_body_bytes)
+        curl.setopt(pycurl.FOLLOWLOCATION, 0)
         curl.setopt(pycurl.PROTOCOLS, _HTTP_PROTOCOLS)
-        curl.setopt(pycurl.REDIR_PROTOCOLS, _HTTP_PROTOCOLS)
         curl.setopt(pycurl.IPRESOLVE, pycurl.IPRESOLVE_V4)
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)
         curl.setopt(pycurl.SSL_VERIFYHOST, 2)
 
-    def _translate_error(self, error: pycurl.error, body_exceeded: bool) -> FetchError:
-        match error.args:
-            case (int(error_code), str(message)):
-                pass
-            case (str(message),):
-                return TransportError(-1, message)
+        if request.address_binding is not None:
+            binding = request.address_binding
+            curl.setopt(
+                pycurl.RESOLVE,
+                [f"{binding.hostname}:{binding.port}:{binding.address}"],
+            )
 
-        if body_exceeded or error_code == pycurl.E_FILESIZE_EXCEEDED:
-            return ResponseTooLargeError(self._limits.max_body_bytes)
-        if error_code == pycurl.E_OPERATION_TIMEDOUT:
-            return FetchTimeoutError(self._limits.timeout_seconds)
-        if error_code == pycurl.E_TOO_MANY_REDIRECTS:
-            return TooManyRedirectsError(self._limits.max_redirects)
-        return TransportError(error_code, message)
+
+def _translate_error(
+    error: pycurl.error,
+    *,
+    body_exceeded: bool,
+    timeout_seconds: float,
+    max_body_bytes: int,
+) -> FetchError:
+    match error.args:
+        case (int(error_code), str(message)):
+            pass
+        case (str(message),):
+            return TransportError(-1, message)
+        case _:
+            return TransportError(-1, str(error))
+
+    if body_exceeded or error_code == pycurl.E_FILESIZE_EXCEEDED:
+        return ResponseTooLargeError(max_body_bytes)
+    if error_code == pycurl.E_OPERATION_TIMEDOUT:
+        return FetchTimeoutError(timeout_seconds)
+    return TransportError(error_code, message)
 
 
 def _optional_string(value: object) -> str | None:

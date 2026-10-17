@@ -1,0 +1,5 @@
+services:
+  preview:
+    environment:
+      SSRF_LAB_FETCH_POLICY: disabled
+      SSRF_LAB_DEMO: "1"

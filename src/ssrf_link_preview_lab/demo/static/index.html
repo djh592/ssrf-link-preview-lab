@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SSRF Link Preview Lab</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">↗</span>
+        <span>Link Preview <strong>Lab</strong></span>
+      </div>
+      <div class="top-meta">
+        <span class="live-dot"></span>
+        <span>Isolated local lab</span>
+        <span class="meta-divider"></span>
+        <span class="top-meta-detail">SSRF demonstration</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <div class="heading-row">
+        <div>
+          <p class="eyebrow">INTERACTIVE EXPERIMENT</p>
+          <h1>Link Preview Security Lab</h1>
+        </div>
+        <button id="download" class="quiet-button" type="button" disabled>Download trial JSON</button>
+      </div>
+
+      <div class="layout">
+        <aside class="controls" aria-label="Experiment controls">
+          <section class="control-section">
+            <div class="section-heading">
+              <span class="step-number">01</span>
+              <h2>Address defense</h2>
+            </div>
+            <div class="mode-list" id="defense-list">
+              <label>
+                <input type="radio" name="defense" value="none" checked>
+                <span><strong>No address check</strong><small>Follow requests within the lab</small></span>
+              </label>
+              <label>
+                <input type="radio" name="defense" value="initial">
+                <span><strong>Initial URL only</strong><small>Check the submitted URL once</small></span>
+              </label>
+              <label>
+                <input type="radio" name="defense" value="each_hop">
+                <span><strong>Every redirect hop</strong><small>Check each new destination</small></span>
+              </label>
+              <label>
+                <input type="radio" name="defense" value="bound">
+                <span><strong>Check and bind</strong><small>Connect to the checked IP</small></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="control-section">
+            <div class="section-heading">
+              <span class="step-number">02</span>
+              <h2>Redirect example</h2>
+            </div>
+            <div class="segmented" id="redirect-list" role="group" aria-label="Redirect example">
+              <label><input type="radio" name="redirect" value="off" checked><span>Off</span></label>
+              <label><input type="radio" name="redirect" value="page"><span>Public page</span></label>
+              <label><input type="radio" name="redirect" value="internal"><span>Internal report</span></label>
+            </div>
+          </section>
+
+          <section class="control-section">
+            <div class="section-heading">
+              <span class="step-number">03</span>
+              <h2>DNS answer</h2>
+            </div>
+            <div class="segmented" id="dns-list" role="group" aria-label="DNS mode">
+              <label><input type="radio" name="dns_mode" value="stable" checked><span>Stable</span></label>
+              <label><input type="radio" name="dns_mode" value="rebind"><span>Rebinding</span></label>
+            </div>
+            <p class="control-note">For rebind.lab, the first answer points to the external page; the next points to the internal report.</p>
+          </section>
+        </aside>
+
+        <div class="main-column">
+          <section class="request-panel" aria-label="Preview request">
+            <div class="panel-title">
+              <h2>Preview a link</h2>
+              <span id="active-policy" class="status-pill">No address check</span>
+            </div>
+            <form id="preview-form">
+              <label for="url">Target URL</label>
+              <div class="input-row">
+                <input id="url" name="url" type="url" spellcheck="false" autocomplete="off" required value="http://external-page:8080/page">
+                <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
+              </div>
+            </form>
+            <div class="presets" aria-label="Example targets">
+              <span>Examples</span>
+              <button type="button" data-preset="page">Public page</button>
+              <button type="button" data-preset="internal">Internal URL</button>
+              <button type="button" data-preset="redirect_page">Page redirect</button>
+              <button type="button" data-preset="rebind">DNS name</button>
+            </div>
+          </section>
+
+          <section class="result-panel" aria-live="polite">
+            <div class="panel-title">
+              <h2>Preview result</h2>
+              <span id="trial-id" class="trial-id"></span>
+            </div>
+            <div id="result" class="empty-result">
+              <span class="empty-symbol">↗</span>
+              <p>The preview will appear here.</p>
+            </div>
+          </section>
+
+          <section class="evidence-panel" aria-label="Request evidence">
+            <div class="panel-title">
+              <h2>Request evidence</h2>
+              <span id="evidence-count" class="minor-label">0 events</span>
+            </div>
+            <div id="evidence" class="evidence-empty">No request yet</div>
+          </section>
+        </div>
+      </div>
+      <p class="lab-footnote">Requests are limited to three hosts on isolated lab networks. The connection-stage DNS answer is queried separately and bound to the HTTP client.</p>
+    </main>
+  </body>
+</html>

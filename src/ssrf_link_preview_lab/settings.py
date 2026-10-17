@@ -11,6 +11,7 @@ class FetchPolicy(StrEnum):
 @dataclass(frozen=True, slots=True)
 class AppSettings:
     fetch_policy: FetchPolicy = FetchPolicy.DISABLED
+    demo_enabled: bool = False
 
     @classmethod
     def from_environment(cls) -> "AppSettings":
@@ -22,4 +23,7 @@ class AppSettings:
             raise ValueError(
                 f"Invalid SSRF_LAB_FETCH_POLICY={raw_policy!r}; expected one of: {choices}."
             ) from error
-        return cls(fetch_policy=policy)
+        return cls(
+            fetch_policy=policy,
+            demo_enabled=environ.get("SSRF_LAB_DEMO", "0") == "1",
+        )

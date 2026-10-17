@@ -1230,6 +1230,7 @@ name = "ssrf-link-preview-lab"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "dnspython" },
     { name = "fastapi", extra = ["standard"] },
     { name = "pycurl" },
 ]
@@ -1244,6 +1245,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "dnspython", specifier = ">=2.9.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.143.2" },
     { name = "pycurl", specifier = ">=7.48.0" },
 ]

@@ -1,0 +1,122 @@
+name: ssrf-link-preview-${SSRF_LAB_INSTANCE:?Set SSRF_LAB_INSTANCE to a unique value}
+
+x-lab-service: &lab-service
+  image: ssrf-link-preview-${SSRF_LAB_INSTANCE}:local
+  pull_policy: never
+  build:
+    context: .
+    dockerfile: Dockerfile
+  init: true
+  restart: "no"
+  read_only: true
+  tmpfs:
+    - /tmp:size=16m,mode=1777
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  pids_limit: 64
+  stop_grace_period: 5s
+  logging:
+    driver: json-file
+    options:
+      max-size: 5m
+      max-file: "2"
+
+services:
+  preview:
+    <<: *lab-service
+    command:
+      - fastapi
+      - run
+      - src/ssrf_link_preview_lab/api/app.py
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    environment:
+      SSRF_LAB_FETCH_POLICY: unfiltered
+    networks:
+      - external_zone
+      - internal_zone
+    cpus: 0.50
+    mem_limit: 256m
+    pids_limit: 96
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -m
+        - ssrf_link_preview_lab.lab.client
+        - health
+        - http://127.0.0.1:8000/health
+        - --timeout
+        - "2"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  external-page:
+    <<: *lab-service
+    command:
+      - fastapi
+      - run
+      - src/ssrf_link_preview_lab/lab/external.py
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+    networks:
+      - external_zone
+    cpus: 0.25
+    mem_limit: 128m
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -m
+        - ssrf_link_preview_lab.lab.client
+        - health
+        - http://127.0.0.1:8080/health
+        - --timeout
+        - "2"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  internal-report:
+    <<: *lab-service
+    command:
+      - fastapi
+      - run
+      - src/ssrf_link_preview_lab/lab/internal.py
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+    networks:
+      - internal_zone
+    cpus: 0.25
+    mem_limit: 128m
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -m
+        - ssrf_link_preview_lab.lab.client
+        - health
+        - http://127.0.0.1:8080/health
+        - --timeout
+        - "2"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+networks:
+  external_zone:
+    internal: true
+  internal_zone:
+    internal: true
