@@ -1,8 +1,11 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import assert_never
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from ssrf_link_preview_lab.api.routes.demo import create_demo_router
 from ssrf_link_preview_lab.api.routes.health import router as health_router
@@ -13,6 +16,8 @@ from ssrf_link_preview_lab.fetching.protocols import PageFetcher
 from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
 from ssrf_link_preview_lab.preview.service import PreviewService
 from ssrf_link_preview_lab.settings import AppSettings, FetchPolicy
+
+_DEMO_ASSETS = Path(__file__).resolve().parent.parent / "demo" / "static"
 
 
 def create_app(
@@ -44,6 +49,17 @@ def create_app(
     app.include_router(create_preview_router(PreviewService(resolved_fetcher)))
     if controller is not None:
         app.include_router(create_demo_router(controller))
+        app.mount("/assets", StaticFiles(directory=_DEMO_ASSETS), name="demo-assets")
+
+        @app.get("/", include_in_schema=False)
+        def demo_page() -> FileResponse:
+            return FileResponse(_DEMO_ASSETS / "index.html")
+
+        @app.get("/favicon.ico", include_in_schema=False)
+        def favicon() -> FileResponse:
+            return FileResponse(
+                _DEMO_ASSETS / "favicon.svg", media_type="image/svg+xml"
+            )
 
     return app
 

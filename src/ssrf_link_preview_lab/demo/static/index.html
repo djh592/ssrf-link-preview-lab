@@ -15,7 +15,7 @@
       </div>
       <div class="top-meta">
         <span class="live-dot"></span>
-        <span>Isolated local lab</span>
+        <span>Local preview service</span>
         <span class="meta-divider"></span>
         <span class="top-meta-detail">SSRF demonstration</span>
       </div>
@@ -40,7 +40,7 @@
             <div class="mode-list" id="defense-list">
               <label>
                 <input type="radio" name="defense" value="none" checked>
-                <span><strong>No address check</strong><small>Follow requests within the lab</small></span>
+                <span><strong>No lab address check</strong><small>Experiment defense off</small></span>
               </label>
               <label>
                 <input type="radio" name="defense" value="initial">
@@ -64,7 +64,7 @@
             </div>
             <div class="segmented" id="redirect-list" role="group" aria-label="Redirect example">
               <label><input type="radio" name="redirect" value="off" checked><span>Off</span></label>
-              <label><input type="radio" name="redirect" value="page"><span>Public page</span></label>
+              <label><input type="radio" name="redirect" value="page"><span>Lab page</span></label>
               <label><input type="radio" name="redirect" value="internal"><span>Internal report</span></label>
             </div>
           </section>
@@ -86,7 +86,7 @@
           <section class="request-panel" aria-label="Preview request">
             <div class="panel-title">
               <h2>Preview a link</h2>
-              <span id="active-policy" class="status-pill">No address check</span>
+              <span id="active-policy" class="status-pill">No lab address check</span>
             </div>
             <form id="preview-form">
               <label for="url">Target URL</label>
@@ -97,7 +97,8 @@
             </form>
             <div class="presets" aria-label="Example targets">
               <span>Examples</span>
-              <button type="button" data-preset="page">Public page</button>
+              <button type="button" data-preset="page">Lab page</button>
+              <button type="button" data-preset="public">Public website</button>
               <button type="button" data-preset="internal">Internal URL</button>
               <button type="button" data-preset="redirect_page">Page redirect</button>
               <button type="button" data-preset="rebind">DNS name</button>
@@ -124,7 +125,6 @@
           </section>
         </div>
       </div>
-      <p class="lab-footnote">Requests are limited to three hosts on isolated lab networks. The connection-stage DNS answer is queried separately and bound to the HTTP client.</p>
     </main>
   </body>
 </html>

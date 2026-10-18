@@ -1,12 +1,14 @@
 from os import environ
+from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 from ssrf_link_preview_lab.lab.events import request_trial_id, write_event
 
 _DEFAULT_INTERNAL_REPORT_URL = "http://internal-report:8080/report"
+_COVER = Path(__file__).resolve().parent / "assets" / "field-notes.png"
 
 app = FastAPI(title="SSRF Lab External Service", docs_url=None, redoc_url=None)
 
@@ -26,12 +28,37 @@ def page(request: Request) -> HTMLResponse:
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Controlled external page</title>
-    <meta name="description" content="A benign page in the isolated lab">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Field Notes | An external page</title>
+    <meta name="description" content="A short field note from the controlled external site.">
+    <meta property="og:title" content="Field Notes: An external page">
+    <meta property="og:description" content="A short field note from the controlled external site.">
+    <meta property="og:site_name" content="Field Notes">
+    <meta property="og:image" content="http://external-page:8080/cover.png">
+    <style>
+      body { margin: 0; font: 17px/1.65 system-ui, sans-serif; color: #1d312c; background: #f4f7f5; }
+      article { max-width: 720px; margin: 64px auto; padding: 0 24px; }
+      img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+      small { color: #28765d; font-weight: 700; text-transform: uppercase; }
+      h1 { font-size: 38px; line-height: 1.15; margin: 18px 0; }
+    </style>
   </head>
+  <body>
+    <article>
+      <small>Field Notes / External site</small>
+      <h1>An external page</h1>
+      <p>This ordinary article lives in the lab's external network. A link preview reads its metadata without rendering the page.</p>
+      <img src="/cover.png" alt="A desk with an open field notebook">
+    </article>
+  </body>
 </html>
 """
     )
+
+
+@app.get("/cover.png", include_in_schema=False)
+def cover() -> FileResponse:
+    return FileResponse(_COVER, media_type="image/png")
 
 
 @app.get("/redirect/internal")

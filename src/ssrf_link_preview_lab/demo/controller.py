@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import DemoState, DNSMode
-from ssrf_link_preview_lab.demo.policy import LabAddressPolicy
+from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
 from ssrf_link_preview_lab.fetching.errors import FetchError
 from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
 from ssrf_link_preview_lab.preview.errors import UnsupportedContentTypeError
@@ -18,6 +18,7 @@ INTERNAL_URL = "http://internal-report:8080/report"
 REBIND_URL = "http://rebind.lab:8080/report"
 REDIRECT_PAGE_URL = "http://external-page:8080/redirect/page"
 REDIRECT_INTERNAL_URL = "http://external-page:8080/redirect/internal"
+PUBLIC_URL = "https://www.python.org/"
 
 
 class DemoController:
@@ -44,6 +45,7 @@ class DemoController:
                 "redirect_page": REDIRECT_PAGE_URL,
                 "redirect_internal": REDIRECT_INTERNAL_URL,
                 "rebind": REBIND_URL,
+                "public": PUBLIC_URL,
             },
         }
 
@@ -60,7 +62,9 @@ class DemoController:
                     internal_ip,
                     rebind=self._state.dns_mode is DNSMode.REBIND,
                 )
-                policy = LabAddressPolicy(self._state.defense, external_ip, self._dns)
+                policy = DemoAddressPolicy(
+                    self._state.defense, external_ip, internal_ip, self._dns
+                )
                 service = PreviewService(RedirectingFetcher(address_policy=policy))
                 preview = service.create(url, trial_id=trial_id)
             except (
@@ -84,7 +88,10 @@ class DemoController:
                     "final_url": preview.final_url,
                     "title": preview.title,
                     "description": preview.description,
+                    "site_name": preview.site_name,
+                    "image_data_url": preview.image_data_url,
                     "trace": preview.trace.to_dict(),
+                    "image_trace": preview.image_trace.to_dict(),
                 }
             result["dns_answers"] = [answer.to_dict() for answer in self._dns.answers]
             result["defense"] = self._state.defense.value

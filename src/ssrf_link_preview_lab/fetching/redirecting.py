@@ -60,10 +60,10 @@ class RedirectingFetcher:
 
                 binding = None
                 if self._address_policy is not None:
-                    decision, binding = self._address_policy.prepare(
+                    hop_decisions, binding = self._address_policy.prepare(
                         current_url, len(hops), timeout_seconds
                     )
-                    if decision is not None:
+                    for decision in hop_decisions:
                         decisions.append(decision)
                         if not decision.allowed:
                             raise AddressBlockedError(decision.reason)

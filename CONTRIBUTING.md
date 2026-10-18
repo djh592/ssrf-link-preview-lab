@@ -8,7 +8,7 @@ Write code, user-facing text, comments, and docstrings in English. Use names and
 - `preview/` creates preview metadata from fetched HTML.
 - `fetching/` owns redirect handling, address-policy contracts, and single-hop transport.
 - `lab/` contains the isolated external and internal services and their in-container probe client.
-- `demo/` owns interactive trial state, lab-only defenses, DNS answers, and the local presentation bridge. Example URL selection remains in the browser.
+- `demo/` owns interactive trial state, address decisions, and controlled DNS answers. The preview API serves its browser interface directly; example URL selection remains in the browser.
 - `experiments/` runs and records automated trials; event models, log parsing, trial records, and terminal output have separate modules.
 - `scripts/` contains thin launchers that locate this checkout and call package-level commands.
 
@@ -20,7 +20,7 @@ Follow PEP 257 for Python docstrings:
 - Start with a short imperative summary. Add a blank line and further explanation only when necessary. Use `Args`, `Returns`, and `Raises` sections for longer contracts, without repeating types already expressed in annotations.
 - Use inline comments for non-obvious reasoning or implementation constraints, not to narrate each statement. Keep comments accurate when behavior changes.
 
-In this lab, distinguish an observed HTTP connection from an address-policy decision and from a simulated connection-stage DNS lookup. Do not describe the demo's lab-IP allowlist as a production public-IP filter or claim that libcurl made the second DNS query.
+In this lab, distinguish an observed HTTP connection from an address-policy decision and from the separate connection-stage DNS query. Do not describe the demo's lab-IP exception as a production public-IP filter or claim that libcurl made the second DNS query.
 
 Run the checks before submitting changes:
 

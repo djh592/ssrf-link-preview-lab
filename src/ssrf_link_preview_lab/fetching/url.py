@@ -1,7 +1,10 @@
-from ipaddress import IPv6Address, ip_address
+import re
+from ipaddress import IPv4Address, IPv6Address, ip_address
 from urllib.parse import urlsplit
 
 from ssrf_link_preview_lab.fetching.errors import InvalidUrlError
+
+_HOST_LABEL = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\Z")
 
 
 def validate_http_url(url: str) -> str:
@@ -26,9 +29,20 @@ def validate_http_url(url: str) -> str:
     try:
         address = ip_address(parsed.hostname)
     except ValueError:
-        pass
+        hostname = parsed.hostname
+        if (
+            not hostname.isascii()
+            or len(hostname) > 253
+            or not all(_HOST_LABEL.fullmatch(label) for label in hostname.split("."))
+            or all(character in "0123456789." for character in hostname)
+        ):
+            raise InvalidUrlError(
+                "The URL must use a canonical ASCII hostname."
+            ) from None
     else:
         if isinstance(address, IPv6Address):
             raise InvalidUrlError("IPv6 URLs are outside this experiment's scope.")
+        if isinstance(address, IPv4Address) and str(address) != parsed.hostname:
+            raise InvalidUrlError("The URL must use a canonical IPv4 address.")
 
     return url

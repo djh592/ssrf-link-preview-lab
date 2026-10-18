@@ -1,0 +1,9 @@
+services:
+  preview:
+    networks:
+      - external_zone
+      - internal_zone
+      - public_egress
+
+networks:
+  public_egress: {}

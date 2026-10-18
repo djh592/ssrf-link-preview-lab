@@ -3,3 +3,5 @@ services:
     environment:
       SSRF_LAB_FETCH_POLICY: disabled
       SSRF_LAB_DEMO: "1"
+    ports:
+      - "127.0.0.1:${SSRF_LAB_PORT:-8765}:8000"

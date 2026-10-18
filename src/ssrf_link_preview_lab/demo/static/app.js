@@ -1,6 +1,6 @@
 const state = { defense: "none", dns_mode: "stable", urls: {} };
 const defenseNames = {
-  none: "No address check",
+  none: "No lab address check",
   initial: "Initial URL only",
   each_hop: "Every redirect hop",
   bound: "Check and bind",
@@ -106,34 +106,52 @@ function renderResult(trial) {
     `${trial.ok ? "Preview generated" : "Request stopped"} · ${defenseNames[trial.defense]}`,
     "outcome-label",
   );
-  appendText(result, "h3", trial.ok ? trial.title || "Untitled page" : "No preview generated");
+  if (!trial.ok) {
+    appendText(result, "h3", "No preview generated");
+    appendText(result, "p", trial.message);
+    return;
+  }
+
+  const card = appendText(result, "div", "", "preview-content");
+  if (!trial.image_data_url) card.classList.add("text-only");
+  if (trial.image_data_url) {
+    const image = document.createElement("img");
+    image.src = trial.image_data_url;
+    image.alt = "";
+    image.className = "preview-image";
+    card.append(image);
+  }
+  const copy = appendText(card, "div", "", "preview-copy");
+  appendText(copy, "span", trial.site_name || new URL(trial.final_url).hostname, "preview-site");
+  appendText(copy, "h3", trial.title || "Untitled page");
   const description = appendText(
-    result,
+    copy,
     "p",
-    trial.ok ? trial.description || "No description provided" : trial.message,
+    trial.description || "No description provided",
   );
-  if (trial.ok && trial.description?.includes("SSRF_LAB_INTERNAL_REPORT")) {
+  if (trial.description?.includes("SSRF_LAB_INTERNAL_REPORT")) {
     description.className = "secret";
   }
-  if (trial.ok) appendText(result, "p", `Final URL: ${trial.final_url}`, "final-url");
+  appendText(copy, "p", trial.final_url, "final-url");
 }
 
 function trialEvents(trial) {
   const events = [];
-  const trace = trial.trace || {};
-  for (const decision of trace.address_decisions || []) {
-    events.push({
-      observedAt: decision.observed_at,
-      title: decision.allowed ? "Address check · allowed" : "Address check · blocked",
-      details: `${decision.url}\nResolved: ${decision.resolved_addresses.join(", ") || "none"} · ${decision.reason}`,
-    });
-  }
-  for (const hop of trace.hops || []) {
-    events.push({
-      observedAt: hop.observed_at,
-      title: `HTTP ${hop.status_code} · hop ${hop.sequence + 1}`,
-      details: `${hop.url}\nConnected to: ${hop.peer_ip || "unknown"}${hop.redirect_url ? ` · Redirected to ${hop.redirect_url}` : ""}`,
-    });
+  for (const [label, trace] of [["Page", trial.trace], ["Image", trial.image_trace]]) {
+    for (const decision of trace?.address_decisions || []) {
+      events.push({
+        observedAt: decision.observed_at,
+        title: `${label} address · ${decision.allowed ? "allowed" : "blocked"}`,
+        details: `${decision.url}\nResolved: ${decision.resolved_addresses.join(", ") || "none"} · ${decision.reason}`,
+      });
+    }
+    for (const hop of trace?.hops || []) {
+      events.push({
+        observedAt: hop.observed_at,
+        title: `${label} HTTP ${hop.status_code} · hop ${hop.sequence + 1}`,
+        details: `${hop.url}\nConnected to: ${hop.peer_ip || "unknown"}${hop.redirect_url ? ` · Redirected to ${hop.redirect_url}` : ""}`,
+      });
+    }
   }
   for (const answer of trial.dns_answers || []) {
     events.push({

@@ -29,11 +29,10 @@ class AddressPolicy(Protocol):
 
     def prepare(
         self, url: str, sequence: int, timeout_seconds: float
-    ) -> tuple[AddressDecision | None, AddressBinding | None]:
+    ) -> tuple[tuple[AddressDecision, ...], AddressBinding | None]:
         """Inspect one hop before transport sends it.
 
-        A denied decision prevents the request. A binding makes transport
-        connect to that address while retaining the URL's hostname. Either
-        value may be absent when no check or binding applies.
+        Any denied decision prevents the request. A binding makes transport
+        connect to that address while retaining the URL's hostname.
         """
         ...

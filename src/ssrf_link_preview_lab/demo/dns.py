@@ -1,6 +1,7 @@
 """Serve trial-scoped DNS answers without exposing a DNS port to the host."""
 
 from dataclasses import dataclass
+from ipaddress import AddressValueError, IPv4Address
 from socketserver import BaseRequestHandler, ThreadingUDPServer
 from threading import Lock, Thread
 from time import monotonic
@@ -11,7 +12,10 @@ import dns.message
 import dns.query
 import dns.rdataclass
 import dns.rdatatype
+import dns.resolver
 import dns.rrset
+
+from ssrf_link_preview_lab.fetching.errors import DNSLookupError
 
 
 @dataclass(frozen=True, slots=True)
@@ -119,11 +123,27 @@ class DemoDNS:
                 timeout=min(timeout_seconds, 2.0),
             )
         except dns.exception.DNSException as error:
-            raise RuntimeError(f"Lab DNS query failed: {error}") from error
+            raise DNSLookupError("rebind.lab", str(error)) from error
         for answer in response.answer:
             if answer.rdtype == dns.rdatatype.A:
                 return answer[0].to_text()
-        raise RuntimeError("The lab DNS authority returned no IPv4 address")
+        raise DNSLookupError("rebind.lab", "the authority returned no IPv4 address")
+
+    def lookup(self, hostname: str, timeout_seconds: float) -> str:
+        """Resolve ordinary hosts normally and the controlled zone locally."""
+        try:
+            return str(IPv4Address(hostname))
+        except AddressValueError:
+            pass
+        if hostname == "rebind.lab":
+            return self.resolve(timeout_seconds)
+        try:
+            answers = dns.resolver.resolve(
+                hostname, "A", lifetime=min(timeout_seconds, 2.0)
+            )
+        except dns.exception.DNSException as error:
+            raise DNSLookupError(hostname, str(error)) from error
+        return answers[0].to_text()
 
     def close(self) -> None:
         """Stop the UDP server and wait for its thread to exit."""

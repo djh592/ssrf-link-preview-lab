@@ -210,7 +210,7 @@ h2 { font-size: 15px; line-height: 1.4; margin: 0; font-weight: 700; }
   padding: 22px;
 }
 
-.panel-title { margin-bottom: 18px; min-height: 21px; }
+.panel-title { margin-bottom: 18px; min-height: 21px; flex-wrap: wrap; }
 .status-pill {
   border: 1px solid #bfe3d2;
   background: #eef9f2;
@@ -307,12 +307,18 @@ form label {
 }
 
 .blocked .outcome-label { color: #c75846; }
+.preview-content { display: grid; grid-template-columns: minmax(0, 230px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.preview-content.text-only { grid-template-columns: 1fr; }
+.preview-image { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; }
+.preview-copy { min-width: 0; }
+.preview-site { display: block; margin-bottom: 6px; color: #397e65; font-size: 11px; font-weight: 700; overflow-wrap: anywhere; }
 .outcome h3 { margin: 0 0 6px; font-size: 19px; line-height: 1.4; overflow-wrap: anywhere; }
 .outcome p { color: #5c6c64; font-size: 12px; line-height: 1.6; margin: 0 0 8px; overflow-wrap: anywhere; }
 .outcome .final-url {
   color: #88948e;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11px;
+  overflow-wrap: anywhere;
 }
 
 .secret { color: #b03d30; font-weight: 700; }
@@ -369,4 +375,6 @@ form label {
   .input-row { flex-direction: column; }
   .primary-button { min-height: 42px; }
   .request-panel, .result-panel, .evidence-panel { padding: 17px; }
+  .preview-content { grid-template-columns: 1fr; }
+  .preview-image { max-height: 220px; }
 }

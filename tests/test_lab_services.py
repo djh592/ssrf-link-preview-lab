@@ -26,6 +26,19 @@ def test_external_service_redirects_to_internal_report() -> None:
     )
 
 
+def test_external_service_provides_a_page_and_preview_image() -> None:
+    with TestClient(external_app) as client:
+        page = client.get("/page")
+        cover = client.get("/cover.png")
+
+    assert page.status_code == 200
+    assert "<body>" in page.text
+    assert 'property="og:image"' in page.text
+    assert cover.status_code == 200
+    assert cover.headers["content-type"] == "image/png"
+    assert cover.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+
 def test_internal_service_records_access_and_returns_marker(
     capsys: CaptureFixture[str],
 ) -> None:

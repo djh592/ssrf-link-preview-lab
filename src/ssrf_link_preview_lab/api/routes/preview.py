@@ -23,6 +23,8 @@ class PreviewResponse(BaseModel):
     final_url: str
     title: str | None
     description: str | None
+    site_name: str | None
+    image_data_url: str | None
 
 
 def create_preview_router(service: PreviewService) -> APIRouter:
@@ -82,6 +84,8 @@ def create_preview_router(service: PreviewService) -> APIRouter:
             final_url=preview.final_url,
             title=preview.title,
             description=preview.description,
+            site_name=preview.site_name,
+            image_data_url=preview.image_data_url,
         )
 
     return router

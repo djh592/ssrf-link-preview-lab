@@ -45,6 +45,11 @@ class FetchTimeoutError(FetchError):
         )
 
 
+class DNSLookupError(FetchError):
+    def __init__(self, hostname: str, detail: str) -> None:
+        super().__init__(f"DNS lookup failed for {hostname}: {detail}")
+
+
 class TooManyRedirectsError(FetchError):
     def __init__(self, max_redirects: int) -> None:
         super().__init__(f"The upstream request exceeded {max_redirects} redirects.")

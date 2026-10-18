@@ -1,83 +1,104 @@
-"""Address checks and connection binding for the isolated lab hosts."""
+"""Apply experiment defenses without permitting requests to real private networks."""
 
-import socket
+from ipaddress import IPv4Address
 from time import monotonic
 from urllib.parse import urlsplit
 
 from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import Defense
+from ssrf_link_preview_lab.fetching.errors import FetchTimeoutError
 from ssrf_link_preview_lab.fetching.models import AddressBinding, AddressDecision
 
 
-class LabAddressPolicy:
-    """Restrict all demo requests to lab hosts and model selected defenses.
+class DemoAddressPolicy:
+    """Evaluate defense decisions and bind every permitted connection.
 
-    The allowlisted external IP represents the permitted zone in this lab; it
-    is not a general-purpose public-address classification policy.
+    The selected defense may allow the synthetic internal report. The fixed
+    connection boundary never permits other non-global addresses. A second
+    DNS query models an unbound client's connection-stage lookup; this build
+    of libcurl requires the selected answer through CURLOPT_RESOLVE.
     """
 
-    def __init__(self, defense: Defense, external_ip: str, dns: DemoDNS) -> None:
+    def __init__(
+        self, defense: Defense, external_ip: str, internal_ip: str, dns: DemoDNS
+    ) -> None:
         self._defense = defense
         self._external_ip = external_ip
+        self._lab_ips = frozenset((external_ip, internal_ip))
         self._dns = dns
 
     def prepare(
         self, url: str, sequence: int, timeout_seconds: float
-    ) -> tuple[AddressDecision | None, AddressBinding | None]:
-        """Check this hop and select its connection address when needed.
-
-        The lab-host restriction always applies. For ``rebind.lab``, an
-        unbound request makes a separate connection-stage DNS query; the
-        checked-and-bound defense instead reuses the checked answer.
-        """
+    ) -> tuple[tuple[AddressDecision, ...], AddressBinding | None]:
         parsed = urlsplit(url)
-        host = parsed.hostname or ""
-        if (
-            parsed.scheme != "http"
-            or parsed.port != 8080
-            or host not in {"external-page", "internal-report", "rebind.lab"}
-        ):
-            decision = AddressDecision(
-                sequence,
-                url,
-                (),
-                False,
-                "Outside the three isolated lab hosts",
-                observed_at=monotonic(),
-            )
-            return decision, None
+        hostname = parsed.hostname
+        if hostname is None:
+            return (self._deny(sequence, url, (), "Missing hostname"),), None
 
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        deadline = monotonic() + timeout_seconds
         check = self._defense in {Defense.EACH_HOP, Defense.BOUND} or (
             self._defense is Defense.INITIAL and sequence == 0
         )
-        if host == "rebind.lab":
-            checked_ip = self._dns.resolve(timeout_seconds) if check else None
-        else:
-            checked_ip = socket.gethostbyname(host) if check else None
-
-        decision = None
-        if checked_ip is not None:
-            allowed = checked_ip == self._external_ip
+        checked_ip = None
+        decisions: list[AddressDecision] = []
+        if check:
+            checked_ip = self._dns.lookup(
+                hostname, _remaining(deadline, timeout_seconds)
+            )
+            allowed = checked_ip == self._external_ip or _is_public(checked_ip)
             decision = AddressDecision(
                 sequence,
                 url,
                 (checked_ip,),
                 allowed,
-                "Allowed external lab address"
-                if allowed
-                else "Internal lab address blocked",
+                "Address check passed" if allowed else "Non-public address blocked",
                 checked_ip if allowed else None,
                 observed_at=monotonic(),
             )
+            decisions.append(decision)
             if not allowed:
-                return decision, None
+                return tuple(decisions), None
 
-        binding = None
-        if host == "rebind.lab":
-            connection_ip = checked_ip
-            if connection_ip is None or self._defense is not Defense.BOUND:
-                connection_ip = self._dns.resolve(timeout_seconds)
-            binding = AddressBinding(host, 8080, connection_ip)
-        elif self._defense is Defense.BOUND and checked_ip is not None:
-            binding = AddressBinding(host, 8080, checked_ip)
-        return decision, binding
+        connection_ip = (
+            checked_ip
+            if self._defense is Defense.BOUND and checked_ip is not None
+            else self._dns.lookup(hostname, _remaining(deadline, timeout_seconds))
+        )
+        if not _permitted_connection(connection_ip, port, self._lab_ips):
+            decisions.append(
+                self._deny(
+                    sequence,
+                    url,
+                    (connection_ip,),
+                    "Connection outside public web and isolated lab",
+                )
+            )
+            return tuple(decisions), None
+
+        return tuple(decisions), AddressBinding(hostname, port, connection_ip)
+
+    @staticmethod
+    def _deny(
+        sequence: int, url: str, addresses: tuple[str, ...], reason: str
+    ) -> AddressDecision:
+        return AddressDecision(
+            sequence, url, addresses, False, reason, observed_at=monotonic()
+        )
+
+
+def _permitted_connection(address: str, port: int, lab_ips: frozenset[str]) -> bool:
+    if address in lab_ips:
+        return port == 8080
+    return port in {80, 443} and _is_public(address)
+
+
+def _is_public(address: str) -> bool:
+    return IPv4Address(address).is_global
+
+
+def _remaining(deadline: float, timeout_seconds: float) -> float:
+    remaining = deadline - monotonic()
+    if remaining <= 0:
+        raise FetchTimeoutError(timeout_seconds)
+    return remaining

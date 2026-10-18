@@ -3,10 +3,8 @@
 import sys
 from os import environ
 from pathlib import Path
+from threading import Event
 
-import uvicorn
-
-from ssrf_link_preview_lab.demo.presentation import create_presentation_app
 from ssrf_link_preview_lab.experiments.compose import (
     ComposeProject,
     ComposeProjectInUseError,
@@ -18,11 +16,18 @@ def run_browser_demo(root: Path) -> int:
     if not port.isdecimal() or not 1024 <= int(port) <= 65535:
         print("SSRF_LAB_PORT must be between 1024 and 65535.", file=sys.stderr)
         return 2
+    if environ.get("SSRF_LAB_PUBLIC_EGRESS") != "1":
+        print(
+            "The browser demo has public network egress. Set "
+            "SSRF_LAB_PUBLIC_EGRESS=1 only in an authorized personal environment.",
+            file=sys.stderr,
+        )
+        return 2
     project = ComposeProject.from_environment(root)
     project = ComposeProject(
         root=project.root,
         instance=project.instance,
-        overlays=("compose.demo.yaml",),
+        overlays=("compose.demo.yaml", "compose.public.yaml"),
     )
     project.validate()
     existing = project.services(include_stopped=True)
@@ -34,5 +39,8 @@ def run_browser_demo(root: Path) -> int:
     with project.running_services():
         print(f"Browser demo: http://127.0.0.1:{port}")
         print("Press Ctrl+C to stop only this instance.")
-        uvicorn.run(create_presentation_app(project), host="127.0.0.1", port=int(port))
+        try:
+            Event().wait()
+        except KeyboardInterrupt:
+            pass
     return 0

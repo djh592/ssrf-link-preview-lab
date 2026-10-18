@@ -11,8 +11,13 @@ class _MetadataParser(HTMLParser):
         self._title_depth = 0
         self._title_parts: list[str] = []
         self._open_graph_title: str | None = None
+        self._twitter_title: str | None = None
         self._description: str | None = None
         self._open_graph_description: str | None = None
+        self._twitter_description: str | None = None
+        self._site_name: str | None = None
+        self._open_graph_image: str | None = None
+        self._twitter_image: str | None = None
 
     def handle_starttag(
         self,
@@ -34,10 +39,20 @@ class _MetadataParser(HTMLParser):
 
         if key == "og:title" and self._open_graph_title is None:
             self._open_graph_title = content
+        elif key == "twitter:title" and self._twitter_title is None:
+            self._twitter_title = content
         elif key == "description" and self._description is None:
             self._description = content
         elif key == "og:description" and self._open_graph_description is None:
             self._open_graph_description = content
+        elif key == "twitter:description" and self._twitter_description is None:
+            self._twitter_description = content
+        elif key == "og:site_name" and self._site_name is None:
+            self._site_name = content
+        elif key == "og:image" and self._open_graph_image is None:
+            self._open_graph_image = content
+        elif key == "twitter:image" and self._twitter_image is None:
+            self._twitter_image = content
 
     def handle_endtag(self, tag: str) -> None:
         if tag.casefold() == "title" and self._title_depth > 0:
@@ -50,8 +65,14 @@ class _MetadataParser(HTMLParser):
     def metadata(self) -> PageMetadata:
         document_title = _clean_text("".join(self._title_parts))
         return PageMetadata(
-            title=self._open_graph_title or document_title,
-            description=self._open_graph_description or self._description,
+            title=self._open_graph_title or self._twitter_title or document_title,
+            description=(
+                self._open_graph_description
+                or self._twitter_description
+                or self._description
+            ),
+            site_name=self._site_name,
+            image_url=self._open_graph_image or self._twitter_image,
         )
 
 

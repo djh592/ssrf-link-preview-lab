@@ -70,12 +70,22 @@ class PycurlTransport:
                     max_body_bytes=request.max_body_bytes,
                 ) from error
 
+            peer_ip = _optional_string(curl.getinfo(pycurl.PRIMARY_IP))
+            if (
+                request.address_binding is not None
+                and peer_ip != request.address_binding.address
+            ):
+                raise TransportError(
+                    -1,
+                    "The connected peer differed from the selected address.",
+                )
+
             return TransportResponse(
                 url=str(curl.getinfo(pycurl.EFFECTIVE_URL)),
                 status_code=int(curl.getinfo(pycurl.RESPONSE_CODE)),
                 content_type=_optional_string(curl.getinfo(pycurl.CONTENT_TYPE)),
                 location=headers.get("location"),
-                peer_ip=_optional_string(curl.getinfo(pycurl.PRIMARY_IP)),
+                peer_ip=peer_ip,
                 body=bytes(body.data),
             )
         finally:
@@ -101,6 +111,7 @@ class PycurlTransport:
         curl.setopt(pycurl.CONNECTTIMEOUT_MS, timeout_ms)
         curl.setopt(pycurl.MAXFILESIZE_LARGE, request.max_body_bytes)
         curl.setopt(pycurl.FOLLOWLOCATION, 0)
+        curl.setopt(pycurl.PROXY, "")
         curl.setopt(pycurl.PROTOCOLS, _HTTP_PROTOCOLS)
         curl.setopt(pycurl.IPRESOLVE, pycurl.IPRESOLVE_V4)
         curl.setopt(pycurl.SSL_VERIFYPEER, 1)

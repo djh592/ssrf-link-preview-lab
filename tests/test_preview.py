@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from ssrf_link_preview_lab.api.app import create_app
 from ssrf_link_preview_lab.fetching.errors import TransportError
 from ssrf_link_preview_lab.fetching.models import FetchedPage, FetchRequest
+from ssrf_link_preview_lab.preview.parser import parse_html_metadata
 
 
 class _StubFetcher:
@@ -50,10 +51,99 @@ def test_preview_returns_page_metadata() -> None:
         "final_url": "https://example.test/final",
         "title": "Preview title",
         "description": "Preview description",
+        "site_name": "example.test",
+        "image_data_url": None,
     }
     assert fetcher.requests == [
         FetchRequest(url="https://example.test/start", trial_id=trial_id)
     ]
+
+
+def test_preview_fetches_raster_image_through_the_page_fetcher() -> None:
+    class ImageFetcher:
+        def __init__(self) -> None:
+            self.requests: list[FetchRequest] = []
+
+        def fetch(self, request: FetchRequest) -> FetchedPage:
+            self.requests.append(request)
+            if len(self.requests) == 1:
+                return FetchedPage(
+                    request.url,
+                    "https://example.test/story",
+                    200,
+                    "text/html",
+                    "93.184.216.34",
+                    b'<meta property="og:site_name" content="Example News">'
+                    b'<meta property="og:image" content="/cover.png">',
+                )
+            return FetchedPage(
+                request.url,
+                request.url,
+                200,
+                "image/png",
+                "93.184.216.34",
+                b"\x89PNG\r\n\x1a\nimage data",
+            )
+
+    fetcher = ImageFetcher()
+    with TestClient(create_app(fetcher=fetcher)) as client:
+        payload = client.post(
+            "/preview", json={"url": "https://example.test/story"}
+        ).json()
+
+    assert payload["site_name"] == "Example News"
+    assert payload["image_data_url"] == "data:image/png;base64,iVBORw0KGgppbWFnZSBkYXRh"
+    assert [request.url for request in fetcher.requests] == [
+        "https://example.test/story",
+        "https://example.test/cover.png",
+    ]
+
+
+def test_open_graph_metadata_takes_precedence_over_twitter_cards() -> None:
+    metadata = parse_html_metadata(
+        b'<meta name="twitter:title" content="Twitter title">'
+        b'<meta name="twitter:description" content="Twitter summary">'
+        b'<meta name="twitter:image" content="/twitter.png">'
+        b'<meta property="og:title" content="Open Graph title">'
+        b'<meta property="og:description" content="Open Graph summary">'
+        b'<meta property="og:image" content="/og.png">',
+        "text/html; charset=utf-8",
+    )
+
+    assert metadata.title == "Open Graph title"
+    assert metadata.description == "Open Graph summary"
+    assert metadata.image_url == "/og.png"
+
+
+def test_preview_does_not_embed_svg_images() -> None:
+    class SVGFetcher:
+        def fetch(self, request: FetchRequest) -> FetchedPage:
+            if request.url.endswith("/cover.svg"):
+                return FetchedPage(
+                    request.url,
+                    request.url,
+                    200,
+                    "image/svg+xml",
+                    "93.184.216.34",
+                    b"<svg xmlns='http://www.w3.org/2000/svg'/>",
+                )
+            return FetchedPage(
+                request.url,
+                request.url,
+                200,
+                "text/html",
+                "93.184.216.34",
+                b'<title>Article</title><meta property="og:image" '
+                b'content="/cover.svg">',
+            )
+
+    with TestClient(create_app(fetcher=SVGFetcher())) as client:
+        payload = client.post(
+            "/preview", json={"url": "https://example.test/story"}
+        ).json()
+
+    assert payload["title"] == "Article"
+    assert payload["image_data_url"] is None
 
 
 def test_preview_fetching_is_disabled_by_default() -> None:
