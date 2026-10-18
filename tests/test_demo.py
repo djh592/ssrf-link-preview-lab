@@ -290,6 +290,7 @@ def test_demo_api_serves_ui_and_validates_state(
     with TestClient(create_app(settings=AppSettings(demo_enabled=True))) as client:
         assert client.get("/").status_code == 200
         assert client.get("/assets/app.js").status_code == 200
+        assert client.get("/assets/topology.js").status_code == 200
         assert client.get("/favicon.ico").status_code == 200
         response = client.put(
             "/demo/state",
@@ -333,8 +334,12 @@ def test_demo_trial_reports_blocked_decision(
     assert trial["ok"] is False
     trace = trial["trace"]
     assert isinstance(trace, dict)
-    assert trace["hops"] == []
-    assert trace["address_decisions"][0]["allowed"] is False
+    assert trace["events"][0]["type"] == "address_decision"
+    assert trace["events"][0]["allowed"] is False
+    path = trial["path"]
+    assert isinstance(path, list)
+    assert path[0]["outcome"] == "blocked"
+    assert path[0]["target"] == "internal-report"
     assert trial["dns_answers"] == []
 
 

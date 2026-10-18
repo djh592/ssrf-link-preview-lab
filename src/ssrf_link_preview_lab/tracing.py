@@ -3,6 +3,8 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 TRIAL_ID_HEADER = "X-SSRF-Lab-Trial-ID"
+RESPONDER_SERVICE_HEADER = "X-SSRF-Lab-Service"
+RESPONDER_TRIAL_HEADER = "X-SSRF-Lab-Observed-Trial-ID"
 
 
 def write_structured_event(

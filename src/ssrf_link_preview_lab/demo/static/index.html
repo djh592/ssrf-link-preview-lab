@@ -5,20 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SSRF Link Preview Lab</title>
     <link rel="stylesheet" href="/assets/style.css">
-    <script src="/assets/app.js" defer></script>
+    <script type="module" src="/assets/app.js"></script>
   </head>
   <body>
     <header class="topbar">
-      <div class="brand">
-        <span class="brand-mark">↗</span>
-        <span>Link Preview <strong>Lab</strong></span>
-      </div>
-      <div class="top-meta">
-        <span class="live-dot"></span>
-        <span>Local preview service</span>
-        <span class="meta-divider"></span>
-        <span class="top-meta-detail">SSRF demonstration</span>
-      </div>
+      <div class="brand"><span class="brand-mark">↗</span>Link Preview <strong>Lab</strong></div>
+      <button id="download" class="quiet-button" type="button" disabled>Download trial JSON</button>
     </header>
 
     <main class="workspace">
@@ -27,104 +19,72 @@
           <p class="eyebrow">INTERACTIVE EXPERIMENT</p>
           <h1>Link Preview Security Lab</h1>
         </div>
-        <button id="download" class="quiet-button" type="button" disabled>Download trial JSON</button>
+        <span id="trial-id" class="trial-id"></span>
       </div>
 
-      <div class="layout">
-        <aside class="controls" aria-label="Experiment controls">
-          <section class="control-section">
-            <div class="section-heading">
-              <span class="step-number">01</span>
-              <h2>Address defense</h2>
-            </div>
-            <div class="mode-list" id="defense-list">
-              <label>
-                <input type="radio" name="defense" value="none" checked>
-                <span><strong>No lab address check</strong><small>Experiment defense off</small></span>
-              </label>
-              <label>
-                <input type="radio" name="defense" value="initial">
-                <span><strong>Initial URL only</strong><small>Check the submitted URL once</small></span>
-              </label>
-              <label>
-                <input type="radio" name="defense" value="each_hop">
-                <span><strong>Every redirect hop</strong><small>Check each new destination</small></span>
-              </label>
-              <label>
-                <input type="radio" name="defense" value="bound">
-                <span><strong>Check and bind</strong><small>Connect to the checked IP</small></span>
-              </label>
-            </div>
-          </section>
+      <section class="request-section" aria-label="Preview request">
+        <form id="preview-form">
+          <label for="url">Target URL</label>
+          <div class="input-row">
+            <input id="url" name="url" type="url" spellcheck="false" autocomplete="off" required value="http://external-page:8080/page">
+            <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
+          </div>
+        </form>
+        <details class="examples" id="examples">
+          <summary>Example targets</summary>
+          <div class="example-options">
+            <button type="button" data-preset="page">Lab page</button>
+            <button type="button" data-preset="public">Public website</button>
+            <button type="button" data-preset="internal">Internal report</button>
+            <button type="button" data-preset="redirect_page">Redirect to lab page</button>
+            <button type="button" data-preset="redirect_internal">Redirect to internal report</button>
+            <button type="button" data-preset="rebind">DNS name</button>
+          </div>
+        </details>
+      </section>
 
-          <section class="control-section">
-            <div class="section-heading">
-              <span class="step-number">02</span>
-              <h2>Redirect example</h2>
-            </div>
-            <div class="segmented" id="redirect-list" role="group" aria-label="Redirect example">
-              <label><input type="radio" name="redirect" value="off" checked><span>Off</span></label>
-              <label><input type="radio" name="redirect" value="page"><span>Lab page</span></label>
-              <label><input type="radio" name="redirect" value="internal"><span>Internal report</span></label>
-            </div>
-          </section>
+      <section class="experiment-controls" aria-label="Experiment controls">
+        <fieldset class="defense-control">
+          <legend>Address defense</legend>
+          <div class="choice-row">
+            <label><input type="radio" name="defense" value="none" checked><span>No lab check</span></label>
+            <label><input type="radio" name="defense" value="initial"><span>Initial URL</span></label>
+            <label><input type="radio" name="defense" value="each_hop"><span>Each hop</span></label>
+            <label><input type="radio" name="defense" value="bound"><span>Check &amp; bind</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="dns-control">
+          <legend>DNS answer</legend>
+          <div class="choice-row">
+            <label><input type="radio" name="dns_mode" value="stable" checked><span>Stable</span></label>
+            <label><input type="radio" name="dns_mode" value="rebind"><span>Rebinding</span></label>
+          </div>
+        </fieldset>
+      </section>
 
-          <section class="control-section">
-            <div class="section-heading">
-              <span class="step-number">03</span>
-              <h2>DNS answer</h2>
-            </div>
-            <div class="segmented" id="dns-list" role="group" aria-label="DNS mode">
-              <label><input type="radio" name="dns_mode" value="stable" checked><span>Stable</span></label>
-              <label><input type="radio" name="dns_mode" value="rebind"><span>Rebinding</span></label>
-            </div>
-            <p class="control-note">For rebind.lab, the first answer points to the external page; the next points to the internal report.</p>
-          </section>
-        </aside>
+      <div class="result-layout">
+        <section class="preview-stage" aria-live="polite">
+          <div class="section-title"><h2>Preview</h2><span id="preview-status" class="minor-label">No request yet</span></div>
+          <div id="result" class="preview-placeholder">The link preview will appear here.</div>
+        </section>
 
-        <div class="main-column">
-          <section class="request-panel" aria-label="Preview request">
-            <div class="panel-title">
-              <h2>Preview a link</h2>
-              <span id="active-policy" class="status-pill">No lab address check</span>
-            </div>
-            <form id="preview-form">
-              <label for="url">Target URL</label>
-              <div class="input-row">
-                <input id="url" name="url" type="url" spellcheck="false" autocomplete="off" required value="http://external-page:8080/page">
-                <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
-              </div>
-            </form>
-            <div class="presets" aria-label="Example targets">
-              <span>Examples</span>
-              <button type="button" data-preset="page">Lab page</button>
-              <button type="button" data-preset="public">Public website</button>
-              <button type="button" data-preset="internal">Internal URL</button>
-              <button type="button" data-preset="redirect_page">Page redirect</button>
-              <button type="button" data-preset="rebind">DNS name</button>
-            </div>
-          </section>
-
-          <section class="result-panel" aria-live="polite">
-            <div class="panel-title">
-              <h2>Preview result</h2>
-              <span id="trial-id" class="trial-id"></span>
-            </div>
-            <div id="result" class="empty-result">
-              <span class="empty-symbol">↗</span>
-              <p>The preview will appear here.</p>
-            </div>
-          </section>
-
-          <section class="evidence-panel" aria-label="Request evidence">
-            <div class="panel-title">
-              <h2>Request evidence</h2>
-              <span id="evidence-count" class="minor-label">0 events</span>
-            </div>
-            <div id="evidence" class="evidence-empty">No request yet</div>
-          </section>
-        </div>
+        <section class="network-stage" aria-label="Observed network path">
+          <div class="section-title"><h2>Network path</h2><span id="path-count" class="minor-label">0 steps</span></div>
+          <div id="topology" class="topology" role="img" aria-label="Testbed topology with no observed request"></div>
+          <div class="path-legend" aria-label="Path states">
+            <span><i class="legend-line reached"></i>Response</span>
+            <span><i class="legend-line blocked"></i>Blocked</span>
+            <span><i class="legend-line attempted"></i>Unconfirmed</span>
+          </div>
+          <p id="path-detail" class="path-detail">Select a request below to inspect its route.</p>
+          <div id="dns-answers" class="dns-answers" hidden></div>
+        </section>
       </div>
+
+      <section class="evidence-section" aria-label="Request evidence">
+        <div class="section-title"><h2>Request evidence</h2><span id="evidence-count" class="minor-label">0 events</span></div>
+        <div id="evidence" class="evidence-empty">No request yet</div>
+      </section>
     </main>
   </body>
 </html>

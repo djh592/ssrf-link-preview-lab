@@ -1,11 +1,19 @@
 from uuid import UUID
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ssrf_link_preview_lab.api.app import create_app
 from ssrf_link_preview_lab.fetching.errors import TransportError
-from ssrf_link_preview_lab.fetching.models import FetchedPage, FetchRequest
+from ssrf_link_preview_lab.fetching.models import (
+    FetchedPage,
+    FetchHop,
+    FetchRequest,
+    FetchTrace,
+)
+from ssrf_link_preview_lab.preview.errors import UnsupportedContentTypeError
 from ssrf_link_preview_lab.preview.parser import parse_html_metadata
+from ssrf_link_preview_lab.preview.service import PreviewService
 
 
 class _StubFetcher:
@@ -167,3 +175,27 @@ def test_preview_error_returns_the_trial_id_used_by_the_fetcher() -> None:
         "code": "preview_failed",
         "message": "The upstream request failed: controlled failure",
     }
+
+
+def test_non_html_page_keeps_the_observed_http_path() -> None:
+    url = "https://example.test/image.png"
+    trace = FetchTrace(
+        events=(FetchHop(0, url, 200, "93.184.216.34", None, None, 1.0),)
+    )
+
+    class NonHTMLFetcher:
+        def fetch(self, request: FetchRequest) -> FetchedPage:
+            return FetchedPage(
+                request.url,
+                request.url,
+                200,
+                "image/png",
+                "93.184.216.34",
+                b"\x89PNG\r\n\x1a\n",
+                trace,
+            )
+
+    with pytest.raises(UnsupportedContentTypeError) as caught:
+        PreviewService(NonHTMLFetcher()).create(url, trial_id=UUID(int=1))
+
+    assert caught.value.trace == trace

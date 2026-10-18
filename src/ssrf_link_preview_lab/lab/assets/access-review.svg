@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#f3f5f3"/>
+  <rect width="1200" height="122" fill="#20352f"/>
+  <rect width="1200" height="8" fill="#c3483f"/>
+  <text x="68" y="76" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="26" font-weight="700">OPERATIONS PORTAL</text>
+  <rect x="745" y="28" width="387" height="70" rx="4" fill="#c3483f"/>
+  <text x="938" y="76" fill="#ffffff" font-family="DejaVu Sans, sans-serif" font-size="45" font-weight="700" text-anchor="middle">RESTRICTED</text>
+
+  <text x="68" y="214" fill="#5c6c63" font-family="DejaVu Sans, sans-serif" font-size="22" font-weight="700">SECURITY OPERATIONS  /  Q3 2026</text>
+  <text x="63" y="308" fill="#20352f" font-family="DejaVu Sans, sans-serif" font-size="77" font-weight="700">ACCESS REVIEW</text>
+  <rect x="68" y="340" width="108" height="6" fill="#c3483f"/>
+  <text x="68" y="395" fill="#51645b" font-family="DejaVu Sans, sans-serif" font-size="27">Privileged access and exception status</text>
+
+  <rect x="68" y="444" width="1064" height="188" rx="6" fill="#ffffff" stroke="#d8dfdb" stroke-width="2"/>
+  <line x1="421" y1="471" x2="421" y2="605" stroke="#d8dfdb" stroke-width="2"/>
+  <line x1="775" y1="471" x2="775" y2="605" stroke="#d8dfdb" stroke-width="2"/>
+  <text x="105" y="554" fill="#b63f39" font-family="DejaVu Sans, sans-serif" font-size="82" font-weight="700">03</text>
+  <text x="105" y="593" fill="#40564a" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">HIGH-RISK FINDINGS</text>
+  <text x="459" y="554" fill="#20352f" font-family="DejaVu Sans, sans-serif" font-size="82" font-weight="700">02</text>
+  <text x="459" y="593" fill="#40564a" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">PENDING EXCEPTIONS</text>
+  <text x="813" y="554" fill="#20352f" font-family="DejaVu Sans, sans-serif" font-size="82" font-weight="700">01</text>
+  <text x="813" y="593" fill="#40564a" font-family="DejaVu Sans, sans-serif" font-size="18" font-weight="700">OVERDUE SIGN-OFF</text>
+
+  <text x="68" y="683" fill="#6b7d72" font-family="DejaVu Sans, sans-serif" font-size="18">OPS-AR-2026-Q3  |  Security + Platform distribution</text>
+</svg>

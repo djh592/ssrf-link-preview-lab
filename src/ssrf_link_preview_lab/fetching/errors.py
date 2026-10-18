@@ -9,9 +9,26 @@ class FetchError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.trace = FetchTrace()
+        self.peer_ip: str | None = None
+        self.status_code: int | None = None
+        self.responder_service: str | None = None
+        self.responder_trial_id: str | None = None
 
     def with_trace(self, trace: FetchTrace) -> Self:
         self.trace = trace
+        return self
+
+    def with_transport_observation(
+        self,
+        peer_ip: str | None,
+        status_code: int | None,
+        responder_service: str | None = None,
+        responder_trial_id: str | None = None,
+    ) -> Self:
+        self.peer_ip = peer_ip
+        self.status_code = status_code
+        self.responder_service = responder_service
+        self.responder_trial_id = responder_trial_id
         return self
 
 
@@ -64,8 +81,8 @@ class MissingRedirectLocationError(FetchError):
 
 class UpstreamHttpError(FetchError):
     def __init__(self, status_code: int) -> None:
-        self.status_code = status_code
         super().__init__(f"The upstream server returned HTTP {status_code}.")
+        self.status_code = status_code
 
 
 class TransportError(FetchError):

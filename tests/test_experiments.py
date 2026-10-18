@@ -7,6 +7,7 @@ from ssrf_link_preview_lab.experiments.event_models import (
     ExternalRedirect,
     InternalReportAccess,
     PreviewFetchCompleted,
+    PreviewFetchFailed,
     TrialEvent,
 )
 from ssrf_link_preview_lab.experiments.event_parser import parse_trial_events
@@ -25,6 +26,12 @@ from ssrf_link_preview_lab.experiments.trial_models import (
     TrialResult,
     TrialRun,
     VerificationStatus,
+)
+from ssrf_link_preview_lab.fetching.models import (
+    AddressDecision,
+    ConnectionAttempt,
+    FetchFailure,
+    FetchTrace,
 )
 from ssrf_link_preview_lab.lab.constants import INTERNAL_REPORT_MARKER
 
@@ -71,8 +78,9 @@ def test_parses_preview_trace_into_fetch_models() -> None:
         "requested_url": REDIRECT_BASELINE_SPEC.target_url,
         "final_url": "http://internal-report:8080/report",
         "trace": {
-            "hops": [
+            "events": [
                 {
+                    "type": "http_response",
                     "sequence": 0,
                     "url": REDIRECT_BASELINE_SPEC.target_url,
                     "status_code": 302,
@@ -82,7 +90,6 @@ def test_parses_preview_trace_into_fetch_models() -> None:
                     "observed_at": 123.25,
                 }
             ],
-            "address_decisions": [],
         },
     }
 
@@ -92,6 +99,38 @@ def test_parses_preview_trace_into_fetch_models() -> None:
     assert isinstance(events[0].details, PreviewFetchCompleted)
     assert events[0].details.trace.hops[0].status_code == 302
     assert events[0].details.trace.hops[0].observed_at == 123.25
+
+
+def test_parses_new_trace_events_without_losing_failure_evidence() -> None:
+    url = "https://example.org/"
+    trace = FetchTrace(
+        events=(
+            AddressDecision(
+                0,
+                url,
+                ("93.184.216.34",),
+                True,
+                "Address check passed",
+                "93.184.216.34",
+                1.0,
+            ),
+            ConnectionAttempt(0, url, "93.184.216.34", 2.0),
+            FetchFailure(0, url, "transport", "Timed out", 3.0),
+        )
+    )
+    record = {
+        "timestamp": "2026-10-15T16:11:52.886+00:00",
+        "event": "preview_fetch_failed",
+        "trial_id": str(_TRIAL_ID),
+        "error": "FetchTimeoutError",
+        "message": "Timed out",
+        "trace": trace.to_dict(),
+    }
+
+    (event,) = parse_trial_events("preview", json.dumps(record), trial_id=_TRIAL_ID)
+
+    assert isinstance(event.details, PreviewFetchFailed)
+    assert event.details.trace == trace
 
 
 def test_evaluates_and_renders_vulnerable_baseline_without_ambiguous_pass() -> None:
@@ -145,6 +184,24 @@ def test_missing_attack_evidence_is_failed_and_inconclusive() -> None:
 
     assert result.verification_status is VerificationStatus.FAILED
     assert result.observed_security_outcome is SecurityOutcome.INCONCLUSIVE
+    assert [check.satisfied for check in result.evidence] == [True, False, False]
+
+
+def test_marker_on_an_unrelated_page_is_not_accepted_as_internal_disclosure() -> None:
+    preview = PreviewObservation(
+        trial_id=_TRIAL_ID,
+        requested_url=REDIRECT_BASELINE_SPEC.target_url,
+        final_url="http://external-page:8080/page",
+        title="External page",
+        description=INTERNAL_REPORT_MARKER,
+    )
+
+    result = evaluate_redirect_baseline(
+        preview=preview,
+        direct_external_access_blocked=True,
+        events=(),
+    )
+
     assert [check.satisfied for check in result.evidence] == [True, False, False]
 
 
@@ -206,5 +263,5 @@ def _internal_preview() -> PreviewObservation:
         requested_url=REDIRECT_BASELINE_SPEC.target_url,
         final_url=f"http://internal-report:8080/report?source_trial_id={_TRIAL_ID}",
         title="Internal report",
-        description=f"{INTERNAL_REPORT_MARKER}; trial_id={_TRIAL_ID}",
+        description=f"Internal-only: 3 high-risk findings. Proof: {INTERNAL_REPORT_MARKER}",
     )

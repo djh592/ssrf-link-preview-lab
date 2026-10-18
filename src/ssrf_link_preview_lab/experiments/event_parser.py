@@ -16,6 +16,9 @@ from ssrf_link_preview_lab.experiments.event_models import (
 )
 from ssrf_link_preview_lab.fetching.models import (
     AddressDecision,
+    ConnectionAttempt,
+    FetchEvent,
+    FetchFailure,
     FetchHop,
     FetchTrace,
 )
@@ -106,25 +109,79 @@ def _parse_details(
 def _parse_trace(value: object) -> FetchTrace | None:
     if not isinstance(value, dict):
         return None
-    raw_hops = value.get("hops")
-    raw_decisions = value.get("address_decisions")
-    if not isinstance(raw_hops, list) or not isinstance(raw_decisions, list):
+    raw_events = value.get("events")
+    if not isinstance(raw_events, list):
         return None
 
-    hops: list[FetchHop] = []
-    for raw_hop in raw_hops:
-        hop = _parse_hop(raw_hop)
-        if hop is None:
+    events: list[FetchEvent] = []
+    for raw_event in raw_events:
+        event = _parse_fetch_event(raw_event)
+        if event is None:
             return None
-        hops.append(hop)
+        events.append(event)
+    return FetchTrace(events=tuple(events))
 
-    decisions: list[AddressDecision] = []
-    for raw_decision in raw_decisions:
-        decision = _parse_address_decision(raw_decision)
-        if decision is None:
+
+def _parse_fetch_event(value: object) -> FetchEvent | None:
+    if not isinstance(value, dict):
+        return None
+    match value.get("type"):
+        case "http_response":
+            return _parse_hop(value)
+        case "address_decision":
+            return _parse_address_decision(value)
+        case "connection_attempt":
+            sequence = _required_integer(value, "sequence")
+            url = _required_string(value, "url")
+            address = _optional_string(value.get("selected_address"))
+            observed_at = _optional_number(value.get("observed_at"))
+            if (
+                sequence is None
+                or url is None
+                or isinstance(address, _InvalidValue)
+                or not isinstance(observed_at, float)
+            ):
+                return None
+            return ConnectionAttempt(sequence, url, address, observed_at)
+        case "fetch_failure":
+            return _parse_fetch_failure(value)
+        case _:
             return None
-        decisions.append(decision)
-    return FetchTrace(hops=tuple(hops), address_decisions=tuple(decisions))
+
+
+def _parse_fetch_failure(value: dict[object, object]) -> FetchFailure | None:
+    sequence = _required_integer(value, "sequence")
+    url = _required_string(value, "url")
+    stage = _required_string(value, "stage")
+    reason = _required_string(value, "reason")
+    peer_ip = _optional_string(value.get("peer_ip"))
+    status_code = _optional_integer(value.get("status_code"))
+    responder_service = _optional_string(value.get("responder_service"))
+    responder_trial_id = _optional_string(value.get("responder_trial_id"))
+    observed_at = _optional_number(value.get("observed_at"))
+    if (
+        sequence is None
+        or url is None
+        or stage not in {"resolution", "transport"}
+        or reason is None
+        or isinstance(peer_ip, _InvalidValue)
+        or isinstance(status_code, _InvalidValue)
+        or isinstance(responder_service, _InvalidValue)
+        or isinstance(responder_trial_id, _InvalidValue)
+        or not isinstance(observed_at, float)
+    ):
+        return None
+    return FetchFailure(
+        sequence,
+        url,
+        stage,
+        reason,
+        observed_at,
+        peer_ip,
+        status_code,
+        responder_service,
+        responder_trial_id,
+    )
 
 
 def _parse_hop(value: object) -> FetchHop | None:
@@ -137,6 +194,8 @@ def _parse_hop(value: object) -> FetchHop | None:
     location = _optional_string(value.get("location"))
     redirect_url = _optional_string(value.get("redirect_url"))
     observed_at = _optional_number(value.get("observed_at"))
+    responder_service = _optional_string(value.get("responder_service"))
+    responder_trial_id = _optional_string(value.get("responder_trial_id"))
     if (
         sequence is None
         or url is None
@@ -145,6 +204,8 @@ def _parse_hop(value: object) -> FetchHop | None:
         or isinstance(location, _InvalidValue)
         or isinstance(redirect_url, _InvalidValue)
         or isinstance(observed_at, _InvalidValue)
+        or isinstance(responder_service, _InvalidValue)
+        or isinstance(responder_trial_id, _InvalidValue)
     ):
         return None
     return FetchHop(
@@ -155,6 +216,8 @@ def _parse_hop(value: object) -> FetchHop | None:
         location=location,
         redirect_url=redirect_url,
         observed_at=observed_at,
+        responder_service=responder_service,
+        responder_trial_id=responder_trial_id,
     )
 
 
@@ -218,6 +281,12 @@ def _optional_number(value: object) -> float | None | _InvalidValue:
         return None
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return float(value)
+    return _INVALID
+
+
+def _optional_integer(value: object) -> int | None | _InvalidValue:
+    if value is None or type(value) is int:
+        return value
     return _INVALID
 
 

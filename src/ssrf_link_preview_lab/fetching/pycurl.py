@@ -9,7 +9,11 @@ from ssrf_link_preview_lab.fetching.errors import (
     TransportError,
 )
 from ssrf_link_preview_lab.fetching.models import TransportRequest, TransportResponse
-from ssrf_link_preview_lab.tracing import TRIAL_ID_HEADER
+from ssrf_link_preview_lab.tracing import (
+    RESPONDER_SERVICE_HEADER,
+    RESPONDER_TRIAL_HEADER,
+    TRIAL_ID_HEADER,
+)
 
 _HTTP_PROTOCOLS = pycurl.PROTO_HTTP | pycurl.PROTO_HTTPS
 
@@ -68,6 +72,11 @@ class PycurlTransport:
                     body_exceeded=body.exceeded,
                     timeout_seconds=request.timeout_seconds,
                     max_body_bytes=request.max_body_bytes,
+                ).with_transport_observation(
+                    _optional_string(curl.getinfo(pycurl.PRIMARY_IP)),
+                    _optional_status(curl.getinfo(pycurl.RESPONSE_CODE)),
+                    headers.get(RESPONDER_SERVICE_HEADER),
+                    headers.get(RESPONDER_TRIAL_HEADER),
                 ) from error
 
             peer_ip = _optional_string(curl.getinfo(pycurl.PRIMARY_IP))
@@ -78,6 +87,11 @@ class PycurlTransport:
                 raise TransportError(
                     -1,
                     "The connected peer differed from the selected address.",
+                ).with_transport_observation(
+                    peer_ip,
+                    _optional_status(curl.getinfo(pycurl.RESPONSE_CODE)),
+                    headers.get(RESPONDER_SERVICE_HEADER),
+                    headers.get(RESPONDER_TRIAL_HEADER),
                 )
 
             return TransportResponse(
@@ -87,6 +101,8 @@ class PycurlTransport:
                 location=headers.get("location"),
                 peer_ip=peer_ip,
                 body=bytes(body.data),
+                responder_service=headers.get(RESPONDER_SERVICE_HEADER),
+                responder_trial_id=headers.get(RESPONDER_TRIAL_HEADER),
             )
         finally:
             curl.close()
@@ -151,3 +167,7 @@ def _optional_string(value: object) -> str | None:
     if value is None or value == "":
         return None
     return str(value)
+
+
+def _optional_status(value: object) -> int | None:
+    return value if isinstance(value, int) and value > 0 else None

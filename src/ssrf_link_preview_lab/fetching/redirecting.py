@@ -12,8 +12,10 @@ from ssrf_link_preview_lab.fetching.errors import (
     UpstreamHttpError,
 )
 from ssrf_link_preview_lab.fetching.models import (
-    AddressDecision,
+    ConnectionAttempt,
     FetchedPage,
+    FetchEvent,
+    FetchFailure,
     FetchHop,
     FetchLimits,
     FetchRequest,
@@ -49,8 +51,8 @@ class RedirectingFetcher:
         requested_url = validate_http_url(request.url)
         current_url = requested_url
         deadline = monotonic() + self._limits.timeout_seconds
-        hops: list[FetchHop] = []
-        decisions: list[AddressDecision] = []
+        events: list[FetchEvent] = []
+        sequence = 0
 
         try:
             while True:
@@ -60,45 +62,84 @@ class RedirectingFetcher:
 
                 binding = None
                 if self._address_policy is not None:
-                    hop_decisions, binding = self._address_policy.prepare(
-                        current_url, len(hops), timeout_seconds
-                    )
+                    try:
+                        hop_decisions, binding = self._address_policy.prepare(
+                            current_url, sequence, timeout_seconds
+                        )
+                    except FetchError as error:
+                        events.append(
+                            FetchFailure(
+                                sequence,
+                                current_url,
+                                "resolution",
+                                str(error),
+                                monotonic(),
+                            )
+                        )
+                        raise
                     for decision in hop_decisions:
-                        decisions.append(decision)
+                        events.append(decision)
                         if not decision.allowed:
                             raise AddressBlockedError(decision.reason)
 
-                response = self._transport.send(
-                    TransportRequest(
-                        url=current_url,
-                        trial_id=request.trial_id,
-                        timeout_seconds=timeout_seconds,
-                        max_body_bytes=self._limits.max_body_bytes,
-                        address_binding=binding,
+                events.append(
+                    ConnectionAttempt(
+                        sequence,
+                        current_url,
+                        binding.address if binding is not None else None,
+                        monotonic(),
                     )
                 )
+                try:
+                    response = self._transport.send(
+                        TransportRequest(
+                            url=current_url,
+                            trial_id=request.trial_id,
+                            timeout_seconds=timeout_seconds,
+                            max_body_bytes=self._limits.max_body_bytes,
+                            address_binding=binding,
+                        )
+                    )
+                except FetchError as error:
+                    events.append(
+                        FetchFailure(
+                            sequence,
+                            current_url,
+                            "transport",
+                            str(error),
+                            monotonic(),
+                            peer_ip=error.peer_ip,
+                            status_code=error.status_code,
+                            responder_service=error.responder_service,
+                            responder_trial_id=error.responder_trial_id,
+                        )
+                    )
+                    raise
                 redirect_url = _resolve_redirect_url(
                     current_url,
                     status_code=response.status_code,
                     location=response.location,
                 )
 
-                hops.append(
+                events.append(
                     FetchHop(
-                        sequence=len(hops),
+                        sequence=sequence,
                         url=current_url,
                         status_code=response.status_code,
                         peer_ip=response.peer_ip,
                         location=response.location,
                         redirect_url=redirect_url,
                         observed_at=monotonic(),
+                        responder_service=response.responder_service,
+                        responder_trial_id=response.responder_trial_id,
                     )
                 )
+                sequence += 1
 
                 if response.status_code in _REDIRECT_STATUS_CODES:
                     if redirect_url is None:
                         raise MissingRedirectLocationError(response.status_code)
-                    if len(hops) > self._limits.max_redirects:
+                    if sequence > self._limits.max_redirects:
                         raise TooManyRedirectsError(self._limits.max_redirects)
                     try:
                         current_url = validate_http_url(redirect_url)
@@ -116,14 +157,10 @@ class RedirectingFetcher:
                     content_type=response.content_type,
                     peer_ip=response.peer_ip,
                     body=response.body,
-                    trace=FetchTrace(
-                        hops=tuple(hops), address_decisions=tuple(decisions)
-                    ),
+                    trace=FetchTrace(events=tuple(events)),
                 )
         except FetchError as error:
-            raise error.with_trace(
-                FetchTrace(hops=tuple(hops), address_decisions=tuple(decisions))
-            )
+            raise error.with_trace(FetchTrace(events=tuple(events)))
 
 
 def _resolve_redirect_url(

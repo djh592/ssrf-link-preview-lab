@@ -12,15 +12,21 @@ from ssrf_link_preview_lab.fetching.errors import (
     MissingRedirectLocationError,
     ResponseTooLargeError,
     TooManyRedirectsError,
+    UpstreamHttpError,
 )
 from ssrf_link_preview_lab.fetching.models import (
+    FetchFailure,
     FetchLimits,
     FetchRequest,
     TransportRequest,
     TransportResponse,
 )
 from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
-from ssrf_link_preview_lab.tracing import TRIAL_ID_HEADER
+from ssrf_link_preview_lab.tracing import (
+    RESPONDER_SERVICE_HEADER,
+    RESPONDER_TRIAL_HEADER,
+    TRIAL_ID_HEADER,
+)
 
 _HTML = b"""<!doctype html>
 <html>
@@ -50,6 +56,10 @@ class _Handler(BaseHTTPRequestHandler):
         if self.path == "/redirect":
             self.send_response(302)
             self.send_header("Location", "/page")
+            self.send_header(RESPONDER_SERVICE_HEADER, "fixture")
+            self.send_header(
+                RESPONDER_TRIAL_HEADER, self.headers.get(TRIAL_ID_HEADER, "")
+            )
             self.send_header("Content-Length", "0")
             self.end_headers()
             return
@@ -57,6 +67,8 @@ class _Handler(BaseHTTPRequestHandler):
         body = b"x" * 128 if self.path == "/large" else _HTML
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header(RESPONDER_SERVICE_HEADER, "fixture")
+        self.send_header(RESPONDER_TRIAL_HEADER, self.headers.get(TRIAL_ID_HEADER, ""))
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
@@ -98,16 +110,26 @@ def test_fetches_page_and_follows_redirect() -> None:
     assert page.peer_ip == "127.0.0.1"
     assert page.body == _HTML
     assert observed_trial_ids == [str(trial_id), str(trial_id)]
+    assert [hop.responder_service for hop in page.trace.hops] == ["fixture", "fixture"]
+    assert all(hop.responder_trial_id == str(trial_id) for hop in page.trace.hops)
 
 
 def test_stops_when_response_exceeds_limit() -> None:
     limits = FetchLimits(max_body_bytes=32)
     trial_id = UUID("33bac9ca-4fc3-413b-8112-f5e2c0dc9300")
 
-    with _serve_pages() as (base_url, _), pytest.raises(ResponseTooLargeError):
+    with (
+        _serve_pages() as (base_url, _),
+        pytest.raises(ResponseTooLargeError) as caught,
+    ):
         RedirectingFetcher(limits=limits).fetch(
             FetchRequest(url=f"{base_url}/large", trial_id=trial_id)
         )
+
+    failure = caught.value.trace.events[-1]
+    assert isinstance(failure, FetchFailure)
+    assert failure.peer_ip == "127.0.0.1"
+    assert failure.status_code == 200
 
 
 def test_records_redirect_response_when_location_is_missing() -> None:
@@ -156,6 +178,18 @@ def test_redirect_limit_counts_completed_redirect_responses() -> None:
         "http://example.test/second",
     ]
     assert len(transport.requests) == 2
+
+
+def test_http_error_retains_the_observed_status_and_response() -> None:
+    transport = _SequenceTransport(_response(status_code=403, location=None))
+
+    with pytest.raises(UpstreamHttpError) as caught:
+        RedirectingFetcher(transport=transport).fetch(
+            FetchRequest(url="http://example.test/forbidden", trial_id=UUID(int=4))
+        )
+
+    assert caught.value.status_code == 403
+    assert caught.value.trace.hops[0].status_code == 403
 
 
 def _response(*, status_code: int, location: str | None) -> TransportResponse:

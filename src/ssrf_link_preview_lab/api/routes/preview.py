@@ -54,14 +54,13 @@ def create_preview_router(service: PreviewService) -> APIRouter:
                 },
             ) from error
         except (FetchError, UnsupportedContentTypeError) as error:
-            if isinstance(error, FetchError):
-                write_structured_event(
-                    "preview_fetch_failed",
-                    trial_id=trial_id,
-                    error=type(error).__name__,
-                    message=str(error),
-                    trace=error.trace.to_dict(),
-                )
+            write_structured_event(
+                "preview_fetch_failed",
+                trial_id=trial_id,
+                error=type(error).__name__,
+                message=str(error),
+                trace=error.trace.to_dict(),
+            )
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
                 detail={

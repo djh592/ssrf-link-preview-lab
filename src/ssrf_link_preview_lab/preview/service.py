@@ -69,5 +69,5 @@ class PreviewService:
 def _require_html(page: FetchedPage) -> str:
     media_type = (page.content_type or "").partition(";")[0].strip().casefold()
     if media_type not in _HTML_CONTENT_TYPES:
-        raise UnsupportedContentTypeError(page.content_type)
+        raise UnsupportedContentTypeError(page.content_type, page.trace)
     return page.content_type or media_type

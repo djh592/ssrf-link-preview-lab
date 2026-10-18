@@ -1,5 +1,6 @@
 import json
 from collections.abc import Callable
+from urllib.parse import parse_qs, urlsplit
 from uuid import UUID
 
 from ssrf_link_preview_lab.experiments.compose import ComposeProject
@@ -69,9 +70,13 @@ def evaluate_redirect_baseline(
         and event.details.trial_ids_match
         for event in events
     )
-    marker_disclosed = preview.description is not None and (
-        INTERNAL_REPORT_MARKER in preview.description
-        and str(preview.trial_id) in preview.description
+    final_url = urlsplit(preview.final_url)
+    marker_disclosed = (
+        preview.description is not None
+        and INTERNAL_REPORT_MARKER in preview.description
+        and final_url.hostname == "internal-report"
+        and final_url.path == "/report"
+        and parse_qs(final_url.query).get("source_trial_id") == [str(preview.trial_id)]
     )
     evidence = (
         EvidenceCheck(

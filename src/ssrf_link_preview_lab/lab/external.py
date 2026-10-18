@@ -5,7 +5,11 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
-from ssrf_link_preview_lab.lab.events import request_trial_id, write_event
+from ssrf_link_preview_lab.lab.events import (
+    observation_headers,
+    request_trial_id,
+    write_event,
+)
 
 _DEFAULT_INTERNAL_REPORT_URL = "http://internal-report:8080/report"
 _COVER = Path(__file__).resolve().parent / "assets" / "field-notes.png"
@@ -52,13 +56,18 @@ def page(request: Request) -> HTMLResponse:
     </article>
   </body>
 </html>
-"""
+""",
+        headers=observation_headers(request, "external-page"),
     )
 
 
 @app.get("/cover.png", include_in_schema=False)
-def cover() -> FileResponse:
-    return FileResponse(_COVER, media_type="image/png")
+def cover(request: Request) -> FileResponse:
+    return FileResponse(
+        _COVER,
+        media_type="image/png",
+        headers=observation_headers(request, "external-page"),
+    )
 
 
 @app.get("/redirect/internal")
@@ -71,7 +80,11 @@ def redirect_to_internal(request: Request) -> RedirectResponse:
         trial_id=trial_id,
         location=target,
     )
-    return RedirectResponse(target, status_code=302)
+    return RedirectResponse(
+        target,
+        status_code=302,
+        headers=observation_headers(request, "external-page"),
+    )
 
 
 @app.get("/redirect/page")
@@ -79,7 +92,11 @@ def redirect_to_page(request: Request) -> RedirectResponse:
     trial_id = request_trial_id(request)
     target = "http://external-page:8080/page"
     write_event("external_redirect", request, trial_id=trial_id, location=target)
-    return RedirectResponse(target, status_code=302)
+    return RedirectResponse(
+        target,
+        status_code=302,
+        headers=observation_headers(request, "external-page"),
+    )
 
 
 def _internal_report_url(trial_id: str | None) -> str:

@@ -7,7 +7,9 @@ from uuid import uuid4
 from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import DemoState, DNSMode
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
+from ssrf_link_preview_lab.demo.topology import LabAddresses, project_trace
 from ssrf_link_preview_lab.fetching.errors import FetchError
+from ssrf_link_preview_lab.fetching.models import FetchTrace
 from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
 from ssrf_link_preview_lab.preview.errors import UnsupportedContentTypeError
 from ssrf_link_preview_lab.preview.service import PreviewService
@@ -53,10 +55,14 @@ class DemoController:
         with self._lock:
             trial_id = uuid4()
             result: dict[str, object]
+            page_trace = FetchTrace()
+            image_trace = FetchTrace()
+            lab: LabAddresses | None = None
             self._dns.configure("", "", rebind=False)
             try:
                 external_ip = socket.gethostbyname("external-page")
                 internal_ip = socket.gethostbyname("internal-report")
+                lab = LabAddresses(external_ip, internal_ip)
                 self._dns.configure(
                     external_ip,
                     internal_ip,
@@ -73,14 +79,17 @@ class DemoController:
                 OSError,
                 RuntimeError,
             ) as error:
-                trace = error.trace.to_dict() if isinstance(error, FetchError) else {}
+                if isinstance(error, (FetchError, UnsupportedContentTypeError)):
+                    page_trace = error.trace
                 result = {
                     "ok": False,
                     "trial_id": str(trial_id),
+                    "requested_url": url,
                     "message": str(error),
-                    "trace": trace,
                 }
             else:
+                page_trace = preview.trace
+                image_trace = preview.image_trace
                 result = {
                     "ok": True,
                     "trial_id": str(trial_id),
@@ -90,9 +99,23 @@ class DemoController:
                     "description": preview.description,
                     "site_name": preview.site_name,
                     "image_data_url": preview.image_data_url,
-                    "trace": preview.trace.to_dict(),
-                    "image_trace": preview.image_trace.to_dict(),
                 }
+            result["trace"] = page_trace.to_dict()
+            result["image_trace"] = image_trace.to_dict()
+            result["path"] = (
+                [
+                    step.to_dict()
+                    for trace, resource in (
+                        (page_trace, "page"),
+                        (image_trace, "image"),
+                    )
+                    for step in project_trace(
+                        trace, resource=resource, trial_id=trial_id, lab=lab
+                    )
+                ]
+                if lab is not None
+                else []
+            )
             result["dns_answers"] = [answer.to_dict() for answer in self._dns.answers]
             result["defense"] = self._state.defense.value
             result["dns_mode"] = self._state.dns_mode.value
