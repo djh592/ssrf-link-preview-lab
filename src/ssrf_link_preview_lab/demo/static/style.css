@@ -231,20 +231,21 @@ fieldset {
   outline-offset: 2px;
 }
 
-.result-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
-  gap: 24px;
-  align-items: start;
-}
 .preview-stage, .network-stage {
   min-width: 0;
+}
+.preview-stage {
+  margin-bottom: 30px;
+}
+.network-stage {
+  padding-top: 24px;
+  border-top: 1px solid #dce3df;
 }
 .section-title {
   margin-bottom: 12px;
 }
 .preview-placeholder, .link-preview, .preview-error {
-  min-height: 276px;
+  min-height: 300px;
   border: 1px solid #dce3df;
   border-radius: 6px;
   background: #fff;
@@ -257,7 +258,7 @@ fieldset {
 }
 .link-preview {
   display: grid;
-  grid-template-columns: minmax(160px, 36%) minmax(0, 1fr);
+  grid-template-columns: minmax(240px, 36%) minmax(0, 1fr);
   overflow: hidden;
 }
 .link-preview.text-only {
@@ -266,20 +267,23 @@ fieldset {
 .preview-media {
   display: grid;
   place-items: center;
-  min-height: 274px;
+  min-height: 298px;
   padding: 18px;
   background: #eef2ef;
 }
 .preview-media img {
   display: block;
   width: 100%;
-  height: 230px;
+  height: 260px;
   object-fit: contain;
 }
 .preview-copy {
   align-self: center;
   min-width: 0;
-  padding: 26px;
+  padding: 30px clamp(24px, 5vw, 56px);
+}
+.text-only .preview-copy {
+  max-width: 850px;
 }
 .preview-site {
   display: block;
@@ -334,83 +338,171 @@ fieldset {
 
 .topology {
   width: 100%;
-  min-height: 276px;
   border: 1px solid #dce3df;
-  border-radius: 6px;
+  border-radius: 5px;
   background: #fff;
   overflow: hidden;
 }
 .topology svg {
   display: block;
   width: 100%;
+  max-width: 100%;
+  height: auto;
 }
-.topology .network-edge {
+.topology polyline {
   fill: none;
-  stroke: #d6e0da;
-  stroke-width: 2;
-}
-.topology .network-edge.reached {
-  stroke: #238768;
-  stroke-width: 3;
-}
-.topology .network-edge.blocked {
-  stroke: #be5b47;
-  stroke-width: 3;
-  stroke-dasharray: 7 5;
-}
-.topology .network-edge.attempted {
-  stroke: #bf8b3b;
-  stroke-width: 3;
-  stroke-dasharray: 2 5;
-}
-.topology .network-edge.image {
-  stroke-width: 2;
-}
-.topology .network-node {
-  fill: #f7f9f8;
-  stroke: #d6e0da;
-  stroke-width: 1.5;
-}
-.topology .network-node.reached {
-  fill: #e9f6ef;
-  stroke: #238768;
-}
-.topology .network-node.selected {
-  stroke-width: 2.5;
-}
-.topology .network-label {
-  fill: #24352c;
-  font-size: 12px;
-  font-weight: 650;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
-.topology .network-subtitle {
-  fill: #64766c;
-  font-size: 10px;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
-.topology .network-hop-label {
-  fill: #34483d;
-  font-size: 11px;
-  font-weight: 700;
-  text-anchor: middle;
-  paint-order: stroke;
-  stroke: #fff;
-  stroke-width: 4px;
+  stroke-linecap: round;
   stroke-linejoin: round;
 }
-.topology .network-stop {
-  fill: #be5b47;
+.topology .boundary-label, .topology .zone-label {
+  fill: #66776e;
+  font-size: 11px;
+  font-weight: 700;
+}
+.topology .egress-label {
+  font-size: 10px;
+}
+.topology .network-zone {
+  fill: #f4f8f6;
+  stroke: #cfdbd4;
+  stroke-width: 1.5;
+}
+.topology .zone-internal-report {
+  fill: #fff6f3;
+  stroke: #e6cbc4;
+}
+.topology .zone-public-web {
+  fill: #f1f6fa;
+  stroke: #c8d9e5;
+}
+.topology .zone-other-address {
+  fill: #faf8f3;
+  stroke: #d8cdbb;
+  stroke-dasharray: 4 5;
+}
+.topology .internet-boundary {
+  stroke: #a8bfd0;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+.topology .internet-label {
+  fill: #55758c;
+  font-size: 10px;
+  font-weight: 700;
+}
+.topology .network-attachment, .topology .browser-attachment {
+  stroke: #b5c4bc;
+  stroke-width: 1.7;
+  stroke-dasharray: 4 5;
+}
+.topology .browser-request {
+  stroke: #168467;
+  stroke-width: 3;
+}
+.topology .observation-history {
+  stroke: #9ecdb7;
+  stroke-width: 2.5;
+  opacity: .75;
+}
+.topology .observation-history-incomplete {
+  stroke: #d9ba84;
+  stroke-width: 2.5;
+}
+.topology .observation-response {
+  stroke: #128263;
+  stroke-width: 4;
+}
+.topology .observation-incomplete {
+  stroke: #b47f38;
+  stroke-width: 4;
+}
+.topology .observation-blocked {
+  stroke: #c15643;
+  stroke-width: 3;
+  stroke-dasharray: 5 4;
+}
+.topology .observation-attempted {
+  stroke: #ae792d;
+  stroke-width: 3;
+  stroke-dasharray: 2 6;
+}
+.topology .response-mark {
+  fill: #128263;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .stop-mark {
+  fill: #c15643;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .attempt-mark {
+  fill: #fff;
+  stroke: #ae792d;
+  stroke-width: 2;
+}
+.topology .network-port {
+  fill: #fff;
+  stroke: #8ba99a;
+  stroke-width: 1.5;
+}
+.topology .browser-node, .topology .preview-node, .topology .service-node {
+  fill: #fff;
+  stroke: #aebeb5;
+  stroke-width: 1.5;
+}
+.topology .preview-node {
+  fill: #eef7f4;
+  stroke: #3b8d72;
+}
+.topology .preview-node.has-block {
+  stroke: #c15643;
+}
+.topology .service-node.selected {
+  stroke: #128263;
+  stroke-width: 2.5;
+}
+.topology .service-node.candidate {
+  stroke: #b9694e;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+}
+.topology .service-node.identity-mismatch {
+  stroke: #bd653b;
+}
+.topology .dns-node {
+  fill: #fff;
+  stroke: #bdd8c9;
+  stroke-width: 1;
+}
+.topology .node-label, .topology .dns-label {
+  fill: #24352e;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topology .dns-label {
+  font-size: 12px;
+}
+.topology .node-subtitle {
+  fill: #60736a;
+  font-size: 11px;
+}
+.topology .candidate-subtitle {
+  fill: #ad583d;
+  font-size: 11px;
+}
+.topology .mismatch-label {
+  fill: #b4542c;
+  font-size: 17px;
+  font-weight: 800;
 }
 .path-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 9px 17px;
-  margin-top: 9px;
+  gap: 10px 22px;
+  margin-top: 12px;
   color: #52665a;
-  font-size: 11px;
+  font-size: 12px;
 }
 .path-legend span {
   display: inline-flex;
@@ -420,36 +512,64 @@ fieldset {
 .legend-line {
   display: inline-block;
   width: 20px;
-  border-top: 2px solid #238768;
+  border-top: 3px solid #128263;
+}
+.legend-line.attachment {
+  border-color: #aebdb5;
+  border-top-style: dashed;
+}
+.legend-line.incomplete {
+  border-color: #b47f38;
 }
 .legend-line.blocked {
-  border-color: #be5b47;
+  border-color: #c15643;
   border-top-style: dashed;
 }
 .legend-line.attempted {
-  border-color: #bf8b3b;
+  border-color: #ae792d;
   border-top-style: dotted;
 }
 .path-detail {
-  min-height: 40px;
-  margin: 9px 0 0;
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #dce3df;
+}
+.path-detail strong {
+  font-size: 13px;
+}
+#path-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 10px 20px;
   color: #52665a;
   font-size: 12px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
 }
-.dns-answers {
-  padding-top: 8px;
-  border-top: 1px solid #dce3df;
-  color: #52665a;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  line-height: 1.5;
+.path-fact {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+}
+.fact-label {
+  color: #7a8981;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.fact-value {
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+.path-fact.warning .fact-value {
+  color: #af4e30;
+  font-weight: 700;
 }
 
 .evidence-section {
-  margin-top: 27px;
-  padding-top: 18px;
+  margin-top: 30px;
+  padding-top: 24px;
   border-top: 1px solid #dce3df;
 }
 .evidence-empty {
@@ -457,25 +577,28 @@ fieldset {
   font-size: 13px;
 }
 .event-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-  gap: 8px;
+  border-top: 1px solid #dce3df;
 }
 .event {
   display: flex;
   gap: 11px;
   align-items: flex-start;
   width: 100%;
-  min-height: 72px;
-  padding: 11px 12px;
-  border: 1px solid #dce3df;
-  border-radius: 5px;
-  background: #fff;
+  min-height: 62px;
+  padding: 11px 10px;
+  border: 0;
+  border-bottom: 1px solid #dce3df;
+  border-radius: 0;
+  background: transparent;
   color: inherit;
   text-align: left;
 }
 .event:hover, .event.active {
-  border-color: #08775d;
+  background: #eaf5ee;
+}
+.event:focus-visible {
+  outline: 2px solid #08775d;
+  outline-offset: -2px;
 }
 .event-number {
   display: grid;
@@ -503,13 +626,6 @@ fieldset {
   font-size: 11px;
   line-height: 1.5;
   overflow-wrap: anywhere;
-  white-space: pre-line;
-}
-
-@media (max-width: 900px) {
-  .result-layout {
-    grid-template-columns: 1fr;
-  }
 }
 @media (max-width: 610px) {
   .workspace {

@@ -288,7 +288,11 @@ def test_demo_api_serves_ui_and_validates_state(
 ) -> None:
     del lab_dns
     with TestClient(create_app(settings=AppSettings(demo_enabled=True))) as client:
-        assert client.get("/").status_code == 200
+        page = client.get("/")
+        assert page.status_code == 200
+        assert page.text.index('class="preview-stage"') < page.text.index(
+            'class="network-stage"'
+        )
         assert client.get("/assets/app.js").status_code == 200
         assert client.get("/assets/topology.js").status_code == 200
         assert client.get("/favicon.ico").status_code == 200
@@ -336,10 +340,11 @@ def test_demo_trial_reports_blocked_decision(
     assert isinstance(trace, dict)
     assert trace["events"][0]["type"] == "address_decision"
     assert trace["events"][0]["allowed"] is False
-    path = trial["path"]
-    assert isinstance(path, list)
-    assert path[0]["outcome"] == "blocked"
-    assert path[0]["target"] == "internal-report"
+    observations = trial["observations"]
+    assert isinstance(observations, list)
+    assert observations[0]["outcome"] == "blocked"
+    assert observations[0]["destination"] == "internal-report"
+    assert observations[0]["peer_address"] is None
     assert trial["dns_answers"] == []
 
 
