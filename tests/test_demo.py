@@ -295,6 +295,7 @@ def test_demo_api_serves_ui_and_validates_state(
         )
         assert client.get("/assets/app.js").status_code == 200
         assert client.get("/assets/topology.js").status_code == 200
+        assert client.get("/assets/topology.css").status_code == 200
         assert client.get("/favicon.ico").status_code == 200
         response = client.put(
             "/demo/state",

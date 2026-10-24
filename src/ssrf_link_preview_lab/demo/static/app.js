@@ -17,7 +17,8 @@ const result = document.querySelector("#result");
 const topology = document.querySelector("#topology");
 const evidence = document.querySelector("#evidence");
 let latestTrial = null;
-let selectedIndex = -1;
+let events = [];
+let selectedEventIndex = -1;
 
 function setDisabled(controls, disabled) {
   for (const control of controls) control.disabled = disabled;
@@ -118,22 +119,31 @@ function addFact(parent, label, value, warning = false) {
   appendText(fact, "span", String(value), "fact-value");
 }
 
-function renderSelectedRequest() {
+function renderSelection() {
   const observations = latestTrial?.observations || [];
-  const selected = observations[selectedIndex];
-  renderTopology(topology, observations, selectedIndex, latestTrial !== null, latestTrial?.dns_answers || []);
+  const selectedEvent = events[selectedEventIndex];
+  renderTopology(topology, latestTrial, selectedEvent);
   document.querySelector("#request-count").textContent =
     `${observations.length} request${observations.length === 1 ? "" : "s"}`;
 
   const title = document.querySelector("#path-title");
   const facts = document.querySelector("#path-facts");
   facts.replaceChildren();
-  if (!selected) {
-    title.textContent = latestTrial ? "No HTTP request recorded" : "No request selected";
-    facts.textContent = latestTrial?.message || "Select a request below to inspect its evidence.";
+  if (!selectedEvent) {
+    title.textContent = latestTrial ? "No network event recorded" : "No event selected";
+    facts.textContent = latestTrial?.message || "Select an event below to inspect its evidence.";
     return;
   }
 
+  if (selectedEvent.kind === "dns") {
+    const answer = selectedEvent.answer;
+    title.textContent = `DNS answer ${answer.query} · ${answer.hostname}`;
+    addFact(facts, "Returned IP", answer.address);
+    addFact(facts, "Source", "Preview's local UDP authority");
+    return;
+  }
+
+  const selected = selectedEvent.observation;
   title.textContent = `${selected.resource === "image" ? "Image" : "Page"} request ${selected.sequence + 1} · ${outcomeLabel(selected)}`;
   addFact(facts, "URL", selected.url);
   addFact(facts, "Checked IP", selected.checked_address);
@@ -145,44 +155,49 @@ function renderSelectedRequest() {
   addFact(facts, "Evidence", selected.detail, selected.identity_matches === false);
 }
 
-function renderEvidence(trial) {
-  evidence.replaceChildren();
-  const list = appendText(evidence, "div", "", "event-list");
-  const entries = [
-    ...trial.observations.map((observation, index) => ({
-      kind: "request", observation, index, time: observation.observed_at,
+function trialEvents(trial) {
+  return [
+    ...trial.observations.map((observation) => ({
+      kind: "request", observation, time: observation.observed_at,
     })),
     ...trial.dns_answers.map((answer) => ({ kind: "dns", answer, time: answer.observed_at })),
   ].sort((left, right) => (left.time ?? 0) - (right.time ?? 0));
+}
 
-  for (const [number, entry] of entries.entries()) {
-    const selectable = entry.kind === "request";
-    const row = document.createElement(selectable ? "button" : "div");
-    if (selectable) row.type = "button";
-    row.className = `event ${selectable && entry.index === selectedIndex ? "active" : ""}`;
-    appendText(row, "span", String(number + 1), "event-number");
+function renderEvidence() {
+  evidence.replaceChildren();
+  const list = appendText(evidence, "div", "", "event-list");
+  for (const [index, entry] of events.entries()) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = `event ${index === selectedEventIndex ? "active" : ""}`;
+    row.setAttribute("aria-pressed", String(index === selectedEventIndex));
+    appendText(row, "span", String(index + 1), "event-number");
     const content = appendText(row, "span", "", "event-content");
-    if (selectable) {
-      const { observation, index } = entry;
+    if (entry.kind === "request") {
+      const { observation } = entry;
       appendText(content, "span", `${observation.resource === "image" ? "Image" : "Page"} ${observation.sequence + 1} · ${outcomeLabel(observation)}`, "event-title");
       appendText(content, "span", observation.url, "event-details");
       if (observation.redirect_url) {
         appendText(content, "span", `Location: ${observation.redirect_url}`, "event-details");
       }
-      row.addEventListener("click", () => {
-        selectedIndex = index;
-        renderSelectedRequest();
-        for (const button of list.querySelectorAll("button.event")) button.classList.remove("active");
-        row.classList.add("active");
-      });
     } else {
       appendText(content, "span", `rebind.lab DNS answer ${entry.answer.query}`, "event-title");
       appendText(content, "span", `${entry.answer.hostname} → ${entry.answer.address}`, "event-details");
     }
+    row.addEventListener("click", () => {
+      selectedEventIndex = index;
+      renderSelection();
+      for (const button of list.querySelectorAll("button.event")) {
+        const active = button === row;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      }
+    });
     list.append(row);
   }
-  if (!entries.length) appendText(list, "p", trial.message || "No network events observed");
-  document.querySelector("#evidence-count").textContent = `${entries.length} events`;
+  if (!events.length) appendText(list, "p", latestTrial?.message || "No network events observed");
+  document.querySelector("#evidence-count").textContent = `${events.length} events`;
 }
 
 form.addEventListener("submit", async (event) => {
@@ -197,16 +212,18 @@ form.addEventListener("submit", async (event) => {
       body: JSON.stringify({ url: input.value }),
     });
     latestTrial = trial;
-    selectedIndex = trial.observations.reduce((index, item, current) =>
-      item.resource === "page" ? current : index, -1);
-    if (selectedIndex < 0) selectedIndex = trial.observations.length - 1;
+    events = trialEvents(trial);
+    selectedEventIndex = events.findLastIndex((entry) =>
+      entry.kind === "request" && entry.observation.resource === "page");
+    if (selectedEventIndex < 0) selectedEventIndex = events.length - 1;
     renderPreview(trial);
-    renderSelectedRequest();
-    renderEvidence(trial);
+    renderSelection();
+    renderEvidence();
     document.querySelector("#download").disabled = false;
   } catch (error) {
     latestTrial = null;
-    selectedIndex = -1;
+    events = [];
+    selectedEventIndex = -1;
     document.querySelector("#download").disabled = true;
     document.querySelector("#trial-id").textContent = "";
     result.replaceChildren();
@@ -216,7 +233,7 @@ form.addEventListener("submit", async (event) => {
     status.className = "minor-label status-failed";
     appendText(result, "h3", "Demo service error");
     appendText(result, "p", String(error));
-    renderSelectedRequest();
+    renderSelection();
     evidence.textContent = "No request evidence";
     document.querySelector("#evidence-count").textContent = "0 events";
   } finally {
@@ -230,7 +247,6 @@ for (const control of stateControls) control.addEventListener("change", saveStat
 for (const button of exampleButtons) {
   button.addEventListener("click", () => {
     input.value = state.urls[button.dataset.preset];
-    document.querySelector("#examples").open = false;
     input.focus();
   });
 }
@@ -252,10 +268,10 @@ let previousWidth = 0;
 new ResizeObserver(() => {
   if (topology.clientWidth !== previousWidth) {
     previousWidth = topology.clientWidth;
-    renderSelectedRequest();
+    renderSelection();
   }
 }).observe(topology);
-renderSelectedRequest();
+renderSelection();
 request("/demo/state")
   .then((initialState) => {
     Object.assign(state, initialState);

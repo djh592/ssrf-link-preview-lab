@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SSRF Link Preview Lab</title>
     <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/assets/topology.css">
     <script type="module" src="/assets/app.js"></script>
   </head>
   <body>
@@ -67,19 +68,19 @@
         <div id="result" class="preview-placeholder">The link preview will appear here.</div>
       </section>
 
-      <section class="network-stage" aria-label="Observed network topology">
-        <div class="section-title"><h2>Network topology</h2><span id="request-count" class="minor-label">0 requests</span></div>
+      <section class="network-stage" aria-label="Observed network map">
+        <div class="section-title"><h2>Network map</h2><span id="request-count" class="minor-label">0 requests</span></div>
         <div id="topology" class="topology" role="img" aria-label="Testbed topology with no observed request"></div>
         <div class="path-legend" aria-label="Diagram line meanings">
-          <span><i class="legend-line attachment"></i>Network attachment</span>
-          <span><i class="legend-line reached"></i>HTTP response</span>
+          <span><i class="legend-line attachment"></i>Available connection</span>
+          <span><i class="legend-line reached"></i>HTTP response observed</span>
           <span><i class="legend-line incomplete"></i>Incomplete response</span>
-          <span><i class="legend-line blocked"></i>Blocked at Preview</span>
+          <span><i class="legend-stop" aria-hidden="true">×</i>Blocked at Preview</span>
           <span><i class="legend-line attempted"></i>Unconfirmed attempt</span>
         </div>
         <div class="path-detail" aria-live="polite">
-          <strong id="path-title">No request selected</strong>
-          <div id="path-facts">Select a request below to inspect its evidence.</div>
+          <strong id="path-title">No event selected</strong>
+          <div id="path-facts">Select an event below to inspect its evidence.</div>
         </div>
       </section>
 

@@ -1,0 +1,294 @@
+.topology {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #cddbd5;
+  border-radius: 6px;
+  background: #f8faf9;
+}
+.topology svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.topology svg.scene-narrow {
+  max-width: 520px;
+  margin: auto;
+}
+.topology polyline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.topology .scene-background {
+  fill: #f8faf9;
+}
+.topology .testbed-boundary {
+  fill: #f1f5f3;
+  stroke: #aebfb7;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+.topology .segment {
+  stroke-width: 1.5;
+}
+.topology .segment-external {
+  fill: #e9f4f2;
+  stroke: #b9d8d1;
+}
+.topology .segment-internal {
+  fill: #fff1ec;
+  stroke: #eac5b6;
+}
+.topology .region-title,
+.topology .environment-label {
+  fill: #40524d;
+  font-size: 11px;
+  font-weight: 750;
+}
+.topology .region-subtitle {
+  fill: #687b73;
+  font-size: 10px;
+}
+.topology .environment-label {
+  fill: #647671;
+}
+.topology .connection-label {
+  fill: #74857f;
+  font-size: 10px;
+}
+.topology .attachment {
+  stroke: #b0c0ba;
+  stroke-width: 2;
+  stroke-dasharray: 5 6;
+}
+.topology .attachment-browser {
+  stroke: #b2c2cc;
+}
+.topology .device-shell {
+  fill: #fff;
+  stroke: #567367;
+  stroke-width: 2;
+}
+.topology .server-bay {
+  fill: #f1f6f3;
+  stroke: #bdd1c6;
+  stroke-width: 1;
+}
+.topology .server-slot,
+.topology .server-feet {
+  fill: none;
+  stroke: #8eaaa0;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.topology .server-light {
+  fill: #37a481;
+}
+.topology .device-preview .device-shell {
+  fill: #263c39;
+  stroke: #162f2c;
+}
+.topology .device-preview .server-bay {
+  fill: #395551;
+  stroke: #5e8278;
+}
+.topology .device-preview .server-slot,
+.topology .device-preview .server-feet {
+  stroke: #8fada2;
+}
+.topology .device-internal-report .device-shell {
+  stroke: #bc735a;
+}
+.topology .device-internal-report .server-bay {
+  fill: #fff7f4;
+  stroke: #e5b4a0;
+}
+.topology .device-internal-report .server-light {
+  fill: #d47c5e;
+}
+.topology .device-browser .device-shell,
+.topology .device-public-web .device-shell {
+  stroke: #668fa6;
+}
+.topology .laptop-screen {
+  fill: #e9f1f5;
+}
+.topology .screen-line {
+  fill: #749db0;
+}
+.topology .screen-page {
+  fill: #fff;
+  stroke: #bfd3de;
+}
+.topology .laptop-base {
+  fill: #d8e5e9;
+  stroke: #668fa6;
+  stroke-width: 1.5;
+}
+.topology .cloud-point {
+  fill: #5b94ae;
+}
+.topology .cloud-link {
+  fill: none;
+  stroke: #5b94ae;
+  stroke-width: 2;
+}
+.topology .device-label,
+.topology .device-detail {
+  text-anchor: middle;
+}
+.topology .device-label {
+  fill: #20332e;
+  font-size: 14px;
+  font-weight: 700;
+}
+.topology .device-detail {
+  fill: #63776e;
+  font-size: 11px;
+}
+.topology .device.is-reached .device-shell {
+  stroke: #0e8a66;
+  stroke-width: 3;
+}
+.topology .device.identity-warning .device-shell {
+  stroke: #bd6839;
+}
+.topology .identity-mark {
+  fill: #bd6839;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .identity-symbol {
+  fill: #fff;
+  text-anchor: middle;
+  font-size: 13px;
+  font-weight: 800;
+}
+.topology .dns-shell {
+  fill: #fff;
+  stroke: #a8c8bb;
+  stroke-width: 1.5;
+}
+.topology .dns-module.is-selected .dns-shell {
+  stroke: #0e8a66;
+  stroke-width: 2.5;
+}
+.topology .dns-icon {
+  fill: #3f8f75;
+}
+.topology .dns-icon-letter {
+  fill: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.topology .dns-text {
+  fill: #3e6254;
+  font-size: 10px;
+  font-weight: 650;
+}
+.topology .trace-browser {
+  stroke: #5b91ac;
+  stroke-width: 3;
+}
+.topology .trace-history {
+  stroke: #8bb7a5;
+  stroke-width: 3;
+  opacity: .75;
+}
+.topology .trace-history-incomplete {
+  stroke: #c8a170;
+  stroke-width: 3;
+  opacity: .75;
+}
+.topology .trace-reached {
+  stroke: #078865;
+  stroke-width: 4;
+}
+.topology .trace-incomplete,
+.topology .trace-attempted {
+  stroke: #b7782c;
+  stroke-width: 4;
+}
+.topology .trace-attempted {
+  stroke-dasharray: 3 6;
+}
+.topology .trace-endpoint {
+  fill: #078865;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .trace-incomplete-endpoint {
+  fill: #b7782c;
+}
+.topology .trace-stop {
+  fill: #c65444;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .trace-stop.trace-unresolved {
+  fill: #b7782c;
+}
+.topology .trace-stop-symbol,
+.topology .trace-attempt-symbol {
+  fill: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.topology .trace-attempt-mark {
+  fill: #b7782c;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.topology .trace-attempt-symbol {
+  font-size: 10px;
+}
+.topology .unmapped-note {
+  fill: #a15f34;
+  font-size: 11px;
+  font-weight: 650;
+  text-anchor: middle;
+}
+.path-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 12px;
+  color: #52665a;
+  font-size: 12px;
+}
+.path-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-line {
+  display: inline-block;
+  width: 20px;
+  border-top: 3px solid #078865;
+}
+.legend-line.attachment {
+  border-color: #b0c0ba;
+  border-top-style: dashed;
+}
+.legend-line.incomplete,
+.legend-line.attempted {
+  border-color: #b7782c;
+}
+.legend-line.attempted {
+  border-top-style: dotted;
+}
+.legend-stop {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #c65444;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+}
