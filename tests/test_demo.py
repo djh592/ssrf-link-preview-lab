@@ -11,7 +11,7 @@ from ssrf_link_preview_lab.api.app import create_app
 from ssrf_link_preview_lab.demo.cli import run_browser_demo
 from ssrf_link_preview_lab.demo.controller import DemoController
 from ssrf_link_preview_lab.demo.dns import DemoDNS
-from ssrf_link_preview_lab.demo.models import Defense, DemoState, DNSMode
+from ssrf_link_preview_lab.demo.models import Defense, DNSMode, TrialConfiguration
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
 from ssrf_link_preview_lab.fetching.errors import AddressBlockedError
 from ssrf_link_preview_lab.fetching.models import (
@@ -283,41 +283,75 @@ def test_image_url_to_real_private_network_does_not_make_an_http_request(
     assert len(transport.requests) == 1
 
 
-def test_demo_api_serves_ui_and_validates_state(
+def test_demo_api_serves_ui_and_validates_trial_configuration(
     lab_dns: DemoDNS,
 ) -> None:
     del lab_dns
     with TestClient(create_app(settings=AppSettings(demo_enabled=True))) as client:
         page = client.get("/")
         assert page.status_code == 200
-        assert page.text.index('class="preview-stage"') < page.text.index(
-            'class="network-stage"'
+        assert page.text.index('class="network-stage"') < page.text.index(
+            'class="preview-stage"'
         )
         assert client.get("/assets/app.js").status_code == 200
         assert client.get("/assets/topology.js").status_code == 200
+        assert client.get("/assets/topology-scene.js").status_code == 200
+        assert client.get("/assets/inspector.js").status_code == 200
+        assert client.get("/assets/results.js").status_code == 200
         assert client.get("/assets/topology.css").status_code == 200
         assert client.get("/favicon.ico").status_code == 200
-        response = client.put(
-            "/demo/state",
-            json={"defense": "each_hop", "dns_mode": "rebind"},
+        setup = client.get("/demo/setup")
+        assert setup.status_code == 200
+        assert setup.json()["defaults"] == {"defense": "none", "dns_mode": "stable"}
+        assert setup.json()["targets"]["redirect_internal"].endswith(
+            "/redirect/internal"
         )
-        assert response.status_code == 200
-        assert response.json()["defense"] == "each_hop"
-        assert "redirect" not in response.json()
         assert (
-            client.put(
-                "/demo/state",
-                json={"defense": "none", "dns_mode": "stable", "redirect": "internal"},
+            client.post(
+                "/demo/trial",
+                json={"url": "http://internal-report:8080/report"},
             ).status_code
             == 422
         )
         assert (
-            client.put(
-                "/demo/state",
-                json={"defense": "unknown", "dns_mode": "stable"},
+            client.post(
+                "/demo/trial",
+                json={
+                    "url": "http://internal-report:8080/report",
+                    "defense": "initial",
+                    "dns_mode": "stable",
+                    "unexpected": "ignored?",
+                },
             ).status_code
             == 422
         )
+        assert (
+            client.post(
+                "/demo/trial",
+                json={
+                    "url": "http://internal-report:8080/report",
+                    "defense": "unknown",
+                    "dns_mode": "stable",
+                },
+            ).status_code
+            == 422
+        )
+        for defense in ("initial", "each_hop"):
+            response = client.post(
+                "/demo/trial",
+                json={
+                    "url": "http://internal-report:8080/report",
+                    "defense": defense,
+                    "dns_mode": "stable",
+                },
+            )
+            assert response.status_code == 200
+            assert response.json()["configuration"] == {
+                "defense": defense,
+                "dns_mode": "stable",
+            }
+            assert response.json()["observations"][0]["outcome"] == "blocked"
+        assert client.get("/demo/setup").json() == setup.json()
         assert (
             client.post(
                 "/preview", json={"url": "http://external-page:8080/page"}
@@ -332,8 +366,10 @@ def test_demo_trial_reports_blocked_decision(
     del lab_dns
     controller = DemoController()
     try:
-        controller.configure(DemoState(Defense.INITIAL, DNSMode.STABLE))
-        trial = controller.run("http://internal-report:8080/report")
+        trial = controller.run(
+            "http://internal-report:8080/report",
+            TrialConfiguration(Defense.INITIAL, DNSMode.STABLE),
+        )
     finally:
         controller.close()
     assert trial["ok"] is False
@@ -347,6 +383,7 @@ def test_demo_trial_reports_blocked_decision(
     assert observations[0]["destination"] == "internal-report"
     assert observations[0]["peer_address"] is None
     assert trial["dns_answers"] == []
+    assert trial["configuration"] == {"defense": "initial", "dns_mode": "stable"}
 
 
 def test_browser_launcher_rejects_a_privileged_port_without_docker(

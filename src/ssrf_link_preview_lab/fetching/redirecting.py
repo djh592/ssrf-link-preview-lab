@@ -82,6 +82,20 @@ class RedirectingFetcher:
                         if not decision.allowed:
                             raise AddressBlockedError(decision.reason)
 
+                timeout_seconds = deadline - monotonic()
+                if timeout_seconds <= 0:
+                    error = FetchTimeoutError(self._limits.timeout_seconds)
+                    events.append(
+                        FetchFailure(
+                            sequence,
+                            current_url,
+                            "resolution",
+                            str(error),
+                            monotonic(),
+                        )
+                    )
+                    raise error
+
                 events.append(
                     ConnectionAttempt(
                         sequence,

@@ -17,76 +17,101 @@
     <main class="workspace">
       <div class="heading-row">
         <div>
-          <p class="eyebrow">INTERACTIVE EXPERIMENT</p>
-          <h1>Link Preview Security Lab</h1>
+          <p class="eyebrow">SSRF LINK PREVIEW LAB</p>
+          <h1>Network workspace</h1>
         </div>
-        <span id="trial-id" class="trial-id"></span>
+        <span id="trial-id" class="trial-id">No trial yet</span>
       </div>
 
-      <section class="request-section" aria-label="Preview request">
-        <form id="preview-form">
-          <label for="url">Target URL</label>
-          <div class="input-row">
-            <input id="url" name="url" type="url" spellcheck="false" autocomplete="off" required value="http://external-page:8080/page">
-            <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
+      <section class="network-stage" aria-label="Network workspace">
+        <div class="section-title">
+          <h2>Testbed</h2>
+          <span id="setup-status" class="minor-label" aria-live="polite">Loading setup</span>
+        </div>
+        <div class="workbench-grid">
+          <div class="network-surface">
+            <div id="topology" class="topology" role="group" aria-label="Interactive network testbed"></div>
+            <div class="path-legend" aria-label="Diagram line meanings">
+              <span><i class="legend-line attachment"></i>Network link</span>
+              <span><i class="legend-line reached"></i>HTTP response</span>
+              <span><i class="legend-line dns"></i>DNS answer</span>
+              <span><i class="legend-line incomplete"></i>Incomplete response</span>
+              <span><i class="legend-stop" aria-hidden="true">×</i>Blocked at Preview</span>
+              <span><i class="legend-line attempted"></i>Connection unconfirmed</span>
+            </div>
           </div>
-        </form>
-        <details class="examples" id="examples">
-          <summary>Example targets</summary>
-          <div class="example-options">
-            <button type="button" data-preset="page">Lab page</button>
-            <button type="button" data-preset="public">Public website</button>
-            <button type="button" data-preset="internal">Internal report</button>
-            <button type="button" data-preset="redirect_page">Redirect to lab page</button>
-            <button type="button" data-preset="redirect_internal">Redirect to internal report</button>
-            <button type="button" data-preset="rebind">DNS name</button>
-          </div>
-        </details>
-      </section>
 
-      <section class="experiment-controls" aria-label="Experiment controls">
-        <fieldset class="defense-control">
-          <legend>Address defense</legend>
-          <div class="choice-row">
-            <label><input type="radio" name="defense" value="none" checked><span>No lab check</span></label>
-            <label><input type="radio" name="defense" value="initial"><span>Initial URL</span></label>
-            <label><input type="radio" name="defense" value="each_hop"><span>Each hop</span></label>
-            <label><input type="radio" name="defense" value="bound"><span>Check &amp; bind</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="dns-control">
-          <legend>DNS answer</legend>
-          <div class="choice-row">
-            <label><input type="radio" name="dns_mode" value="stable" checked><span>Stable</span></label>
-            <label><input type="radio" name="dns_mode" value="rebind"><span>Rebinding</span></label>
-          </div>
-        </fieldset>
+          <aside class="node-inspector" aria-label="Selected node">
+            <section class="node-panel" data-panel="browser" tabindex="-1" aria-label="Browser controls">
+              <div class="panel-heading"><span class="panel-kicker">WORKSTATION</span><h2>Browser</h2></div>
+              <form id="preview-form">
+                <label for="url">Target URL</label>
+                <input id="url" name="url" type="url" spellcheck="false" autocomplete="off" required maxlength="2048" value="http://external-page:8080/page">
+                <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
+                <p id="trial-error" class="form-error" role="alert" hidden></p>
+              </form>
+            </section>
+
+            <section class="node-panel" data-panel="preview" tabindex="-1" aria-label="Preview controls" hidden>
+              <div class="panel-heading"><span class="panel-kicker">FETCH SERVICE</span><h2>Preview</h2></div>
+              <fieldset class="setting-list">
+                <legend>Address defense</legend>
+                <label><input type="radio" name="defense" value="none" checked><span>No lab check</span></label>
+                <label><input type="radio" name="defense" value="initial"><span>Initial URL</span></label>
+                <label><input type="radio" name="defense" value="each_hop"><span>Each hop</span></label>
+                <label><input type="radio" name="defense" value="bound"><span>Check &amp; bind</span></label>
+              </fieldset>
+            </section>
+
+            <section class="node-panel" data-panel="dns" tabindex="-1" aria-label="DNS controls" hidden>
+              <div class="panel-heading"><span class="panel-kicker">LOCAL AUTHORITY · PREVIEW LOOPBACK</span><h2>DNS</h2></div>
+              <fieldset class="setting-list">
+                <legend>Answer sequence for rebind.lab</legend>
+                <label><input type="radio" name="dns_mode" value="stable" checked><span>Stable</span></label>
+                <label><input type="radio" name="dns_mode" value="rebind"><span>Rebinding</span></label>
+              </fieldset>
+              <button id="use-rebind" class="secondary-button node-action" type="button">Use rebind.lab URL</button>
+            </section>
+
+            <section class="node-panel" data-panel="external-page" tabindex="-1" aria-label="Attacker web controls" hidden>
+              <div class="panel-heading"><span class="panel-kicker">EXTERNAL_ZONE</span><h2>Attacker web</h2></div>
+              <fieldset class="setting-list">
+                <legend>Request endpoint</legend>
+                <label><input type="radio" name="external_response" value="page"><span>Page · HTTP 200</span></label>
+                <label><input type="radio" name="external_response" value="redirect_page"><span>302 → external page</span></label>
+                <label><input type="radio" name="external_response" value="redirect_internal"><span>302 → private report</span></label>
+              </fieldset>
+              <div class="panel-url"><span>Browser target</span><code id="external-target-url"></code></div>
+            </section>
+
+            <section class="node-panel" data-panel="internal-report" tabindex="-1" aria-label="Private report controls" hidden>
+              <div class="panel-heading"><span class="panel-kicker">INTERNAL_ZONE</span><h2>Private report</h2></div>
+              <p class="node-fact">Operations Portal · restricted report</p>
+              <button id="use-internal" class="secondary-button" type="button">Use report URL</button>
+            </section>
+
+            <section class="node-panel" data-panel="public-web" tabindex="-1" aria-label="Internet controls" hidden>
+              <div class="panel-heading"><span class="panel-kicker">PUBLIC_EGRESS</span><h2>Internet</h2></div>
+              <p class="node-fact">Public HTTP and HTTPS websites</p>
+              <button id="use-public" class="secondary-button" type="button">Use public example</button>
+            </section>
+          </aside>
+        </div>
+
+        <div class="evidence-heading section-title">
+          <h2>Observed requests</h2>
+          <span id="evidence-count" class="minor-label">0 events</span>
+        </div>
+        <div id="evidence" class="event-list">No request yet</div>
+        <div class="path-detail" aria-live="polite">
+          <strong id="path-title">No event selected</strong>
+          <div id="path-facts">Select an event to inspect its evidence.</div>
+        </div>
       </section>
 
       <section class="preview-stage" aria-live="polite">
         <div class="section-title"><h2>Link preview</h2><span id="preview-status" class="minor-label">No request yet</span></div>
         <div id="result" class="preview-placeholder">The link preview will appear here.</div>
-      </section>
-
-      <section class="network-stage" aria-label="Observed network map">
-        <div class="section-title"><h2>Network map</h2><span id="request-count" class="minor-label">0 requests</span></div>
-        <div id="topology" class="topology" role="img" aria-label="Testbed topology with no observed request"></div>
-        <div class="path-legend" aria-label="Diagram line meanings">
-          <span><i class="legend-line attachment"></i>Available connection</span>
-          <span><i class="legend-line reached"></i>HTTP response observed</span>
-          <span><i class="legend-line incomplete"></i>Incomplete response</span>
-          <span><i class="legend-stop" aria-hidden="true">×</i>Blocked at Preview</span>
-          <span><i class="legend-line attempted"></i>Unconfirmed attempt</span>
-        </div>
-        <div class="path-detail" aria-live="polite">
-          <strong id="path-title">No event selected</strong>
-          <div id="path-facts">Select an event below to inspect its evidence.</div>
-        </div>
-      </section>
-
-      <section class="evidence-section" aria-label="Request evidence">
-        <div class="section-title"><h2>Request evidence</h2><span id="evidence-count" class="minor-label">0 events</span></div>
-        <div id="evidence" class="evidence-empty">No request yet</div>
       </section>
     </main>
   </body>

@@ -19,6 +19,8 @@ from ssrf_link_preview_lab.fetching.url import validate_http_url
         "http://exa_mple.test/",
         "http://tést.example/",
         "http://%31%32%37.0.0.1/",
+        " http://example.test/",
+        "http://example.test/ ",
     ],
 )
 def test_rejects_urls_outside_common_fetching_contract(url: str) -> None:

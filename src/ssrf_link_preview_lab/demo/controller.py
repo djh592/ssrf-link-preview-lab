@@ -1,11 +1,11 @@
-"""Run browser-demo trials with one operator-controlled state."""
+"""Run browser-demo trials using one shared loopback DNS authority."""
 
 import socket
 from threading import Lock
 from uuid import uuid4
 
 from ssrf_link_preview_lab.demo.dns import DemoDNS
-from ssrf_link_preview_lab.demo.models import DemoState, DNSMode
+from ssrf_link_preview_lab.demo.models import DNSMode, TrialConfiguration
 from ssrf_link_preview_lab.demo.observations import LabAddresses, project_observations
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
 from ssrf_link_preview_lab.fetching.errors import FetchError
@@ -26,22 +26,14 @@ PUBLIC_URL = "https://www.python.org/"
 class DemoController:
     def __init__(self) -> None:
         self._lock = Lock()
-        self._state = DemoState()
         self._dns = DemoDNS()
 
-    def state(self) -> dict[str, object]:
-        with self._lock:
-            return self._state_payload()
-
-    def configure(self, state: DemoState) -> dict[str, object]:
-        with self._lock:
-            self._state = state
-            return self._state_payload()
-
-    def _state_payload(self) -> dict[str, object]:
+    @staticmethod
+    def setup() -> dict[str, object]:
+        """Return immutable options needed to prepare a browser trial."""
         return {
-            **self._state.to_dict(),
-            "urls": {
+            "defaults": TrialConfiguration().to_dict(),
+            "targets": {
                 "page": EXTERNAL_URL,
                 "internal": INTERNAL_URL,
                 "redirect_page": REDIRECT_PAGE_URL,
@@ -51,7 +43,8 @@ class DemoController:
             },
         }
 
-    def run(self, url: str) -> dict[str, object]:
+    def run(self, url: str, configuration: TrialConfiguration) -> dict[str, object]:
+        """Run a trial with the exact settings supplied in its request."""
         with self._lock:
             trial_id = uuid4()
             result: dict[str, object]
@@ -66,10 +59,10 @@ class DemoController:
                 self._dns.configure(
                     external_ip,
                     internal_ip,
-                    rebind=self._state.dns_mode is DNSMode.REBIND,
+                    rebind=configuration.dns_mode is DNSMode.REBIND,
                 )
                 policy = DemoAddressPolicy(
-                    self._state.defense, external_ip, internal_ip, self._dns
+                    configuration.defense, external_ip, internal_ip, self._dns
                 )
                 service = PreviewService(RedirectingFetcher(address_policy=policy))
                 preview = service.create(url, trial_id=trial_id)
@@ -117,8 +110,7 @@ class DemoController:
                 else []
             )
             result["dns_answers"] = [answer.to_dict() for answer in self._dns.answers]
-            result["defense"] = self._state.defense.value
-            result["dns_mode"] = self._state.dns_mode.value
+            result["configuration"] = configuration.to_dict()
             write_structured_event("demo_trial", trial_id=trial_id, result=result)
             return result
 

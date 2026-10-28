@@ -8,6 +8,8 @@ _HOST_LABEL = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\Z")
 
 
 def validate_http_url(url: str) -> str:
+    if url != url.strip():
+        raise InvalidUrlError("The URL cannot start or end with whitespace.")
     if any(ord(character) < 32 or ord(character) == 127 for character in url):
         raise InvalidUrlError("The URL cannot contain control characters.")
 

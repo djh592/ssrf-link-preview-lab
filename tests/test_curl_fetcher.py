@@ -8,6 +8,7 @@ from uuid import UUID
 import pytest
 
 from ssrf_link_preview_lab.fetching.errors import (
+    FetchTimeoutError,
     InvalidRedirectUrlError,
     MissingRedirectLocationError,
     ResponseTooLargeError,
@@ -15,6 +16,8 @@ from ssrf_link_preview_lab.fetching.errors import (
     UpstreamHttpError,
 )
 from ssrf_link_preview_lab.fetching.models import (
+    AddressBinding,
+    AddressDecision,
     FetchFailure,
     FetchLimits,
     FetchRequest,
@@ -46,6 +49,18 @@ class _SequenceTransport:
     def send(self, request: TransportRequest) -> TransportResponse:
         self.requests.append(request)
         return next(self._responses)
+
+
+class _TimePassingPolicy:
+    def __init__(self, clock: list[float], elapsed: float) -> None:
+        self.clock = clock
+        self.elapsed = elapsed
+
+    def prepare(
+        self, url: str, sequence: int, timeout_seconds: float
+    ) -> tuple[tuple[AddressDecision, ...], AddressBinding | None]:
+        self.clock[0] += self.elapsed
+        return (), None
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -190,6 +205,49 @@ def test_http_error_retains_the_observed_status_and_response() -> None:
 
     assert caught.value.status_code == 403
     assert caught.value.trace.hops[0].status_code == 403
+
+
+def test_address_preparation_consumes_the_shared_fetch_deadline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = [0.0]
+    monkeypatch.setattr(
+        "ssrf_link_preview_lab.fetching.redirecting.monotonic", lambda: clock[0]
+    )
+    transport = _SequenceTransport(_response(status_code=200, location=None))
+    fetcher = RedirectingFetcher(
+        transport=transport,
+        limits=FetchLimits(timeout_seconds=1.0),
+        address_policy=_TimePassingPolicy(clock, 0.4),
+    )
+
+    fetcher.fetch(FetchRequest(url="http://example.test/", trial_id=UUID(int=5)))
+
+    assert len(transport.requests) == 1
+    assert transport.requests[0].timeout_seconds == pytest.approx(0.6)
+
+
+def test_expired_deadline_after_address_preparation_does_not_connect(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = [0.0]
+    monkeypatch.setattr(
+        "ssrf_link_preview_lab.fetching.redirecting.monotonic", lambda: clock[0]
+    )
+    transport = _SequenceTransport()
+    fetcher = RedirectingFetcher(
+        transport=transport,
+        limits=FetchLimits(timeout_seconds=1.0),
+        address_policy=_TimePassingPolicy(clock, 1.0),
+    )
+
+    with pytest.raises(FetchTimeoutError) as caught:
+        fetcher.fetch(FetchRequest(url="http://example.test/", trial_id=UUID(int=6)))
+
+    assert transport.requests == []
+    failure = caught.value.trace.events[-1]
+    assert isinstance(failure, FetchFailure)
+    assert failure.stage == "resolution"
 
 
 def _response(*, status_code: int, location: str | None) -> TransportResponse:

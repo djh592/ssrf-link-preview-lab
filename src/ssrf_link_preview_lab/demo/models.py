@@ -1,4 +1,4 @@
-"""Operator-selected settings for one browser demonstration."""
+"""Operator-selected settings for one browser-demo trial."""
 
 from dataclasses import dataclass
 from enum import StrEnum
@@ -17,7 +17,7 @@ class DNSMode(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
-class DemoState:
+class TrialConfiguration:
     defense: Defense = Defense.NONE
     dns_mode: DNSMode = DNSMode.STABLE
 

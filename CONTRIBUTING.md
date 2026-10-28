@@ -8,7 +8,7 @@ Write code, user-facing text, comments, and docstrings in English. Use names and
 - `preview/` creates preview metadata from fetched HTML.
 - `fetching/` owns redirect handling, address-policy contracts, and single-hop transport.
 - `lab/` contains the isolated external and internal services and their in-container probe client.
-- `demo/` owns interactive trial state, address decisions, and controlled DNS answers. The preview API serves its browser interface directly; example URL selection remains in the browser.
+- `demo/` owns per-trial settings, address decisions, and controlled DNS answers. The preview API serves its browser interface directly; target selection remains in the browser.
 - `experiments/` runs and records automated trials; event models, log parsing, trial records, and terminal output have separate modules.
 - `scripts/` contains thin launchers that locate this checkout and call package-level commands.
 
