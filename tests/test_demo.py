@@ -13,13 +13,16 @@ from ssrf_link_preview_lab.demo.controller import DemoController
 from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import Defense, DNSMode, TrialConfiguration
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
-from ssrf_link_preview_lab.fetching.errors import AddressBlockedError
+from ssrf_link_preview_lab.fetching.errors import (
+    AddressBlockedError,
+    RedirectDisallowedError,
+)
 from ssrf_link_preview_lab.fetching.models import (
     FetchRequest,
     TransportRequest,
     TransportResponse,
 )
-from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
+from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher, RedirectMode
 from ssrf_link_preview_lab.preview.service import PreviewService
 from ssrf_link_preview_lab.settings import AppSettings
 
@@ -83,6 +86,7 @@ def lab_dns(monkeypatch: MonkeyPatch) -> Generator[DemoDNS]:
         (Defense.INITIAL, 2, False),
         (Defense.EACH_HOP, 1, True),
         (Defense.BOUND, 1, True),
+        (Defense.NO_REDIRECTS, 1, True),
     ],
 )
 def test_redirect_policy_matrix(
@@ -138,6 +142,27 @@ def test_rebinding_queries_and_checked_address_binding(
     assert lab_dns.answers[0].observed_at < decision.observed_at
     if defense is Defense.EACH_HOP:
         assert decision.observed_at < lab_dns.answers[1].observed_at
+
+
+def test_no_redirects_checks_and_binds_initial_target(lab_dns: DemoDNS) -> None:
+    url = "http://external-page:8080/redirect/internal"
+    transport = _SequenceTransport(
+        _response(url, 302, "http://internal-report:8080/report")
+    )
+    fetcher = RedirectingFetcher(
+        transport=transport,
+        address_policy=DemoAddressPolicy(
+            Defense.NO_REDIRECTS, EXTERNAL, INTERNAL, lab_dns
+        ),
+        redirect_mode=RedirectMode.STOP,
+    )
+
+    with pytest.raises(RedirectDisallowedError) as caught:
+        fetcher.fetch(FetchRequest(url, UUID(int=10)))
+
+    assert transport.requests[0].address_binding is not None
+    assert transport.requests[0].address_binding.address == EXTERNAL
+    assert len(caught.value.trace.hops) == 1
 
 
 def test_http_hop_is_recorded_after_connection_stage_dns(lab_dns: DemoDNS) -> None:

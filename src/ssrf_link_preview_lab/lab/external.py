@@ -2,7 +2,7 @@ from os import environ
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 from ssrf_link_preview_lab.lab.events import (
@@ -91,6 +91,30 @@ def redirect_to_internal(request: Request) -> RedirectResponse:
 def redirect_to_page(request: Request) -> RedirectResponse:
     trial_id = request_trial_id(request)
     target = "http://external-page:8080/page"
+    write_event("external_redirect", request, trial_id=trial_id, location=target)
+    return RedirectResponse(
+        target,
+        status_code=302,
+        headers=observation_headers(request, "external-page"),
+    )
+
+
+@app.get("/redirect/chain/{remaining}/{destination}")
+def redirect_chain(
+    request: Request, remaining: int, destination: str
+) -> RedirectResponse:
+    """Return exactly the requested number of redirects, up to three."""
+    if remaining not in {1, 2, 3} or destination not in {"page", "internal"}:
+        raise HTTPException(status_code=404, detail="Unknown redirect chain")
+    trial_id = request_trial_id(request)
+    if remaining > 1:
+        target = (
+            f"http://external-page:8080/redirect/chain/{remaining - 1}/{destination}"
+        )
+    elif destination == "internal":
+        target = _internal_report_url(trial_id)
+    else:
+        target = "http://external-page:8080/page"
     write_event("external_redirect", request, trial_id=trial_id, location=target)
     return RedirectResponse(
         target,

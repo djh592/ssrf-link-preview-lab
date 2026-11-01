@@ -37,9 +37,11 @@ class DemoAddressPolicy:
 
         port = parsed.port or (443 if parsed.scheme == "https" else 80)
         deadline = monotonic() + timeout_seconds
-        check = self._defense in {Defense.EACH_HOP, Defense.BOUND} or (
-            self._defense is Defense.INITIAL and sequence == 0
-        )
+        check = self._defense in {
+            Defense.EACH_HOP,
+            Defense.BOUND,
+            Defense.NO_REDIRECTS,
+        } or (self._defense is Defense.INITIAL and sequence == 0)
         checked_ip = None
         decisions: list[AddressDecision] = []
         if check:
@@ -62,7 +64,8 @@ class DemoAddressPolicy:
 
         connection_ip = (
             checked_ip
-            if self._defense is Defense.BOUND and checked_ip is not None
+            if self._defense in {Defense.BOUND, Defense.NO_REDIRECTS}
+            and checked_ip is not None
             else self._dns.lookup(hostname, _remaining(deadline, timeout_seconds))
         )
         if not _permitted_connection(connection_ip, port, self._lab_ips):

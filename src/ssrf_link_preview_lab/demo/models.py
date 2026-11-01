@@ -3,12 +3,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-
-class Defense(StrEnum):
-    NONE = "none"
-    INITIAL = "initial"
-    EACH_HOP = "each_hop"
-    BOUND = "bound"
+from ssrf_link_preview_lab.fetching.strategies import Defense
 
 
 class DNSMode(StrEnum):

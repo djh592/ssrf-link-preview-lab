@@ -11,6 +11,7 @@ const DEVICES = {
 };
 const DEFENSE_NAMES = {
   none: "No lab check", initial: "Initial URL", each_hop: "Each hop", bound: "Check & bind",
+  no_redirects: "No redirects",
 };
 const EXTERNAL_NAMES = {
   page: "HTTP 200", redirect_page: "302 → page", redirect_internal: "302 → report",

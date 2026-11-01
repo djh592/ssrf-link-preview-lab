@@ -1,5 +1,6 @@
 import argparse
 import json
+import socket
 from collections.abc import Sequence
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -61,14 +62,19 @@ def request_preview(url: str, *, timeout_seconds: float) -> dict[str, object]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Client for isolated lab services")
-    parser.add_argument("operation", choices=("preview", "probe", "health"))
+    parser.add_argument("operation", choices=("preview", "probe", "health", "resolve"))
     parser.add_argument("url")
     parser.add_argument("--timeout", type=float, default=15.0)
     arguments = parser.parse_args(argv)
     if arguments.timeout <= 0:
         parser.error("--timeout must be positive")
 
-    if arguments.operation == "preview":
+    if arguments.operation == "resolve":
+        result = {
+            "hostname": arguments.url,
+            "address": socket.gethostbyname(arguments.url),
+        }
+    elif arguments.operation == "preview":
         result = request_preview(arguments.url, timeout_seconds=arguments.timeout)
     else:
         result = probe_url(arguments.url, timeout_seconds=arguments.timeout)

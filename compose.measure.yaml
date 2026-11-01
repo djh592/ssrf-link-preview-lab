@@ -1,0 +1,4 @@
+services:
+  preview:
+    environment:
+      SSRF_LAB_FETCH_POLICY: disabled

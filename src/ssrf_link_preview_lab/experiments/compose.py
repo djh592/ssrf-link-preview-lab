@@ -153,8 +153,11 @@ class ComposeProject:
             check=check,
         )
 
-    def logs(self, service: str) -> str:
-        return self.run("logs", "--no-color", "--no-log-prefix", service).stdout
+    def logs(self, service: str, *, since: str | None = None) -> str:
+        arguments = ["logs", "--no-color", "--no-log-prefix"]
+        if since is not None:
+            arguments.extend(("--since", since))
+        return self.run(*arguments, service).stdout
 
     def _command(self, *arguments: str) -> tuple[str, ...]:
         command = (

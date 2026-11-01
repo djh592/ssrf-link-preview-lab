@@ -10,15 +10,21 @@ from ssrf_link_preview_lab.experiments.trial_models import TrialRun
 
 def save_trial_run(run: TrialRun, directory: Path) -> Path:
     """Atomically save a trial record without leaving a partial result file."""
-    directory.mkdir(parents=True, exist_ok=True)
     timestamp = run.started_at.strftime("%Y%m%dT%H%M%S%fZ")
     identifier = run.result.trial_id if run.result is not None else uuid4()
     scenario = re.sub(r"[^a-z0-9]+", "-", run.spec.scenario.lower()).strip("-")
     destination = directory / f"{timestamp}_{scenario}_{identifier}.json"
-    content = json.dumps(run.to_dict(), indent=2, sort_keys=True) + "\n"
+    write_json_atomic(run.to_dict(), destination)
+    return destination
+
+
+def write_json_atomic(record: dict[str, object], destination: Path) -> None:
+    """Replace one JSON artifact only after its complete contents are durable."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    content = json.dumps(record, indent=2, sort_keys=True) + "\n"
 
     file_descriptor, temporary_name = tempfile.mkstemp(
-        dir=directory,
+        dir=destination.parent,
         prefix=f".{destination.name}.",
         suffix=".tmp",
         text=True,
@@ -33,4 +39,3 @@ def save_trial_run(run: TrialRun, directory: Path) -> Path:
     except BaseException:
         temporary_path.unlink(missing_ok=True)
         raise
-    return destination

@@ -21,15 +21,18 @@ _IMAGE_SIGNATURES = {
 class PreviewService:
     """Turn a fetched HTML page into preview metadata and retain its trace."""
 
-    def __init__(self, fetcher: PageFetcher) -> None:
+    def __init__(self, fetcher: PageFetcher, *, fetch_images: bool = True) -> None:
         self._fetcher = fetcher
+        self._fetch_images = fetch_images
 
     def create(self, url: str, *, trial_id: UUID) -> Preview:
         page = self._fetcher.fetch(FetchRequest(url=url, trial_id=trial_id))
         content_type = _require_html(page)
         metadata = parse_html_metadata(page.body, content_type)
-        image_data_url, image_trace = self._fetch_image(
-            page.final_url, metadata.image_url, trial_id
+        image_data_url, image_trace = (
+            self._fetch_image(page.final_url, metadata.image_url, trial_id)
+            if self._fetch_images
+            else (None, FetchTrace())
         )
 
         return Preview(

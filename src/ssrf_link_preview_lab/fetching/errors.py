@@ -72,6 +72,14 @@ class TooManyRedirectsError(FetchError):
         super().__init__(f"The upstream request exceeded {max_redirects} redirects.")
 
 
+class RedirectDisallowedError(FetchError):
+    def __init__(self, status_code: int) -> None:
+        super().__init__(
+            f"The upstream server returned HTTP {status_code}; redirects are disabled."
+        )
+        self.status_code = status_code
+
+
 class MissingRedirectLocationError(FetchError):
     def __init__(self, status_code: int) -> None:
         super().__init__(

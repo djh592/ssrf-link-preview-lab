@@ -11,6 +11,7 @@ from ssrf_link_preview_lab.fetching.errors import (
     FetchTimeoutError,
     InvalidRedirectUrlError,
     MissingRedirectLocationError,
+    RedirectDisallowedError,
     ResponseTooLargeError,
     TooManyRedirectsError,
     UpstreamHttpError,
@@ -24,7 +25,7 @@ from ssrf_link_preview_lab.fetching.models import (
     TransportRequest,
     TransportResponse,
 )
-from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher
+from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher, RedirectMode
 from ssrf_link_preview_lab.tracing import (
     RESPONDER_SERVICE_HEADER,
     RESPONDER_TRIAL_HEADER,
@@ -193,6 +194,22 @@ def test_redirect_limit_counts_completed_redirect_responses() -> None:
         "http://example.test/second",
     ]
     assert len(transport.requests) == 2
+
+
+def test_no_redirects_records_response_without_requesting_target() -> None:
+    transport = _SequenceTransport(
+        _response(status_code=302, location="http://example.test/second"),
+    )
+
+    with pytest.raises(RedirectDisallowedError) as caught:
+        RedirectingFetcher(
+            transport=transport,
+            redirect_mode=RedirectMode.STOP,
+        ).fetch(FetchRequest(url="http://example.test/start", trial_id=UUID(int=7)))
+
+    assert len(transport.requests) == 1
+    assert caught.value.trace.hops[0].redirect_url == "http://example.test/second"
+    assert caught.value.status_code == 302
 
 
 def test_http_error_retains_the_observed_status_and_response() -> None:

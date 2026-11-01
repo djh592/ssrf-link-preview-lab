@@ -1,3 +1,4 @@
+from enum import StrEnum
 from time import monotonic
 from urllib.parse import urljoin
 
@@ -8,6 +9,7 @@ from ssrf_link_preview_lab.fetching.errors import (
     InvalidRedirectUrlError,
     InvalidUrlError,
     MissingRedirectLocationError,
+    RedirectDisallowedError,
     TooManyRedirectsError,
     UpstreamHttpError,
 )
@@ -29,6 +31,11 @@ from ssrf_link_preview_lab.fetching.url import validate_http_url
 _REDIRECT_STATUS_CODES = {301, 302, 303, 307, 308}
 
 
+class RedirectMode(StrEnum):
+    FOLLOW = "follow"
+    STOP = "stop"
+
+
 class RedirectingFetcher:
     """Follow bounded redirects and check each hop when a policy is supplied.
 
@@ -41,10 +48,12 @@ class RedirectingFetcher:
         transport: HttpTransport | None = None,
         limits: FetchLimits | None = None,
         address_policy: AddressPolicy | None = None,
+        redirect_mode: RedirectMode = RedirectMode.FOLLOW,
     ) -> None:
         self._transport = transport if transport is not None else PycurlTransport()
         self._limits = limits if limits is not None else FetchLimits()
         self._address_policy = address_policy
+        self._redirect_mode = redirect_mode
 
     def fetch(self, request: FetchRequest) -> FetchedPage:
         """Return the final successful page or raise a fetch error with its trace."""
@@ -151,6 +160,8 @@ class RedirectingFetcher:
                 sequence += 1
 
                 if response.status_code in _REDIRECT_STATUS_CODES:
+                    if self._redirect_mode is RedirectMode.STOP:
+                        raise RedirectDisallowedError(response.status_code)
                     if redirect_url is None:
                         raise MissingRedirectLocationError(response.status_code)
                     if sequence > self._limits.max_redirects:

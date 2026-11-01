@@ -33,6 +33,26 @@ def test_external_service_redirects_to_internal_report() -> None:
     assert response.headers[RESPONDER_TRIAL_HEADER] == str(_TRIAL_ID)
 
 
+def test_three_redirects_end_at_the_requested_destination() -> None:
+    with TestClient(external_app, follow_redirects=False) as client:
+        for destination in ("page", "internal"):
+            path = f"/redirect/chain/3/{destination}"
+            targets = []
+            for _ in range(3):
+                response = client.get(path, headers={TRIAL_ID_HEADER: str(_TRIAL_ID)})
+                assert response.status_code == 302
+                targets.append(response.headers["location"])
+                path = response.headers["location"]
+
+            assert targets[0].endswith(f"/redirect/chain/2/{destination}")
+            assert targets[1].endswith(f"/redirect/chain/1/{destination}")
+            assert targets[2] == (
+                "http://external-page:8080/page"
+                if destination == "page"
+                else f"http://internal-report:8080/report?source_trial_id={_TRIAL_ID}"
+            )
+
+
 def test_external_service_provides_a_page_and_preview_image() -> None:
     with TestClient(external_app) as client:
         page = client.get("/page")

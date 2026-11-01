@@ -5,6 +5,8 @@ from datetime import datetime
 from uuid import UUID
 
 from ssrf_link_preview_lab.experiments.event_models import (
+    DNSAuthorityAnswer,
+    DNSAuthorityQuery,
     EventDetails,
     EventName,
     ExternalPageAccess,
@@ -77,6 +79,20 @@ def _parse_details(
     record: dict[object, object],
 ) -> EventDetails | None:
     match event_name:
+        case EventName.DNS_AUTHORITY_ANSWER:
+            hostname = _required_string(record, "hostname")
+            address = _required_string(record, "address")
+            ttl = _required_integer(record, "ttl")
+            query = _required_integer(record, "query")
+            if hostname is None or address is None or ttl is None or query is None:
+                return None
+            return DNSAuthorityAnswer(hostname, address, ttl, query)
+        case EventName.DNS_AUTHORITY_QUERY:
+            hostname = _required_string(record, "hostname")
+            record_type = _required_string(record, "record_type")
+            if hostname is None or record_type is None:
+                return None
+            return DNSAuthorityQuery(hostname, record_type)
         case EventName.EXTERNAL_PAGE_ACCESS:
             return ExternalPageAccess()
         case EventName.EXTERNAL_REDIRECT:
@@ -93,20 +109,21 @@ def _parse_details(
         case EventName.PREVIEW_FETCH_COMPLETED:
             requested_url = _required_string(record, "requested_url")
             final_url = _required_string(record, "final_url")
-            trace = _parse_trace(record.get("trace"))
+            trace = parse_fetch_trace(record.get("trace"))
             if requested_url is None or final_url is None or trace is None:
                 return None
             return PreviewFetchCompleted(requested_url, final_url, trace)
         case EventName.PREVIEW_FETCH_FAILED:
             error_type = _required_string(record, "error")
             message = _required_string(record, "message")
-            trace = _parse_trace(record.get("trace"))
+            trace = parse_fetch_trace(record.get("trace"))
             if error_type is None or message is None or trace is None:
                 return None
             return PreviewFetchFailed(error_type, message, trace)
 
 
-def _parse_trace(value: object) -> FetchTrace | None:
+def parse_fetch_trace(value: object) -> FetchTrace | None:
+    """Decode a fetch trace returned by a trusted lab worker or service log."""
     if not isinstance(value, dict):
         return None
     raw_events = value.get("events")

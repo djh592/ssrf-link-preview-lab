@@ -1,0 +1,35 @@
+server:
+  interface: @RESOLVER_IP@
+  port: 53
+  access-control: @DNS_SUBNET@ allow
+  do-ip4: yes
+  do-ip6: no
+  username: "unbound"
+  chroot: ""
+  directory: "/tmp"
+  pidfile: ""
+  logfile: ""
+  use-syslog: no
+  verbosity: 1
+  log-queries: yes
+  log-replies: yes
+  module-config: "iterator"
+  cache-min-ttl: 0
+  cache-max-ttl: 3600
+  prefetch: no
+  serve-expired: no
+  num-threads: 1
+  do-not-query-localhost: no
+
+remote-control:
+  control-enable: yes
+  control-interface: 127.0.0.1
+  control-use-cert: no
+
+stub-zone:
+  name: "attack.lab."
+  stub-host: "dns-authority@5353"
+
+forward-zone:
+  name: "."
+  forward-addr: 127.0.0.11@53

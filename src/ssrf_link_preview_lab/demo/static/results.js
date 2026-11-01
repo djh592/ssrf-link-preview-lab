@@ -32,7 +32,9 @@ export function renderPreview(trial) {
   const result = document.querySelector("#result");
   const status = document.querySelector("#preview-status");
   result.replaceChildren();
-  status.textContent = trial.ok ? "Generated" : "Unavailable";
+  const elapsed = typeof trial.duration_seconds === "number"
+    ? ` · ${Math.round(trial.duration_seconds * 1000)} ms` : "";
+  status.textContent = `${trial.ok ? "Generated" : "Unavailable"}${elapsed}`;
   status.className = `minor-label ${trial.ok ? "status-ok" : "status-failed"}`;
 
   if (!trial.ok) {

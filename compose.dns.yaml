@@ -1,0 +1,93 @@
+services:
+  preview:
+    depends_on:
+      resolver:
+        condition: service_healthy
+    networks:
+      - external_zone
+      - internal_zone
+      - dns_zone
+    dns:
+      - ${SSRF_LAB_RESOLVER_IP:-10.217.53.53}
+
+  dns-authority:
+    image: ssrf-link-preview-${SSRF_LAB_INSTANCE}:local
+    pull_policy: never
+    command: ["python", "-m", "ssrf_link_preview_lab.lab.dns_authority"]
+    networks:
+      - dns_zone
+    init: true
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    cpus: 0.25
+    mem_limit: 128m
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "2"
+    healthcheck:
+      test: ["CMD", "python", "-m", "ssrf_link_preview_lab.lab.dns_health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  resolver:
+    image: ssrf-link-preview-${SSRF_LAB_INSTANCE}-resolver:local
+    pull_policy: never
+    build:
+      context: .
+      dockerfile: docker/Resolver.Dockerfile
+    depends_on:
+      dns-authority:
+        condition: service_healthy
+    environment:
+      SSRF_LAB_RESOLVER_IP: ${SSRF_LAB_RESOLVER_IP:-10.217.53.53}
+      SSRF_LAB_DNS_SUBNET: ${SSRF_LAB_DNS_SUBNET:-10.217.53.0/24}
+    networks:
+      dns_zone:
+        ipv4_address: ${SSRF_LAB_RESOLVER_IP:-10.217.53.53}
+      external_zone:
+      internal_zone:
+    init: true
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+    cpus: 0.25
+    mem_limit: 128m
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "2"
+    healthcheck:
+      test: ["CMD", "unbound-control", "-c", "/tmp/unbound.conf", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+networks:
+  dns_zone:
+    internal: true
+    ipam:
+      config:
+        - subnet: ${SSRF_LAB_DNS_SUBNET:-10.217.53.0/24}

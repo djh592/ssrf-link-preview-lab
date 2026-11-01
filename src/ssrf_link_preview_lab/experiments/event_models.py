@@ -15,6 +15,8 @@ class EventName(StrEnum):
     EXTERNAL_REDIRECT = "external_redirect"
     EXTERNAL_PAGE_ACCESS = "external_page_access"
     INTERNAL_REPORT_ACCESS = "internal_report_access"
+    DNS_AUTHORITY_ANSWER = "dns_authority_answer"
+    DNS_AUTHORITY_QUERY = "dns_authority_query"
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,12 +85,43 @@ class InternalReportAccess:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class DNSAuthorityAnswer:
+    hostname: str
+    address: str
+    ttl: int
+    query: int
+
+    event_name: ClassVar[EventName] = EventName.DNS_AUTHORITY_ANSWER
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "hostname": self.hostname,
+            "address": self.address,
+            "ttl": self.ttl,
+            "query": self.query,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class DNSAuthorityQuery:
+    hostname: str
+    record_type: str
+
+    event_name: ClassVar[EventName] = EventName.DNS_AUTHORITY_QUERY
+
+    def to_dict(self) -> dict[str, object]:
+        return {"hostname": self.hostname, "record_type": self.record_type}
+
+
 EventDetails = (
     PreviewFetchCompleted
     | PreviewFetchFailed
     | ExternalRedirect
     | ExternalPageAccess
     | InternalReportAccess
+    | DNSAuthorityAnswer
+    | DNSAuthorityQuery
 )
 
 
