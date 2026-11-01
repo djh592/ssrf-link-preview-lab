@@ -237,18 +237,20 @@ function addHitTargets(viewport, scene, selectedNode, onSelectNode) {
     button.style.height = `${height / scene.height * 100}%`;
     button.style.setProperty("--ring-top", `${ringTop / height * 100}%`);
     button.style.setProperty("--ring-height", `${ringHeight / height * 100}%`);
-    button.addEventListener("click", () => onSelectNode(id));
+    button.addEventListener("click", (event) => onSelectNode(id, event.detail === 0));
     viewport.append(button);
   }
 }
 
 export function renderTopology(root, { trial, selectedEvent, selectedNode, configuration, targets, onSelectNode }) {
-  const scene = root.clientWidth < 900 ? SCENES.narrow : SCENES.wide;
+  const scene = root.clientWidth < 560
+    ? SCENES.narrow
+    : root.clientWidth < 900 ? SCENES.medium : SCENES.wide;
   const observation = selectedEvent?.kind === "request" ? selectedEvent.observation : null;
   const dnsSelected = selectedEvent?.kind === "dns";
   const focusNode = root.contains(document.activeElement) ? document.activeElement.dataset.node : null;
   const viewport = document.createElement("div");
-  viewport.className = scene === SCENES.narrow ? "topology-viewport scene-narrow" : "topology-viewport scene-wide";
+  viewport.className = scene === SCENES.narrow ? "topology-viewport scene-narrow" : "topology-viewport";
   viewport.style.aspectRatio = `${scene.width} / ${scene.height}`;
   const svg = add(viewport, "svg", { viewBox: `0 0 ${scene.width} ${scene.height}`, "aria-hidden": "true" });
   drawStructure(svg, scene);
@@ -267,7 +269,7 @@ export function renderTopology(root, { trial, selectedEvent, selectedNode, confi
   drawMarker(svg, marker);
   addHitTargets(viewport, scene, selectedNode, onSelectNode);
   root.replaceChildren(viewport);
-  if (focusNode) viewport.querySelector(`[data-node="${focusNode}"]`)?.focus();
+  if (focusNode) viewport.querySelector(`[data-node="${focusNode}"]`)?.focus({ preventScroll: true });
   const description = observation
     ? `${observation.resource} request ${observation.sequence + 1}: ${observation.outcome}; ${observation.destination || "peer location unknown"}`
     : dnsSelected

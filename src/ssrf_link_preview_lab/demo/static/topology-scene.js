@@ -1,4 +1,4 @@
-// The two scenes contain the same Compose topology at different aspect ratios.
+// The scenes contain the same Compose topology at aspect ratios that keep labels readable.
 export const SCENES = {
   wide: {
     width: 1120,
@@ -30,6 +30,38 @@ export const SCENES = {
       "internal-report": [588, 352],
       "public-web": [546, 285],
       default: [546, 330],
+    },
+  },
+  medium: {
+    width: 760,
+    height: 540,
+    testbed: { x: 145, y: 152, width: 470, height: 350, labelX: 160 },
+    previewContainer: { x: 319, y: 234, width: 190, height: 184, labelX: 331 },
+    devices: {
+      browser: { x: 20, y: 74, hit: [-5, -5, 92, 100, 0, 70] },
+      preview: { x: 338, y: 275, hit: [-5, -5, 82, 150, 0, 96] },
+      dns: { x: 444, y: 263, hit: [-5, -5, 66, 110, 0, 65] },
+      "external-page": { x: 206, y: 315, labelAbove: true, hit: [-5, -40, 82, 140, 35, 94] },
+      "internal-report": { x: 520, y: 315, labelAbove: true, hit: [-5, -40, 82, 140, 35, 94] },
+      "public-web": { x: 650, y: 74, labelAbove: true, hit: [-5, -14, 100, 85, 9, 70] },
+    },
+    networks: [
+      { id: "public", label: "public_egress", x1: 366, x2: 610, y: 210, ports: [372, 610], labelY: 197 },
+      { id: "external", label: "external_zone", x1: 177, x2: 380, y: 465, ports: [242, 365] },
+      { id: "internal", label: "internal_zone", x1: 410, x2: 611, y: 465, ports: [416, 556] },
+    ],
+    routes: {
+      browser: [[102, 108], [125, 108], [125, 230], [304, 230], [304, 297], [338, 297]],
+      "external-page": [[338, 335], [365, 335], [365, 465], [242, 465], [242, 403]],
+      "internal-report": [[410, 335], [416, 335], [416, 465], [556, 465], [556, 403]],
+      "public-web": [[372, 275], [372, 210], [610, 210], [610, 160], [694, 160], [694, 133]],
+      dns: [[410, 299], [432, 299], [432, 293], [444, 293]],
+    },
+    stops: {
+      "external-page": [332, 335],
+      "internal-report": [416, 335],
+      "public-web": [372, 268],
+      default: [374, 328],
     },
   },
   narrow: {

@@ -49,6 +49,7 @@ function renderMap() {
     targets: inspector.getTargets(),
     onSelectNode: selectNode,
   });
+  inspector.align(topology);
 }
 
 function updateSetupStatus() {
@@ -78,14 +79,11 @@ function updateSetupStatus() {
   setupStatus.className = `minor-label ${changed ? "status-pending" : ""}`;
 }
 
-function selectNode(node) {
+function selectNode(node, focusPanel = false) {
   state.node = node;
-  const panel = inspector.show(node);
+  inspector.show(node);
   renderMap();
-  if (panel && window.matchMedia("(max-width: 1360px)").matches) {
-    panel.scrollIntoView({ block: "start" });
-    panel.focus({ preventScroll: true });
-  }
+  if (focusPanel) inspector.focusPanel();
 }
 
 function selectEvent(index) {
@@ -99,6 +97,7 @@ async function runTrial(configuration) {
   state.busy = true;
   state.requestFailed = false;
   trialError.hidden = true;
+  inspector.align(topology);
   inspector.setBusy(true);
   updateSetupStatus();
   try {
@@ -126,6 +125,7 @@ async function runTrial(configuration) {
   } finally {
     state.busy = false;
     inspector.setBusy(false);
+    inspector.align(topology);
     updateSetupStatus();
   }
 }
@@ -139,7 +139,7 @@ const inspector = createInspector({
   onSelectNode: selectNode,
 });
 inspector.setBusy(true);
-inspector.show(state.node);
+inspector.show(state.node, { open: false });
 renderMap();
 
 download.addEventListener("click", () => {
