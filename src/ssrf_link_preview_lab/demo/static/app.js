@@ -8,6 +8,9 @@ const topology = document.querySelector("#topology");
 const setupStatus = document.querySelector("#setup-status");
 const trialError = document.querySelector("#trial-error");
 const download = document.querySelector("#download");
+const submitLabel = document.querySelector("#submit-label");
+const previewForm = document.querySelector("#preview-form");
+const previewStatus = document.querySelector("#preview-status");
 const state = {
   node: "browser",
   trial: null,
@@ -95,6 +98,11 @@ function selectEvent(index) {
 async function runTrial(configuration) {
   if (state.busy || !state.ready) return;
   state.busy = true;
+  submitLabel.textContent = "Generating preview…";
+  previewForm.setAttribute("aria-busy", "true");
+  download.disabled = true;
+  previewStatus.textContent = "Generating preview…";
+  previewStatus.className = "minor-label status-pending";
   state.requestFailed = false;
   trialError.hidden = true;
   inspector.align(topology);
@@ -122,8 +130,14 @@ async function runTrial(configuration) {
     state.requestFailed = true;
     trialError.textContent = `Trial request failed: ${error instanceof Error ? error.message : String(error)}`;
     trialError.hidden = false;
+    previewStatus.textContent = state.trial
+      ? "Previous preview retained" : "No preview generated";
+    previewStatus.className = `minor-label ${state.trial ? "status-pending" : "status-failed"}`;
   } finally {
     state.busy = false;
+    submitLabel.textContent = "Generate preview";
+    previewForm.removeAttribute("aria-busy");
+    download.disabled = !state.trial;
     inspector.setBusy(false);
     inspector.align(topology);
     updateSetupStatus();
@@ -149,7 +163,7 @@ download.addEventListener("click", () => {
   link.href = URL.createObjectURL(blob);
   link.download = `ssrf-trial-${state.trial.trial_id}.json`;
   link.click();
-  URL.revokeObjectURL(link.href);
+  window.setTimeout(() => URL.revokeObjectURL(link.href), 1_000);
 });
 
 let previousWidth = 0;

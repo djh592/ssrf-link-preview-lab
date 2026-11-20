@@ -160,14 +160,6 @@ h2 { margin: 0; font-size: 16px; }
   background: #eaf5ef;
   font-weight: 700;
 }
-.example-url {
-  display: grid;
-  gap: 3px;
-  margin-top: 9px;
-  color: #64766d;
-  font-size: 11px;
-}
-.example-url code { color: #253e34; overflow-wrap: anywhere; }
 .node-panel input:focus-visible,
 .node-panel select:focus-visible,
 .node-panel button:focus-visible { outline: 2px solid #08775d; outline-offset: 2px; }
@@ -299,11 +291,45 @@ h2 { margin: 0; font-size: 16px; }
 }
 .preview-placeholder { display: grid; place-items: center; color: #84928a; font-size: 13px; }
 .link-preview { display: grid; grid-template-columns: minmax(240px, 35%) minmax(0, 1fr); overflow: hidden; }
-.link-preview.text-only { grid-template-columns: 1fr; }
 .preview-media { display: grid; place-items: center; min-height: 268px; padding: 18px; background: #eef2ef; }
 .preview-media img { display: block; width: 100%; height: 230px; object-fit: contain; }
+.preview-media-unavailable { background: #edf1ee; }
+.preview-image-placeholder {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 290px;
+  padding: 24px;
+  color: #52665a;
+  text-align: center;
+}
+.preview-image-glyph {
+  position: relative;
+  display: block;
+  width: 54px;
+  height: 68px;
+  border: 2px solid #9eafa5;
+  border-radius: 4px;
+  background: linear-gradient(#d7e2da 0 0) 11px 24px / 28px 3px no-repeat,
+    linear-gradient(#d7e2da 0 0) 11px 34px / 32px 3px no-repeat,
+    linear-gradient(#d7e2da 0 0) 11px 44px / 21px 3px no-repeat,
+    #fff;
+}
+.preview-image-glyph::before {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 15px;
+  height: 15px;
+  border-bottom: 2px solid #9eafa5;
+  border-left: 2px solid #9eafa5;
+  border-radius: 0 2px 0 2px;
+  background: #edf1ee;
+  content: "";
+}
+.preview-image-title { color: #354c41; font-size: 12px; }
+.preview-image-detail { color: #65766d; font-size: 11px; line-height: 1.45; }
 .preview-copy { align-self: center; min-width: 0; padding: 28px clamp(24px, 5vw, 52px); }
-.text-only .preview-copy { max-width: 850px; }
 .preview-site { display: block; margin-bottom: 11px; color: #27735a; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
 .preview-copy h3 { margin: 0 0 10px; font-size: 23px; line-height: 1.3; overflow-wrap: anywhere; }
 .preview-copy p { margin: 0 0 13px; color: #5b6b62; font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }

@@ -8,8 +8,6 @@ const mobileLayout = window.matchMedia("(max-width: 979px)");
 const form = document.querySelector("#preview-form");
 const urlInput = document.querySelector("#url");
 const exampleTargets = [...document.querySelectorAll(".example-target")];
-const selectedExample = document.querySelector("#selected-example");
-const selectedExampleUrl = document.querySelector("#selected-example-url");
 const externalTarget = document.querySelector("#external-target-url");
 const controls = [...document.querySelectorAll(".node-panel input, .node-panel select, .node-panel button")];
 
@@ -39,14 +37,10 @@ export function createInspector({ onChange, onRun, onSelectNode }) {
   syncVisibility();
 
   function syncTargets() {
-    let matchedExample = false;
     for (const button of exampleTargets) {
       const selected = draft.url === targets[button.dataset.target];
       button.setAttribute("aria-pressed", String(selected));
-      matchedExample ||= selected;
     }
-    selectedExample.hidden = !matchedExample;
-    selectedExampleUrl.textContent = matchedExample ? draft.url : "";
     for (const control of document.querySelectorAll('input[name="external_response"]')) {
       control.checked = draft.url === targets[control.value];
     }

@@ -62,9 +62,11 @@
                       <button class="example-target" type="button" data-target="redirect_internal">302 → report</button>
                       <button class="example-target" type="button" data-target="rebind">Rebinding</button>
                     </div>
-                    <div id="selected-example" class="example-url" hidden><span>Selected URL</span><code id="selected-example-url"></code></div>
                   </div>
-                  <button class="primary-button" type="submit">Generate preview <span aria-hidden="true">→</span></button>
+                  <button class="primary-button" type="submit">
+                    <span id="submit-label">Generate preview</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
                   <p id="trial-error" class="form-error" role="alert" hidden></p>
                 </form>
               </section>

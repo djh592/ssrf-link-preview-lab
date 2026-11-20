@@ -12,6 +12,7 @@ function outcomeLabel(observation) {
     case "response_failed": return `HTTP ${observation.status_code} · incomplete body`;
     case "blocked": return "Blocked before connection";
     case "attempted": return "Connection outcome unconfirmed";
+    case "unresolved": return "DNS lookup failed";
     default: return "Address preparation failed";
   }
 }
@@ -44,19 +45,66 @@ export function renderPreview(trial) {
     return;
   }
 
-  result.className = `link-preview ${trial.image_data_url ? "" : "text-only"}`;
+  result.className = "link-preview";
+  const media = appendText(result, "div", "", "preview-media");
   if (trial.image_data_url) {
-    const media = appendText(result, "div", "", "preview-media");
     const image = document.createElement("img");
     image.src = trial.image_data_url;
     image.alt = "";
     media.append(image);
+  } else {
+    renderImageFallback(media, trial);
   }
   const copy = appendText(result, "div", "", "preview-copy");
   appendText(copy, "span", trial.site_name || new URL(trial.final_url).hostname, "preview-site");
   appendText(copy, "h3", trial.title || "Untitled page");
   appendText(copy, "p", trial.description || "No description provided");
   appendText(copy, "p", trial.final_url, "final-url");
+}
+
+function renderImageFallback(parent, trial) {
+  parent.classList.add("preview-media-unavailable");
+  const placeholder = appendText(parent, "div", "", "preview-image-placeholder");
+  appendText(placeholder, "span", "", "preview-image-glyph");
+  const imageObservation = trial.observations
+    .filter((observation) => observation.resource === "image")
+    .at(-1);
+  const [title, detail] = imageFallbackCopy(imageObservation);
+  appendText(placeholder, "strong", title, "preview-image-title");
+  appendText(placeholder, "span", detail, "preview-image-detail");
+}
+
+function imageFallbackCopy(observation) {
+  if (!observation) {
+    return ["No cover image", "The page did not provide a fetchable image URL."];
+  }
+  switch (observation.outcome) {
+    case "blocked":
+      return [
+        "Cover image blocked",
+        "The page loaded, but its separate image request was stopped by the address defense.",
+      ];
+    case "attempted":
+      return [
+        "Cover image unconfirmed",
+        "The page loaded, but the image connection has no recorded response.",
+      ];
+    case "unresolved":
+      return [
+        "Cover image unavailable",
+        "The page loaded, but the image hostname could not be resolved.",
+      ];
+    case "response_failed":
+      return [
+        "Cover image incomplete",
+        "The page loaded, but the image response was incomplete.",
+      ];
+    default:
+      return [
+        "Cover image unavailable",
+        "The image response was not a supported preview image.",
+      ];
+  }
 }
 
 export function renderServiceError(error) {
@@ -73,7 +121,8 @@ export function renderServiceError(error) {
 export function renderEvidence(events, onSelect) {
   const root = document.querySelector("#evidence");
   root.replaceChildren();
-  document.querySelector("#evidence-count").textContent = `${events.length} events`;
+  document.querySelector("#evidence-count").textContent =
+    `${events.length} ${events.length === 1 ? "event" : "events"}`;
   if (!events.length) {
     root.textContent = "No request evidence recorded";
     return;
