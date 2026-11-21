@@ -1,0 +1,14 @@
+{
+  "name": "ssrf-link-preview-presentation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reveal.js presentation for the SSRF Link Preview Lab project",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "python3 -m http.server 8766 --bind 127.0.0.1",
+    "preview": "python3 -m http.server 8767 --bind 127.0.0.1 --directory dist"
+  },
+  "dependencies": {
+    "reveal.js": "6.0.2"
+  }
+}

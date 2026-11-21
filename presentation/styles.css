@@ -1,0 +1,342 @@
+:root,
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --background: #f7f8fb;
+  --ink: #172033;
+  --muted: #5e6a7c;
+  --line: #d8dee8;
+  --soft: #edf2f8;
+  --panel: #ffffff;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --selection: #cfe0ff;
+
+  --r-background: var(--background);
+  --r-background-color: var(--background);
+  --r-main-font:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans", "Noto Sans CJK SC", Arial, sans-serif;
+  --r-heading-font: var(--r-main-font);
+  --r-main-color: var(--ink);
+  --r-heading-color: var(--ink);
+  --r-link-color: var(--accent);
+  --r-link-color-hover: var(--accent-dark);
+  --r-selection-background-color: var(--selection);
+}
+
+html[data-theme="dark"],
+html[data-theme="system"][data-resolved-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #111418;
+  --ink: #e8edf4;
+  --muted: #aeb8c6;
+  --line: #313844;
+  --soft: #1b222c;
+  --panel: #171b21;
+  --accent: #8ab4ff;
+  --accent-dark: #b2caff;
+  --selection: #233c68;
+
+  --r-background: var(--background);
+  --r-background-color: var(--background);
+  --r-main-color: var(--ink);
+  --r-heading-color: var(--ink);
+  --r-link-color: var(--accent);
+  --r-link-color-hover: var(--accent-dark);
+  --r-selection-background-color: var(--selection);
+}
+
+html,
+body,
+.reveal-viewport {
+  background: var(--background);
+  background-color: var(--background);
+  color: var(--ink);
+}
+
+.deck-toolbar {
+  position: fixed;
+  z-index: 40;
+  top: 18px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.theme-toggle,
+.print-toggle {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.05rem;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--muted);
+  padding: 0;
+  cursor: pointer;
+  opacity: 0.82;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    opacity 140ms ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible,
+.print-toggle:hover,
+.print-toggle:focus-visible {
+  border-color: var(--accent);
+  color: var(--ink);
+  opacity: 1;
+  outline: none;
+}
+
+.theme-toggle-icon,
+.print-toggle-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.theme-toggle-icon {
+  display: none;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+html[data-theme="system"] .icon-system,
+html[data-theme="light"] .icon-light,
+html[data-theme="dark"] .icon-dark {
+  display: block;
+}
+
+.reveal {
+  color: var(--ink);
+  font-family: var(--r-main-font);
+  font-size: 36px;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal .slides section {
+  box-sizing: border-box;
+  padding: 0.5em 0.8em;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.18;
+  text-transform: none;
+}
+
+.reveal h1 {
+  max-width: min(100%, 1080px);
+  font-size: 1.55em;
+}
+
+.reveal h2 {
+  max-width: min(100%, 1360px);
+  font-size: 1.35em;
+}
+
+.reveal p {
+  max-width: 30em;
+  line-height: 1.4;
+}
+
+.reveal .eyebrow {
+  margin: 0 0 0.8em;
+  color: var(--accent-dark);
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reveal .subtitle {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.title-slide {
+  display: flex !important;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.8em 1.35em !important;
+}
+
+.title-slide h1 {
+  max-width: min(100%, 1300px);
+  margin: 0 0 0.4em;
+  font-size: 1.7em;
+  line-height: 1.1;
+}
+
+.title-slide .subtitle {
+  max-width: 25em;
+  margin: 0;
+}
+
+.examples-slide h2 {
+  margin: 0 0 0.6em;
+}
+
+.examples-slide .eyebrow {
+  margin-bottom: 0.35em;
+}
+
+.preview-examples {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.1em;
+  margin: 0 auto;
+}
+
+.preview-example {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+}
+
+.preview-example img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 16.2em;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  object-fit: contain;
+  background: #fff;
+  box-shadow: 0 6px 20px rgb(23 33 43 / 10%);
+}
+
+.preview-example figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+  margin-top: 0.28em;
+  font-size: 0.54em;
+  line-height: 1.3;
+}
+
+.preview-example figcaption strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.preview-example figcaption span {
+  color: var(--muted);
+}
+
+.slide-takeaway {
+  max-width: none !important;
+  margin: 0.9em 0 0;
+  border-left: 0.16em solid var(--accent);
+  padding: 0.45em 0.8em;
+  background: var(--soft);
+  color: var(--ink) !important;
+  font-size: 0.76em;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.reveal .progress {
+  height: 4px;
+  color: var(--accent);
+}
+
+.reveal .slide-number {
+  right: auto;
+  bottom: 16px;
+  left: 22px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.42em;
+}
+
+.reveal .controls {
+  right: 18px;
+  bottom: 18px;
+  color: var(--accent);
+}
+
+.deck-error {
+  position: fixed;
+  inset: 1.5rem;
+  z-index: 50;
+  max-width: 48rem;
+  margin: auto;
+  border: 1px solid #b42318;
+  border-radius: 0.5rem;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 1rem 1.2rem;
+  font: 500 1rem/1.45 var(--r-main-font);
+}
+
+@media (max-width: 700px) {
+  .title-slide {
+    padding: 0.45em 0.65em !important;
+  }
+
+  .title-slide h1 {
+    font-size: 1.5em;
+  }
+
+  .preview-examples {
+    gap: 0.65em;
+  }
+
+  .preview-example img {
+    height: 12em;
+  }
+
+  .slide-takeaway {
+    font-size: 0.66em;
+  }
+}
+
+@media (hover: hover) {
+  .reveal .controls {
+    opacity: 0.62;
+  }
+
+  .reveal .controls:hover {
+    opacity: 1;
+  }
+}
+
+@media print {
+  .deck-toolbar,
+  .reveal .controls,
+  .reveal .slide-number,
+  .reveal .progress {
+    display: none;
+  }
+}
+
+html.print-pdf .deck-toolbar {
+  display: none;
+}
