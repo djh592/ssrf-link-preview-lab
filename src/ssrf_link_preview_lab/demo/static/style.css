@@ -64,6 +64,7 @@ h2 { margin: 0; font-size: 16px; }
 .trial-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .status-ok { color: #08775d; }
 .status-failed { color: #b24736; }
+.status-exposed { color: #aa3e34; font-weight: 700; }
 .status-pending { color: #9b622d; }
 
 .workbench-grid {
@@ -291,9 +292,11 @@ h2 { margin: 0; font-size: 16px; }
 }
 .preview-placeholder { display: grid; place-items: center; color: #84928a; font-size: 13px; }
 .link-preview { display: grid; grid-template-columns: minmax(240px, 35%) minmax(0, 1fr); overflow: hidden; }
+.link-preview--restricted { border-color: #d9aaa4; box-shadow: inset 4px 0 #c3483f; }
 .preview-media { display: grid; place-items: center; min-height: 268px; padding: 18px; background: #eef2ef; }
 .preview-media img { display: block; width: 100%; height: 230px; object-fit: contain; }
 .preview-media-unavailable { background: #edf1ee; }
+.preview-media-restricted { border-right: 1px solid #e5c5c0; background: #faefed; }
 .preview-image-placeholder {
   display: grid;
   justify-items: center;
@@ -329,8 +332,48 @@ h2 { margin: 0; font-size: 16px; }
 }
 .preview-image-title { color: #354c41; font-size: 12px; }
 .preview-image-detail { color: #65766d; font-size: 11px; line-height: 1.45; }
+.preview-restricted-placeholder { gap: 9px; color: #82372f; }
+.preview-classification {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 3px;
+  color: #fff;
+  background: #c3483f;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.preview-restricted-glyph {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 82px;
+  border: 2px solid #b95b52;
+  border-radius: 4px;
+  background:
+    linear-gradient(#c3483f 0 0) 0 0 / 100% 13px no-repeat,
+    linear-gradient(#d9aaa4 0 0) 13px 32px / 49px 4px no-repeat,
+    linear-gradient(#e5c5c0 0 0) 13px 44px / 39px 4px no-repeat,
+    linear-gradient(#e5c5c0 0 0) 13px 56px / 46px 4px no-repeat,
+    #fff;
+}
+.preview-restricted-glyph::after {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  color: #b24736;
+  content: "!";
+  font-size: 18px;
+  font-weight: 800;
+}
+.preview-restricted-placeholder .preview-image-title { color: #82372f; font-size: 13px; }
+.preview-restricted-placeholder .preview-image-detail { color: #7a514c; }
 .preview-copy { align-self: center; min-width: 0; padding: 28px clamp(24px, 5vw, 52px); }
+.preview-classification { margin-bottom: 12px; }
 .preview-site { display: block; margin-bottom: 11px; color: #27735a; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.link-preview--restricted .preview-site { color: #aa3e34; }
 .preview-copy h3 { margin: 0 0 10px; font-size: 23px; line-height: 1.3; overflow-wrap: anywhere; }
 .preview-copy p { margin: 0 0 13px; color: #5b6b62; font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
 .preview-copy .final-url { margin: 0; color: #77867e; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }

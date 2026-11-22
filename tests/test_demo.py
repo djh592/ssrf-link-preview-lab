@@ -12,13 +12,18 @@ from ssrf_link_preview_lab.demo.cli import run_browser_demo
 from ssrf_link_preview_lab.demo.controller import DemoController
 from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import Defense, DNSMode, TrialConfiguration
+from ssrf_link_preview_lab.demo.observations import LabAddresses, project_observations
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
+from ssrf_link_preview_lab.demo.presentation import PreviewKind, classify_preview
 from ssrf_link_preview_lab.fetching.errors import (
     AddressBlockedError,
     RedirectDisallowedError,
 )
 from ssrf_link_preview_lab.fetching.models import (
+    ConnectionAttempt,
+    FetchHop,
     FetchRequest,
+    FetchTrace,
     TransportRequest,
     TransportResponse,
 )
@@ -142,6 +147,85 @@ def test_rebinding_queries_and_checked_address_binding(
     assert lab_dns.answers[0].observed_at < decision.observed_at
     if defense is Defense.EACH_HOP:
         assert decision.observed_at < lab_dns.answers[1].observed_at
+
+
+def test_preview_classification_uses_confirmed_final_response_identity() -> None:
+    external = "http://external-page:8080/redirect/internal"
+    internal = "http://internal-report:8080/report"
+    trace = FetchTrace(
+        (
+            ConnectionAttempt(0, external, EXTERNAL, 0.1),
+            FetchHop(
+                0,
+                external,
+                302,
+                EXTERNAL,
+                internal,
+                internal,
+                0.2,
+                "external-page",
+                str(UUID(int=1)),
+            ),
+            ConnectionAttempt(1, internal, INTERNAL, 0.3),
+            FetchHop(
+                1,
+                internal,
+                200,
+                INTERNAL,
+                None,
+                None,
+                0.4,
+                "internal-report",
+                str(UUID(int=1)),
+            ),
+        )
+    )
+    observations = project_observations(
+        trace,
+        resource="page",
+        trial_id=UUID(int=1),
+        lab=LabAddresses(EXTERNAL, INTERNAL),
+    )
+
+    assert classify_preview(generated=True, page_observations=observations) is (
+        PreviewKind.RESTRICTED
+    )
+
+
+def test_preview_classification_does_not_trust_an_internal_url_alone() -> None:
+    internal = "http://internal-report:8080/report"
+    trace = FetchTrace(
+        (
+            ConnectionAttempt(0, internal, INTERNAL, 0.1),
+            FetchHop(
+                0,
+                internal,
+                200,
+                INTERNAL,
+                None,
+                None,
+                0.2,
+                "external-page",
+                str(UUID(int=1)),
+            ),
+        )
+    )
+    observations = project_observations(
+        trace,
+        resource="page",
+        trial_id=UUID(int=1),
+        lab=LabAddresses(EXTERNAL, INTERNAL),
+    )
+
+    assert classify_preview(generated=True, page_observations=observations) is (
+        PreviewKind.UNVERIFIED
+    )
+
+
+def test_failed_preview_is_classified_as_unavailable() -> None:
+    assert classify_preview(generated=False, page_observations=()) is (
+        PreviewKind.UNAVAILABLE
+    )
 
 
 def test_no_redirects_checks_and_binds_initial_target(lab_dns: DemoDNS) -> None:
@@ -407,6 +491,7 @@ def test_demo_trial_reports_blocked_decision(
     assert observations[0]["outcome"] == "blocked"
     assert observations[0]["destination"] == "internal-report"
     assert observations[0]["peer_address"] is None
+    assert trial["preview_kind"] == "unavailable"
     assert trial["dns_answers"] == []
     assert trial["configuration"] == {"defense": "initial", "dns_mode": "stable"}
 

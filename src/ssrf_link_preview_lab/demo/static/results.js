@@ -35,8 +35,16 @@ export function renderPreview(trial) {
   result.replaceChildren();
   const elapsed = typeof trial.duration_seconds === "number"
     ? ` · ${Math.round(trial.duration_seconds * 1000)} ms` : "";
-  status.textContent = `${trial.ok ? "Generated" : "Unavailable"}${elapsed}`;
-  status.className = `minor-label ${trial.ok ? "status-ok" : "status-failed"}`;
+  const restricted = trial.ok && trial.preview_kind === "restricted";
+  const unverified = trial.ok && trial.preview_kind === "unverified";
+  const statusLabel = restricted
+    ? "Restricted data exposed"
+    : unverified
+      ? "Generated · identity unverified"
+      : trial.ok ? "Generated" : "Unavailable";
+  status.textContent = `${statusLabel}${elapsed}`;
+  status.className = `minor-label ${restricted || unverified
+    ? "status-exposed" : trial.ok ? "status-ok" : "status-failed"}`;
 
   if (!trial.ok) {
     result.className = "preview-error";
@@ -45,7 +53,7 @@ export function renderPreview(trial) {
     return;
   }
 
-  result.className = "link-preview";
+  result.className = `link-preview${restricted ? " link-preview--restricted" : ""}`;
   const media = appendText(result, "div", "", "preview-media");
   if (trial.image_data_url) {
     const image = document.createElement("img");
@@ -53,23 +61,36 @@ export function renderPreview(trial) {
     image.alt = "";
     media.append(image);
   } else {
-    renderImageFallback(media, trial);
+    renderImageFallback(media, trial, { restricted });
   }
   const copy = appendText(result, "div", "", "preview-copy");
+  if (restricted) {
+    appendText(copy, "span", "INTERNAL / RESTRICTED", "preview-classification");
+  }
   appendText(copy, "span", trial.site_name || new URL(trial.final_url).hostname, "preview-site");
   appendText(copy, "h3", trial.title || "Untitled page");
   appendText(copy, "p", trial.description || "No description provided");
   appendText(copy, "p", trial.final_url, "final-url");
 }
 
-function renderImageFallback(parent, trial) {
+function renderImageFallback(parent, trial, { restricted }) {
   parent.classList.add("preview-media-unavailable");
-  const placeholder = appendText(parent, "div", "", "preview-image-placeholder");
-  appendText(placeholder, "span", "", "preview-image-glyph");
   const imageObservation = trial.observations
     .filter((observation) => observation.resource === "image")
     .at(-1);
   const [title, detail] = imageFallbackCopy(imageObservation);
+  if (restricted) {
+    parent.classList.add("preview-media-restricted");
+    const placeholder = appendText(
+      parent, "div", "", "preview-image-placeholder preview-restricted-placeholder",
+    );
+    appendText(placeholder, "span", "", "preview-restricted-glyph");
+    appendText(placeholder, "strong", "Report body exposed", "preview-image-title");
+    appendText(placeholder, "span", detail, "preview-image-detail");
+    return;
+  }
+  const placeholder = appendText(parent, "div", "", "preview-image-placeholder");
+  appendText(placeholder, "span", "", "preview-image-glyph");
   appendText(placeholder, "strong", title, "preview-image-title");
   appendText(placeholder, "span", detail, "preview-image-detail");
 }

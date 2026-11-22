@@ -8,6 +8,7 @@ from ssrf_link_preview_lab.demo.dns import DemoDNS
 from ssrf_link_preview_lab.demo.models import Defense, DNSMode, TrialConfiguration
 from ssrf_link_preview_lab.demo.observations import LabAddresses, project_observations
 from ssrf_link_preview_lab.demo.policy import DemoAddressPolicy
+from ssrf_link_preview_lab.demo.presentation import classify_preview
 from ssrf_link_preview_lab.fetching.models import FetchTrace
 from ssrf_link_preview_lab.fetching.redirecting import RedirectingFetcher, RedirectMode
 from ssrf_link_preview_lab.preview.service import PreviewService
@@ -88,20 +89,28 @@ class DemoController:
                 result = execution.to_dict()
             result.setdefault("trace", page_trace.to_dict())
             result.setdefault("image_trace", image_trace.to_dict())
-            result["observations"] = (
-                [
-                    step.to_dict()
-                    for trace, resource in (
-                        (page_trace, "page"),
-                        (image_trace, "image"),
-                    )
-                    for step in project_observations(
-                        trace, resource=resource, trial_id=trial_id, lab=lab
-                    )
-                ]
+            page_observations = (
+                project_observations(
+                    page_trace, resource="page", trial_id=trial_id, lab=lab
+                )
                 if lab is not None
-                else []
+                else ()
             )
+            image_observations = (
+                project_observations(
+                    image_trace, resource="image", trial_id=trial_id, lab=lab
+                )
+                if lab is not None
+                else ()
+            )
+            result["observations"] = [
+                observation.to_dict()
+                for observation in (*page_observations, *image_observations)
+            ]
+            result["preview_kind"] = classify_preview(
+                generated=bool(result.get("ok")),
+                page_observations=page_observations,
+            ).value
             result["dns_answers"] = [answer.to_dict() for answer in self._dns.answers]
             result["configuration"] = configuration.to_dict()
             write_structured_event("demo_trial", trial_id=trial_id, result=result)
