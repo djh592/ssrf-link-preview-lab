@@ -1,0 +1,73 @@
+<section class="content-slide limitations-slide">
+  <p class="eyebrow">Evaluation | Evidence boundaries</p>
+  <h2>Where Do Our Claims Stop?</h2>
+
+  <div class="limitations-framework">
+    <div class="limitations-header" aria-hidden="true">
+      <span>Evidence boundary</span>
+      <span></span>
+      <span>Next experiment</span>
+    </div>
+
+    <div class="limitations-row">
+      <div class="limitations-boundary">
+        <span class="limitations-scope">DNS SCOPE</span>
+        <strong>4 single verified probes</strong>
+        <p>Mechanism observed; attack rate not estimated</p>
+      </div>
+      <div class="limitations-arrow" aria-hidden="true">→</div>
+      <div class="limitations-next">
+        <strong>Repeat the TTL / cache matrix</strong>
+        <p>TTL 0 / 1 / 60 × empty and primed caches</p>
+      </div>
+    </div>
+
+    <div class="limitations-row">
+      <div class="limitations-boundary">
+        <span class="limitations-scope">CLIENT SCOPE</span>
+        <strong>One Python + PycURL/libcurl stack</strong>
+        <p>Behavior depends on the HTTP client and resolver path</p>
+      </div>
+      <div class="limitations-arrow" aria-hidden="true">→</div>
+      <div class="limitations-next">
+        <strong>Add a controlled reference-client comparison</strong>
+        <p>Define and evaluate safehttpx under the same scenarios</p>
+      </div>
+    </div>
+
+    <div class="limitations-row">
+      <div class="limitations-boundary">
+        <span class="limitations-scope">PROTOCOL SCOPE</span>
+        <strong>Controlled HTTP fixtures only</strong>
+        <p>No measured HTTPS or certificate-handling cases</p>
+      </div>
+      <div class="limitations-arrow" aria-hidden="true">→</div>
+      <div class="limitations-next">
+        <strong>Add controlled HTTPS fixtures</strong>
+        <p>Verify redirects and address binding preserve TLS semantics</p>
+      </div>
+    </div>
+
+    <p class="limitations-evidence">
+      Claims use 1,750 repeated HTTP trials + 4 verified DNS probes—not the live GUI.
+    </p>
+  </div>
+
+  <p class="slide-takeaway">
+    <strong>The Results Describe This Python + PycURL/libcurl Testbed Under the Conditions We Verified.</strong>
+  </p>
+
+  <aside class="notes">
+    The repeated HTTP results support rates for the tested direct and redirect
+    conditions, but the four recursive-DNS artifacts are mechanism probes, not
+    estimates of rebinding probability. Client behavior is also part of the
+    result: this study evaluated one Python and PycURL/libcurl stack in the
+    controlled Docker topology, so another HTTP client or resolver path may
+    behave differently. Finally, the controlled evaluation fixtures use HTTP;
+    public previews may involve HTTPS, certificate validation, and connection
+    reuse. Each limitation maps to a concrete next experiment. The live GUI
+    explains individual paths but is not counted as measurement evidence.
+    Transition with: "Within those limits, the strongest result we can support
+    is that a check must govern the destination actually contacted."
+  </aside>
+</section>

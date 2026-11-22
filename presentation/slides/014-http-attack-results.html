@@ -1,0 +1,88 @@
+<section class="content-slide attack-results-slide">
+  <p class="eyebrow">Evaluation | HTTP attack results</p>
+  <h2>Where Did Initial Validation Fail?</h2>
+
+  <figure class="attack-results-figure">
+    <table class="attack-results-table">
+      <caption>
+        <strong>Each cell:</strong> internal access / marker disclosure · 100 resolved trials
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Attack condition</th>
+          <th scope="col">No check</th>
+          <th class="attack-results-focus" scope="col">Initial URL</th>
+          <th scope="col">Each hop</th>
+          <th scope="col">Check &amp; bind</th>
+          <th scope="col">No redirects</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">
+            <strong>Direct internal target</strong>
+            <span>IP address + service name</span>
+          </th>
+          <td class="attack-result attack-result--leaked">
+            <strong>100 / 100</strong>
+          </td>
+          <td class="attack-result attack-results-focus">
+            <strong>0 / 0</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <strong>Redirect to internal</strong>
+            <span>1 redirect + 3 redirects</span>
+          </th>
+          <td class="attack-result attack-result--leaked">
+            <strong>100 / 100</strong>
+          </td>
+          <td class="attack-result attack-result--leaked attack-results-focus">
+            <strong>100 / 100</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+          <td class="attack-result">
+            <strong>0 / 0</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <figcaption>
+      <span><strong>50 repetitions</strong> per constituent scenario</span>
+      <span><strong>0 unresolved trials</strong></span>
+    </figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>Initial Validation Blocked Direct Targets, but All 100 Redirect Trials Reached and Disclosed the Report.</strong>
+  </p>
+
+  <aside class="notes">
+    The vulnerable baseline reached and disclosed the internal report in every
+    direct and redirect trial. Initial-URL validation blocked both direct
+    conditions, but it trusted the original external target and therefore
+    failed in all 100 redirect trials. Internal access and marker disclosure
+    were measured separately; they happen to agree for every HTTP attack in
+    this run. Each-hop validation, check and bind, and rejecting redirects all
+    stopped these static HTTP attack scenarios, with no unresolved trials.
+    This slide does not yet distinguish each-hop validation from address
+    binding. Transition with: "Per-hop validation solved the redirect problem,
+    but did the client actually connect to the address that passed the check?"
+  </aside>
+</section>

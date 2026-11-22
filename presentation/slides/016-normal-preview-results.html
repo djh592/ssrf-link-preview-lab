@@ -1,0 +1,98 @@
+<section class="content-slide normal-results-slide">
+  <p class="eyebrow">Evaluation | Normal preview utility</p>
+  <h2>What Did Safer Fetching Cost?</h2>
+
+  <figure class="normal-results-figure">
+    <div class="normal-results-layout">
+      <div class="normal-success-panel">
+        <h3>Normal preview success</h3>
+        <p class="normal-results-context">150 trials per policy · 3 scenarios × 50</p>
+
+        <div
+          class="normal-success-chart"
+          role="img"
+          aria-label="No check, Initial URL, Each hop, and Check and bind each succeeded in 150 of 150 normal preview trials. No redirects succeeded in 50 of 150 trials and rejected all 100 normal redirect trials."
+        >
+          <div class="normal-success-row">
+            <span class="normal-success-label">No check</span>
+            <span class="normal-success-track"><span style="width: 100%"></span></span>
+            <strong>150/150</strong>
+          </div>
+          <div class="normal-success-row">
+            <span class="normal-success-label">Initial URL</span>
+            <span class="normal-success-track"><span style="width: 100%"></span></span>
+            <strong>150/150</strong>
+          </div>
+          <div class="normal-success-row">
+            <span class="normal-success-label">Each hop</span>
+            <span class="normal-success-track"><span style="width: 100%"></span></span>
+            <strong>150/150</strong>
+          </div>
+          <div class="normal-success-row normal-success-row--bound">
+            <span class="normal-success-label">Check &amp; bind</span>
+            <span class="normal-success-track"><span style="width: 100%"></span></span>
+            <strong>150/150</strong>
+          </div>
+          <div class="normal-success-row normal-success-row--limited">
+            <span class="normal-success-label">No redirects</span>
+            <span class="normal-success-track"><span style="width: 33.333%"></span></span>
+            <strong>50/150</strong>
+            <span class="normal-success-failure">100 normal redirects rejected</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="normal-latency-panel">
+        <h3>Check &amp; bind latency</h3>
+        <p class="normal-results-context">No check → Check &amp; bind · successful trials</p>
+
+        <div class="normal-latency-table" role="table" aria-label="Worker-side latency in milliseconds">
+          <div class="normal-latency-header" role="row">
+            <span role="columnheader">Scenario</span>
+            <span role="columnheader">Median</span>
+            <span role="columnheader">P95</span>
+          </div>
+          <div class="normal-latency-row" role="row">
+            <strong role="rowheader">0 redirects</strong>
+            <span role="cell"><span>5.7</span> → <strong>6.9 ms</strong></span>
+            <span role="cell"><span>57.6</span> → <strong>62.5 ms</strong></span>
+          </div>
+          <div class="normal-latency-row" role="row">
+            <strong role="rowheader">1 redirect</strong>
+            <span role="cell"><span>8.9</span> → <strong>10.8 ms</strong></span>
+            <span role="cell"><span>70.1</span> → <strong>70.5 ms</strong></span>
+          </div>
+          <div class="normal-latency-row" role="row">
+            <strong role="rowheader">3 redirects</strong>
+            <span role="cell"><span>15.5</span> → <strong>19.4 ms</strong></span>
+            <span role="cell"><span>79.3</span> → <strong>80.1 ms</strong></span>
+          </div>
+        </div>
+
+        <p class="normal-latency-note">
+          Worker-side duration · image fetching disabled
+        </p>
+      </div>
+    </div>
+
+    <figcaption>750 completed trials · 0 unresolved</figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>Check &amp; Bind Preserved All 150 Normal Previews; Disabling Redirects Broke 100.</strong>
+  </p>
+
+  <aside class="notes">
+    Four policies preserved all 150 tested normal previews. The no-redirects
+    policy succeeded only for the 50 direct-page trials and rejected all 100
+    legitimate redirect trials, showing the compatibility cost of simply
+    disabling redirects. The latency panel compares the vulnerable no-check
+    baseline with check and bind because binding was the policy that also
+    closed the observed DNS gap. Across zero, one, and three redirects, its
+    median worker-side overhead was only a few milliseconds in this isolated
+    testbed, while P95 remained close to the baseline. Latency includes only
+    successful tasks and excludes Compose startup and image fetching.
+    Transition with: "These results answer the question inside our testbed,
+    but they do not establish behavior for every client, network, or resolver."
+  </aside>
+</section>

@@ -1,6 +1,23 @@
 {
   "slides": [
     "slides/000-cover.html",
-    "slides/001-everyday-link-previews.html"
+    "slides/001-everyday-link-previews.html",
+    "slides/002-slack-app-unfurl.html",
+    "slides/003-preview-service-architecture.html",
+    "slides/004-preview-network-access.html",
+    "slides/005-ssrf-definition.html",
+    "slides/006-synology-link-preview-ssrf.html",
+    "slides/007-redirect-bypasses-initial-check.html",
+    "slides/008-dns-rebinding.html",
+    "slides/009-research-question.html",
+    "slides/010-instrumented-testbed.html",
+    "slides/011-threat-model.html",
+    "slides/012-check-and-bind.html",
+    "slides/013-measurement-design.html",
+    "slides/014-http-attack-results.html",
+    "slides/015-dns-probe-results.html",
+    "slides/016-normal-preview-results.html",
+    "slides/017-evidence-boundaries.html",
+    "slides/018-conclusion.html"
   ]
 }

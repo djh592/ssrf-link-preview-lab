@@ -1,0 +1,223 @@
+<section class="content-slide threat-model-slide">
+  <p class="eyebrow">System | Threat model</p>
+  <h2>Where Is the Trust Boundary?</h2>
+
+  <figure class="threat-model-figure">
+    <svg
+      class="threat-model-topology"
+      viewBox="0 0 1320 470"
+      role="img"
+      aria-labelledby="threat-model-title threat-model-description"
+    >
+      <title id="threat-model-title">
+        Threat model for the isolated link-preview testbed
+      </title>
+      <desc id="threat-model-description">
+        An attacker-selected URL enters the preview worker. The worker can
+        reach an attacker-controlled web service and authoritative DNS server,
+        as well as a protected internal report. The attacker has no direct
+        route to the report. A recursive resolver provides DNS infrastructure
+        across the isolated testbed networks.
+      </desc>
+
+      <defs>
+        <marker
+          id="threat-arrow-accent-11"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="threat-arrowhead threat-arrowhead--accent" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="threat-arrow-risk-11"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="threat-arrowhead threat-arrowhead--risk" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <g>
+        <rect class="threat-control-zone" x="1035" y="18" width="265" height="292" rx="18" />
+        <text class="threat-zone-title" x="1056" y="48">ATTACKER-CONTROLLED</text>
+      </g>
+      <g>
+        <rect class="threat-protected-zone" x="1035" y="325" width="265" height="132" rx="18" />
+        <text class="threat-zone-title threat-zone-title--risk" x="1056" y="352">
+          PROTECTED ASSET
+        </text>
+      </g>
+
+      <g class="threat-network-layer">
+        <path class="threat-network" d="M510 100H1110" />
+        <path class="threat-network" d="M510 235H1110" />
+        <path class="threat-network threat-network--internal" d="M510 380H1110" />
+        <path class="threat-network" d="M720 100V380" />
+
+        <circle class="threat-interface" cx="720" cy="100" r="6" />
+        <circle class="threat-interface" cx="720" cy="235" r="6" />
+        <circle class="threat-interface" cx="720" cy="380" r="6" />
+
+        <text class="threat-network-label" x="895" y="82" text-anchor="middle">
+          dns_zone
+        </text>
+        <text class="threat-network-label" x="895" y="217" text-anchor="middle">
+          external_zone
+        </text>
+        <text class="threat-network-label threat-network-label--risk" x="895" y="362" text-anchor="middle">
+          internal_zone
+        </text>
+      </g>
+
+      <g class="threat-preview-attachments">
+        <path class="threat-attachment" d="M430 195H462L510 100" />
+        <path class="threat-attachment" d="M430 235H510" />
+        <path class="threat-attachment threat-attachment--internal" d="M430 275H462L510 380" />
+        <circle class="threat-interface" cx="510" cy="100" r="6" />
+        <circle class="threat-interface" cx="510" cy="235" r="6" />
+        <circle class="threat-interface threat-interface--risk" cx="510" cy="380" r="6" />
+      </g>
+
+      <g class="threat-observed-paths">
+        <path
+          class="threat-path threat-path--accent"
+          d="M185 235H286"
+          marker-end="url(#threat-arrow-accent-11)"
+        />
+
+        <path
+          class="threat-path threat-path--accent"
+          d="M430 235H1100"
+          marker-end="url(#threat-arrow-accent-11)"
+        />
+        <path
+          class="threat-path threat-path--accent"
+          d="M430 195H462L510 100H662"
+          marker-end="url(#threat-arrow-accent-11)"
+        />
+        <path
+          class="threat-path threat-path--accent"
+          d="M778 100H1100"
+          marker-end="url(#threat-arrow-accent-11)"
+        />
+
+        <path
+          class="threat-path threat-path--risk"
+          d="M430 275H462L510 380H1100"
+          marker-end="url(#threat-arrow-risk-11)"
+        />
+        <text class="threat-path-label threat-path-label--risk" x="850" y="410" text-anchor="middle">
+          Unauthorized HTTP request — must be prevented
+        </text>
+      </g>
+
+      <g class="threat-blocked-route">
+        <path class="threat-no-route" d="M145 286C175 407 315 438 492 395" />
+        <circle class="threat-block-marker" cx="503" cy="392" r="13" />
+        <path class="threat-block-cross" d="M495 384 511 400M511 384 495 400" />
+        <text class="threat-no-route-label" x="292" y="440" text-anchor="middle">
+          No direct route
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--input" transform="translate(115 235)">
+        <rect class="threat-device" x="-66" y="-49" width="132" height="84" rx="7" />
+        <line class="threat-device-line" x1="-66" y1="9" x2="66" y2="9" />
+        <path class="threat-device-line" d="M-84 52H84L66 35H-66Z" />
+        <path class="threat-input-mark" d="M-34 -20H25M-34 -3H12" />
+        <circle class="threat-input-cursor" cx="35" cy="-12" r="7" />
+        <text class="threat-node-label" x="0" y="94" text-anchor="middle">
+          Untrusted URL
+        </text>
+        <text class="threat-node-detail" x="0" y="120" text-anchor="middle">
+          Attacker-selected input
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--preview" transform="translate(360 235)">
+        <rect class="threat-device" x="-70" y="-72" width="140" height="43" rx="7" />
+        <rect class="threat-device" x="-70" y="-21" width="140" height="43" rx="7" />
+        <rect class="threat-device" x="-70" y="30" width="140" height="43" rx="7" />
+        <circle class="threat-status" cx="47" cy="-51" r="5" />
+        <circle class="threat-status" cx="47" cy="0" r="5" />
+        <circle class="threat-status" cx="47" cy="51" r="5" />
+        <path class="threat-device-detail" d="M-45 -51H18M-45 0H18M-45 51H18" />
+        <text class="threat-node-label" x="0" y="112" text-anchor="middle">
+          Preview Worker
+        </text>
+        <text class="threat-node-detail" x="0" y="138" text-anchor="middle">
+          Application HTTP fetcher
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--resolver" transform="translate(720 100)">
+        <circle class="threat-device" cx="0" cy="0" r="45" />
+        <path class="threat-resolver-mark" d="M-23 0H23M0 -23V23M-23 0l9 -7M-23 0l9 7M23 0l-9 -7M23 0l-9 7M0 -23l-7 9M0 -23l7 9M0 23l-7 -9M0 23l7 -9" />
+        <text class="threat-node-label" x="0" y="82" text-anchor="middle">
+          Recursive Resolver
+        </text>
+        <text class="threat-node-detail" x="0" y="108" text-anchor="middle">
+          Lab DNS infrastructure
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--authority" transform="translate(1168 105)">
+        <path class="threat-device" d="M-45 -25V25C-45 38 45 38 45 25V-25Z" />
+        <ellipse class="threat-device" cx="0" cy="-25" rx="45" ry="14" />
+        <path class="threat-device-detail" d="M-45 0C-45 13 45 13 45 0M-45 24C-45 37 45 37 45 24" />
+        <text class="threat-node-label" x="0" y="72" text-anchor="middle">
+          Authoritative DNS
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--web" transform="translate(1168 235)">
+        <rect class="threat-device" x="-55" y="-40" width="110" height="78" rx="7" />
+        <line class="threat-device-line" x1="-55" y1="-16" x2="55" y2="-16" />
+        <circle class="threat-status" cx="-37" cy="-28" r="4" />
+        <circle class="threat-status" cx="-23" cy="-28" r="4" />
+        <path class="threat-device-detail" d="M-33 3H33M-33 19H18" />
+        <text class="threat-node-label" x="0" y="50" text-anchor="middle">
+          External Web
+        </text>
+      </g>
+
+      <g class="threat-node threat-node--report" transform="translate(1168 385)">
+        <rect class="threat-device" x="-56" y="-32" width="112" height="64" rx="7" />
+        <path class="threat-report-sheet" d="M-24 -18H9L25 -2V21H-24Z" />
+        <path class="threat-report-detail" d="M9 -18V-2H25M-13 4H14M-13 14H8" />
+        <text class="threat-node-label" x="0" y="54" text-anchor="middle">
+          Internal Report
+        </text>
+      </g>
+    </svg>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>The Attacker Controls the URL Path into a Preview Worker That Can Reach the Protected Report.</strong>
+  </p>
+
+  <aside class="notes">
+    This is the isolated measurement topology, not the public browser-demo
+    overlay. The attacker controls only the submitted URL and the responses
+    produced by the external web and authoritative DNS fixtures. There is no
+    host-published route to the synthetic internal report, and the attacker
+    cannot modify Preview, the recursive resolver, or the report. Preview is
+    the application HTTP-fetch path that can reach both the untrusted service
+    and the protected report. In the DNS overlay, the recursive resolver also
+    joins the lab networks so it can resolve their service names; it is DNS
+    infrastructure, not an HTTP proxy. The dashed red line is the attack goal,
+    not a measured result. A request arriving at the report is the primary
+    security outcome; returning its marker is tracked separately as
+    disclosure. Transition with: "This boundary gives us one design rule:
+    every request must be authorized against the destination it actually
+    reaches."
+  </aside>
+</section>

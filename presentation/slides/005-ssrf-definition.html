@@ -1,0 +1,58 @@
+<section class="content-slide ssrf-definition-slide">
+  <p class="eyebrow">Background | Definition</p>
+  <h2>Server-Side Request Forgery (SSRF)</h2>
+
+  <figure class="cwe-definition">
+    <blockquote class="cwe-definition-quote">
+      The web server receives a
+      <strong class="cwe-input">URL or similar request</strong> from an upstream
+      component and retrieves the contents of this URL, but it does not
+      sufficiently ensure that the request is being sent to the
+      <strong class="cwe-destination">expected destination</strong>.
+    </blockquote>
+
+    <img
+      src="assets/CWE-918-Diagram.png"
+      alt="CWE-918 diagram showing an input URL causing a web server to retrieve an unexpected destination instead of the expected destination"
+    />
+
+    <figcaption>
+      Source:
+      <a href="https://cwe.mitre.org/data/definitions/918.html">
+        MITRE CWE-918: Server-Side Request Forgery
+      </a>
+    </figcaption>
+  </figure>
+
+  <p class="ssrf-study-summary">
+    In a
+    <a href="https://www.usenix.org/conference/usenixsecurity24/presentation/wessels">
+      USENIX Security '24 study</a> of 27,078 open-source PHP applications,
+    researchers identified 237 flows where user input reached a server-side
+    request. Of the 158 application flows, 39 were trivially exploitable; the
+    manual analysis found only two applications with safe server-side request
+    features.
+  </p>
+
+  <p class="slide-takeaway">
+    <strong>SSRF Occurs When a Server Does Not Ensure Its Request Reaches the Expected Destination.</strong>
+  </p>
+
+  <aside class="notes">
+    MITRE classifies this weakness as CWE-918. The definition centers on
+    destination control: a server retrieves a user-influenced URL without
+    sufficiently ensuring that the request reaches the expected destination.
+    Returning the response to the user is one possible consequence, but it is
+    not required for the server-side request itself to be an SSRF risk. A 2024
+    study examined 27,078 open-source PHP applications and identified 237
+    flows in which user input reached a server-side request. The authors
+    classified 158 as application flows, 71 as hacking-tool flows, 7 as test
+    flows, and 1 as an example. Of the application flows, 39 were trivially
+    exploitable, 18 were false positives, and 101 required further analysis.
+    The manual analysis found only two applications with safe server-side
+    request features. These results are scoped to the studied PHP applications,
+    not an estimate for every web system. Transition with: "We now need a
+    concrete setting in which useful server-side fetching and this destination
+    risk coexist."
+  </aside>
+</section>

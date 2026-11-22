@@ -1,0 +1,50 @@
+<section class="content-slide research-question-slide">
+  <p class="eyebrow">Research question</p>
+  <h2>Can We Block Private Access Without Breaking Public Previews?</h2>
+
+  <div class="research-question-framework">
+    <div class="research-policy" aria-labelledby="research-policy-title">
+      <p class="research-section-label" id="research-policy-title">Fetch policy</p>
+      <p class="research-policy-question">
+        Where is each destination checked, and does the checked address govern
+        the connection?
+      </p>
+    </div>
+
+    <div class="research-outcomes">
+      <div class="research-outcome research-outcome--security" aria-labelledby="security-outcome-title">
+        <h3 id="security-outcome-title">Security</h3>
+        <p>Did a request reach the private service?</p>
+        <p>Was private data returned?</p>
+      </div>
+
+      <div class="research-outcome research-outcome--functionality" aria-labelledby="functionality-outcome-title">
+        <h3 id="functionality-outcome-title">Functionality</h3>
+        <p>Did the preview succeed?</p>
+        <p>How long did it take?</p>
+      </div>
+    </div>
+
+    <p class="research-conditions">
+      Tested under <strong>direct URLs</strong>, <strong>HTTP redirects</strong>,
+      and <strong>changing DNS answers</strong>.
+    </p>
+  </div>
+
+  <p class="slide-takeaway">
+    <strong>We Evaluate Security and Preview Functionality Together.</strong>
+  </p>
+
+  <aside class="notes">
+    These mechanisms lead to our research question: can a link-preview service
+    block unauthorized private access without breaking useful public previews?
+    We vary where each destination is checked and whether the checked address
+    governs the actual connection. For security, we separately measure whether
+    a request reaches the private service and whether its data is returned. For
+    functionality, we measure successful previews and latency under direct
+    URLs, redirects, and changing DNS answers. Our conclusions are scoped to
+    the Python/libcurl testbed we evaluate. Transition with: "To answer this
+    question, we built a controlled testbed that connects each policy decision
+    to the request path actually observed."
+  </aside>
+</section>

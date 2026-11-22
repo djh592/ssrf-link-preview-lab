@@ -1,0 +1,214 @@
+<section class="content-slide architecture-slide">
+  <p class="eyebrow">Background | Security implication</p>
+  <h2>When Preview Can Reach an Internal Service</h2>
+
+  <figure class="architecture-figure">
+    <svg
+      class="network-topology"
+      viewBox="0 0 1320 520"
+      role="img"
+      aria-labelledby="ssrf-topology-title ssrf-topology-description"
+    >
+      <title id="ssrf-topology-title">
+        Network topology showing an unintended internal request path
+      </title>
+      <desc id="ssrf-topology-description">
+        The user cannot directly reach a service in a private network. The
+        preview service can reach it, so a user-supplied internal URL can cause
+        Preview to send the internal request and return the response.
+      </desc>
+
+      <defs>
+        <marker
+          id="network-arrow-muted-4"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto-start-reverse"
+        >
+          <path class="network-arrow network-arrow--muted" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="network-arrow-risk-4"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto-start-reverse"
+        >
+          <path class="network-arrow network-arrow--risk" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <g>
+        <rect class="network-zone" x="30" y="82" width="310" height="350" rx="18" />
+        <text class="network-zone-label" x="55" y="116">CLIENT NETWORK</text>
+      </g>
+      <g>
+        <rect
+          class="network-zone network-zone--application"
+          x="390"
+          y="82"
+          width="340"
+          height="350"
+          rx="18"
+        />
+        <text class="network-zone-label" x="415" y="116">APPLICATION NETWORK</text>
+      </g>
+      <g class="network-path--inactive">
+        <rect class="network-zone" x="860" y="42" width="420" height="235" rx="18" />
+        <text class="network-zone-label" x="885" y="76">PUBLIC INTERNET</text>
+      </g>
+      <g class="network-zone--private">
+        <rect class="network-zone" x="860" y="302" width="420" height="190" rx="18" />
+        <text class="network-zone-label" x="885" y="336">PRIVATE NETWORK</text>
+      </g>
+
+      <g>
+        <path
+          class="network-link network-link--risk"
+          d="M265 255H480"
+          marker-start="url(#network-arrow-risk-4)"
+          marker-end="url(#network-arrow-risk-4)"
+        />
+        <circle class="network-port network-port--risk" cx="340" cy="255" r="5" />
+        <circle class="network-port network-port--risk" cx="390" cy="255" r="5" />
+        <text
+          class="network-link-label network-link-label--risk"
+          x="373"
+          y="229"
+          text-anchor="middle"
+        >
+          HTTPS
+        </text>
+        <text class="network-link-detail" x="373" y="288" text-anchor="middle">
+          Internal URL / returned data
+        </text>
+      </g>
+
+      <g class="network-path--inactive">
+        <path
+          class="network-link network-link--muted"
+          d="M630 215H790V155H1000"
+          marker-start="url(#network-arrow-muted-4)"
+          marker-end="url(#network-arrow-muted-4)"
+        />
+        <circle class="network-port" cx="730" cy="215" r="5" />
+        <circle class="network-port" cx="860" cy="155" r="5" />
+        <text class="network-link-label" x="895" y="129" text-anchor="middle">
+          Normal preview path
+        </text>
+      </g>
+
+      <g class="network-path--risk">
+        <path
+          class="network-link network-link--risk"
+          d="M630 295H790V385H1000"
+          marker-start="url(#network-arrow-risk-4)"
+          marker-end="url(#network-arrow-risk-4)"
+        />
+        <circle class="network-port network-port--risk" cx="730" cy="295" r="5" />
+        <circle class="network-port network-port--risk" cx="860" cy="385" r="5" />
+        <text
+          class="network-link-label network-link-label--risk"
+          x="900"
+          y="365"
+          text-anchor="middle"
+        >
+          Internal HTTP
+        </text>
+        <text class="network-link-detail" x="940" y="414" text-anchor="middle">
+          Request / response
+        </text>
+      </g>
+
+      <g class="network-blocked-path">
+        <path class="network-link network-link--blocked" d="M255 346C430 478 650 488 835 420" />
+        <circle class="network-block-marker" cx="850" cy="414" r="13" />
+        <path class="network-block-cross" d="M842 406 858 422M858 406 842 422" />
+        <text class="network-block-label" x="570" y="479" text-anchor="middle">
+          No direct route
+        </text>
+      </g>
+
+      <g class="network-node" transform="translate(185 255)">
+        <rect class="network-device" x="-70" y="-61" width="140" height="92" rx="7" />
+        <line class="network-device" x1="-70" y1="-34" x2="70" y2="-34" />
+        <circle class="network-status-dot" cx="-49" cy="-47" r="4" />
+        <circle class="network-status-dot" cx="-35" cy="-47" r="4" />
+        <circle class="network-status-dot" cx="-21" cy="-47" r="4" />
+        <line class="network-device" x1="0" y1="31" x2="0" y2="49" />
+        <line class="network-device" x1="-32" y1="49" x2="32" y2="49" />
+        <text class="network-node-label" x="0" y="93" text-anchor="middle">
+          User / Browser
+        </text>
+        <text class="network-node-detail" x="0" y="122" text-anchor="middle">
+          Cannot route to private network
+        </text>
+      </g>
+
+      <g
+        class="network-node network-node--preview"
+        transform="translate(560 255)"
+      >
+        <rect class="network-device" x="-70" y="-68" width="140" height="43" rx="7" />
+        <rect class="network-device" x="-70" y="-15" width="140" height="43" rx="7" />
+        <rect class="network-device" x="-70" y="38" width="140" height="43" rx="7" />
+        <circle class="network-status-dot" cx="47" cy="-47" r="5" />
+        <circle class="network-status-dot" cx="47" cy="6" r="5" />
+        <circle class="network-status-dot" cx="47" cy="59" r="5" />
+        <line class="network-device-detail" x1="-45" y1="-47" x2="18" y2="-47" />
+        <line class="network-device-detail" x1="-45" y1="6" x2="18" y2="6" />
+        <line class="network-device-detail" x1="-45" y1="59" x2="18" y2="59" />
+        <text class="network-node-label" x="0" y="124" text-anchor="middle">
+          Preview Service
+        </text>
+        <text class="network-node-detail" x="0" y="153" text-anchor="middle">
+          Can route to private network
+        </text>
+      </g>
+
+      <g
+        class="network-node network-path--inactive"
+        transform="translate(1090 155)"
+      >
+        <circle class="network-device" cx="0" cy="0" r="66" />
+        <ellipse class="network-device" cx="0" cy="0" rx="29" ry="66" />
+        <line class="network-device" x1="-62" y1="-22" x2="62" y2="-22" />
+        <line class="network-device" x1="-62" y1="22" x2="62" y2="22" />
+        <text class="network-node-label" x="0" y="104" text-anchor="middle">
+          External Website
+        </text>
+      </g>
+
+      <g class="network-node network-node--internal" transform="translate(1090 390)">
+        <rect class="network-device" x="-68" y="-55" width="136" height="38" rx="6" />
+        <rect class="network-device" x="-68" y="-9" width="136" height="38" rx="6" />
+        <circle class="network-status-dot network-status-dot--risk" cx="46" cy="-36" r="5" />
+        <circle class="network-status-dot network-status-dot--risk" cx="46" cy="10" r="5" />
+        <line class="network-device-detail" x1="-44" y1="-36" x2="18" y2="-36" />
+        <line class="network-device-detail" x1="-44" y1="10" x2="18" y2="10" />
+        <text class="network-node-label" x="0" y="68" text-anchor="middle">
+          Internal Service
+        </text>
+      </g>
+    </svg>
+  </figure>
+
+  <p class="slide-takeaway slide-takeaway--risk">
+    <strong>A User Can Induce Preview to Request a Resource the User Cannot Reach.</strong>
+  </p>
+
+  <aside class="notes">
+    The topology is unchanged: the user remains outside the application and
+    private networks, while Preview runs inside the application network. The
+    normal public fetch path is still present but de-emphasized. The user has
+    no direct route to the internal service, yet Preview can reach it. A
+    user-influenced internal URL can therefore make Preview send the request
+    and relay the response. Transition with: "This kind of unintended
+    server-side request is known as SSRF."
+  </aside>
+</section>

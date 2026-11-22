@@ -1,0 +1,161 @@
+<section class="content-slide architecture-slide">
+  <p class="eyebrow">Background | Network topology</p>
+  <h2>A Simple Link Preview Topology</h2>
+
+  <figure class="architecture-figure">
+    <svg
+      class="network-topology"
+      viewBox="0 0 1320 520"
+      role="img"
+      aria-labelledby="normal-topology-title normal-topology-description"
+    >
+      <title id="normal-topology-title">
+        Network topology for a server-side link preview
+      </title>
+      <desc id="normal-topology-description">
+        A browser in a client network sends a URL to a preview service in an
+        application network. The preview service fetches an external website
+        over the public Internet and returns preview metadata to the browser.
+      </desc>
+
+      <defs>
+        <marker
+          id="network-arrow-accent-3"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto-start-reverse"
+        >
+          <path class="network-arrow network-arrow--accent" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <g>
+        <rect class="network-zone" x="30" y="82" width="310" height="350" rx="18" />
+        <text class="network-zone-label" x="55" y="116">CLIENT NETWORK</text>
+      </g>
+      <g>
+        <rect
+          class="network-zone network-zone--application"
+          x="390"
+          y="82"
+          width="340"
+          height="350"
+          rx="18"
+        />
+        <text class="network-zone-label" x="415" y="116">APPLICATION NETWORK</text>
+      </g>
+      <g>
+        <rect class="network-zone" x="860" y="42" width="420" height="235" rx="18" />
+        <text class="network-zone-label" x="885" y="76">PUBLIC INTERNET</text>
+      </g>
+
+      <g>
+        <path
+          class="network-link network-link--accent"
+          d="M265 255H480"
+          marker-start="url(#network-arrow-accent-3)"
+          marker-end="url(#network-arrow-accent-3)"
+        />
+        <circle class="network-port network-port--accent" cx="340" cy="255" r="5" />
+        <circle class="network-port network-port--accent" cx="390" cy="255" r="5" />
+        <text
+          class="network-link-label network-link-label--accent"
+          x="373"
+          y="229"
+          text-anchor="middle"
+        >
+          HTTPS
+        </text>
+        <text class="network-link-detail" x="373" y="288" text-anchor="middle">
+          URL / preview metadata
+        </text>
+      </g>
+
+      <g>
+        <path
+          class="network-link network-link--accent"
+          d="M630 215H790V155H1000"
+          marker-start="url(#network-arrow-accent-3)"
+          marker-end="url(#network-arrow-accent-3)"
+        />
+        <circle class="network-port network-port--accent" cx="730" cy="215" r="5" />
+        <circle class="network-port network-port--accent" cx="860" cy="155" r="5" />
+        <text
+          class="network-link-label network-link-label--accent"
+          x="895"
+          y="129"
+          text-anchor="middle"
+        >
+          Outbound HTTP(S)
+        </text>
+        <text class="network-link-detail" x="895" y="188" text-anchor="middle">
+          Page request / HTML
+        </text>
+      </g>
+
+      <g class="network-node" transform="translate(185 255)">
+        <rect class="network-device" x="-70" y="-61" width="140" height="92" rx="7" />
+        <line class="network-device" x1="-70" y1="-34" x2="70" y2="-34" />
+        <circle class="network-status-dot" cx="-49" cy="-47" r="4" />
+        <circle class="network-status-dot" cx="-35" cy="-47" r="4" />
+        <circle class="network-status-dot" cx="-21" cy="-47" r="4" />
+        <line class="network-device" x1="0" y1="31" x2="0" y2="49" />
+        <line class="network-device" x1="-32" y1="49" x2="32" y2="49" />
+        <text class="network-node-label" x="0" y="93" text-anchor="middle">
+          User / Browser
+        </text>
+        <text class="network-node-detail" x="0" y="122" text-anchor="middle">
+          Client endpoint
+        </text>
+      </g>
+
+      <g
+        class="network-node network-node--preview"
+        transform="translate(560 255)"
+      >
+        <rect class="network-device" x="-70" y="-68" width="140" height="43" rx="7" />
+        <rect class="network-device" x="-70" y="-15" width="140" height="43" rx="7" />
+        <rect class="network-device" x="-70" y="38" width="140" height="43" rx="7" />
+        <circle class="network-status-dot" cx="47" cy="-47" r="5" />
+        <circle class="network-status-dot" cx="47" cy="6" r="5" />
+        <circle class="network-status-dot" cx="47" cy="59" r="5" />
+        <line class="network-device-detail" x1="-45" y1="-47" x2="18" y2="-47" />
+        <line class="network-device-detail" x1="-45" y1="6" x2="18" y2="6" />
+        <line class="network-device-detail" x1="-45" y1="59" x2="18" y2="59" />
+        <text class="network-node-label" x="0" y="124" text-anchor="middle">
+          Preview Service
+        </text>
+        <text class="network-node-detail" x="0" y="153" text-anchor="middle">
+          Server-side fetcher
+        </text>
+      </g>
+
+      <g class="network-node" transform="translate(1090 155)">
+        <circle class="network-device" cx="0" cy="0" r="66" />
+        <ellipse class="network-device" cx="0" cy="0" rx="29" ry="66" />
+        <line class="network-device" x1="-62" y1="-22" x2="62" y2="-22" />
+        <line class="network-device" x1="-62" y1="22" x2="62" y2="22" />
+        <text class="network-node-label" x="0" y="104" text-anchor="middle">
+          External Website
+        </text>
+      </g>
+    </svg>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>The Preview Service, Not the User's Browser, Makes the HTTP Request.</strong>
+  </p>
+
+  <aside class="notes">
+    Read this first as a network topology. The browser is a client endpoint,
+    Preview runs inside an application network, and the external website is
+    on the public Internet. The two bidirectional links show network
+    connectivity; their labels identify the traffic carried on those links.
+    The user submits a URL over HTTPS, while Preview performs the outbound
+    page fetch. Transition with: "Because the request comes from Preview, it
+    uses Preview's network access."
+  </aside>
+</section>

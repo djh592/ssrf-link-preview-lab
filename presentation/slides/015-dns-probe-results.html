@@ -1,0 +1,182 @@
+<section class="content-slide dns-results-slide">
+  <p class="eyebrow">Evaluation | Recursive DNS evidence</p>
+  <h2>Did the Client Use the Address It Checked?</h2>
+
+  <figure class="dns-results-figure">
+    <p class="dns-results-condition">
+      Matched condition · Rebinding · TTL 0 · Empty cache
+    </p>
+
+    <svg
+      class="dns-results-comparison"
+      viewBox="0 0 1320 390"
+      role="img"
+      aria-labelledby="dns-results-title dns-results-description"
+    >
+      <title id="dns-results-title">
+        Observed recursive-DNS traces for each-hop validation and address binding
+      </title>
+      <desc id="dns-results-description">
+        In the each-hop probe, validation checked external address 172.23.0.2,
+        but the HTTP client connected to internal address 172.24.0.2 and
+        disclosed the report. In the bound probe, validation checked and the
+        client connected to external address 172.23.0.2, with no internal access.
+      </desc>
+
+      <defs>
+        <marker
+          id="dns-results-arrow-risk-15"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="dns-results-arrowhead dns-results-arrowhead--risk" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="dns-results-arrow-accent-15"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="dns-results-arrowhead dns-results-arrowhead--accent" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <text class="dns-results-column-title" x="370" y="30" text-anchor="middle">
+        ADDRESS DECISION
+      </text>
+      <text class="dns-results-column-title" x="770" y="30" text-anchor="middle">
+        OBSERVED HTTP PEER
+      </text>
+      <text class="dns-results-column-title" x="1155" y="30" text-anchor="middle">
+        SERVICE OUTCOME
+      </text>
+      <line class="dns-results-rule" x1="40" y1="48" x2="1280" y2="48" />
+      <line class="dns-results-rule" x1="40" y1="210" x2="1280" y2="210" />
+
+      <g class="dns-results-policy" transform="translate(40 106)">
+        <text class="dns-results-policy-name" x="0" y="0">EACH HOP</text>
+        <text class="dns-results-policy-detail" x="0" y="27">single verified probe</text>
+      </g>
+
+      <g class="dns-results-observation dns-results-observation--external" transform="translate(250 70)">
+        <rect width="240" height="100" rx="10" />
+        <text class="dns-results-observation-label" x="24" y="28">CHECKED IP</text>
+        <text class="dns-results-service" x="24" y="59">External Web</text>
+        <text class="dns-results-address" x="24" y="85">172.23.0.2</text>
+      </g>
+
+      <path
+        class="dns-results-path dns-results-path--risk"
+        d="M490 120H650"
+        marker-end="url(#dns-results-arrow-risk-15)"
+      />
+      <text class="dns-results-path-label dns-results-path-label--risk" x="570" y="91" text-anchor="middle">
+        resolved again
+      </text>
+      <g class="dns-results-relation dns-results-relation--risk" transform="translate(570 120)">
+        <circle r="19" />
+        <text x="0" y="7" text-anchor="middle">≠</text>
+      </g>
+
+      <g class="dns-results-observation dns-results-observation--internal" transform="translate(650 70)">
+        <rect width="240" height="100" rx="10" />
+        <text class="dns-results-observation-label" x="24" y="28">CONNECTED IP</text>
+        <text class="dns-results-service" x="24" y="59">Internal Report</text>
+        <text class="dns-results-address" x="24" y="85">172.24.0.2</text>
+      </g>
+
+      <path
+        class="dns-results-path dns-results-path--risk"
+        d="M890 120H1030"
+        marker-end="url(#dns-results-arrow-risk-15)"
+      />
+
+      <g class="dns-results-outcome dns-results-outcome--risk" transform="translate(1030 70)">
+        <rect width="250" height="100" rx="10" />
+        <text class="dns-results-outcome-label" x="24" y="31">INTERNAL ACCESS</text>
+        <text class="dns-results-outcome-title" x="24" y="61">Report reached</text>
+        <text class="dns-results-outcome-detail" x="24" y="85">Marker disclosed</text>
+      </g>
+
+      <g class="dns-results-policy" transform="translate(40 268)">
+        <text class="dns-results-policy-name dns-results-policy-name--accent" x="0" y="0">
+          CHECK &amp; BIND
+        </text>
+        <text class="dns-results-policy-detail" x="0" y="27">single verified probe</text>
+      </g>
+
+      <g class="dns-results-observation dns-results-observation--external" transform="translate(250 232)">
+        <rect width="240" height="100" rx="10" />
+        <text class="dns-results-observation-label" x="24" y="28">CHECKED IP</text>
+        <text class="dns-results-service" x="24" y="59">External Web</text>
+        <text class="dns-results-address" x="24" y="85">172.23.0.2</text>
+      </g>
+
+      <path
+        class="dns-results-path dns-results-path--accent"
+        d="M490 282H650"
+        marker-end="url(#dns-results-arrow-accent-15)"
+      />
+      <text class="dns-results-path-label dns-results-path-label--accent" x="570" y="253" text-anchor="middle">
+        approved IP pinned
+      </text>
+      <g class="dns-results-relation dns-results-relation--accent" transform="translate(570 282)">
+        <circle r="19" />
+        <text x="0" y="7" text-anchor="middle">=</text>
+      </g>
+
+      <g class="dns-results-observation dns-results-observation--external" transform="translate(650 232)">
+        <rect width="240" height="100" rx="10" />
+        <text class="dns-results-observation-label" x="24" y="28">CONNECTED IP</text>
+        <text class="dns-results-service" x="24" y="59">External Web</text>
+        <text class="dns-results-address" x="24" y="85">172.23.0.2</text>
+      </g>
+
+      <path
+        class="dns-results-path dns-results-path--accent"
+        d="M890 282H1030"
+        marker-end="url(#dns-results-arrow-accent-15)"
+      />
+
+      <g class="dns-results-outcome dns-results-outcome--safe" transform="translate(1030 232)">
+        <rect width="250" height="100" rx="10" />
+        <text class="dns-results-outcome-label" x="24" y="31">INTERNAL ACCESS</text>
+        <text class="dns-results-outcome-title" x="24" y="61">Not observed</text>
+        <text class="dns-results-outcome-detail" x="24" y="85">External preview returned</text>
+      </g>
+
+      <text class="dns-results-authority" x="250" y="370">
+        Authority answers: each hop 172.23.0.2 → 172.24.0.2 · bound 172.23.0.2 only
+      </text>
+    </svg>
+
+    <figcaption>
+      Evidence complete: authority events · resolver logs · recorded HTTP peer · service logs
+    </figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>Per-Hop Validation Checked the External IP but Connected to the Internal IP; Binding Kept Them the Same.</strong>
+  </p>
+
+  <aside class="notes">
+    These are two separate single probes under the same rebinding, TTL-zero,
+    empty-cache condition. In the each-hop probe, validation approved the first
+    external DNS answer. Because the transport was not bound, it resolved the
+    hostname again, received the internal answer, and connected to the internal
+    report. The independent report log and returned marker confirm access and
+    disclosure. In the bound probe, the approved external IP was supplied to
+    libcurl, the recorded peer remained the external service, and no internal
+    access was observed. These traces establish the mechanism in this testbed;
+    they are not repeated success-rate estimates. Transition with: "Binding
+    closed the observed DNS gap, but a useful defense must also preserve
+    legitimate pages and redirects."
+  </aside>
+</section>

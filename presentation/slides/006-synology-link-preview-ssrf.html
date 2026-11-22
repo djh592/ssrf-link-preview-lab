@@ -1,0 +1,45 @@
+<section class="content-slide incident-slide">
+  <p class="eyebrow">Motivation | Scope</p>
+  <h2>Why Study Link-Preview SSRF?</h2>
+
+  <p class="link-preview-rationale">
+    Fetching a <strong>user-chosen URL</strong> is the feature itself—so
+    blocking every outbound request is not a usable defense.
+  </p>
+
+  <figure class="incident-evidence-figure">
+    <img
+      src="assets/cve-2017-11148-record.png"
+      alt="Official CVE record submitted by Synology describing a link-preview SSRF vulnerability that allowed authenticated users to access intranet resources"
+    />
+
+    <figcaption>
+      Source:
+      <a href="https://www.cve.org/CVERecord?id=CVE-2017-11148">
+        CVE-2017-11148
+      </a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.synology.com/en-global/support/security/Synology_SA_17_38_Chat">
+        Synology advisory
+      </a>
+    </figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>Link Preview Must Fetch Public URLs—but Not Private Services.</strong>
+  </p>
+
+  <aside class="notes">
+    Link preview is not the only SSRF setting, and we do not claim it is
+    uniquely dangerous. We choose it because fetching a user-selected public
+    page is the feature's normal behavior. A useful defense therefore cannot
+    simply block all outbound requests without breaking the feature. It must
+    preserve public previews while preventing access to private services. This
+    official CVE record, submitted by Synology, shows that this boundary has
+    failed in a real link-preview product. The record leaves the exploit vector
+    unspecified, so do not attribute this case to redirects, DNS rebinding, or
+    another particular mechanism. Transition with: "One difficulty is that the
+    effective destination may change after the initial URL is checked—through
+    HTTP redirects or DNS resolution."
+  </aside>
+</section>

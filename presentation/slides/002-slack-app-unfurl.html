@@ -1,0 +1,40 @@
+<section class="content-slide slack-unfurl-slide">
+  <p class="eyebrow">Background | How it works</p>
+  <h2>One Way to Generate a Link Preview</h2>
+
+  <figure class="slack-unfurl-figure">
+    <img
+      src="assets/slack-unfurl-flow.svg"
+      alt="Slack app unfurl flow: a message with an app-associated link triggers a link_shared event; the app handles it and returns custom content through chat.unfurl, and Slack displays the preview in the message."
+      width="818"
+      height="522"
+    />
+    <figcaption class="slack-unfurl-caption">
+      <span>Slack app unfurl example</span>
+      <span class="slack-unfurl-source">
+        Source:
+        <a href="https://docs.slack.dev/messaging/unfurling-links-in-messages/">
+          Slack Developer Documentation, "Unfurling links in messages"
+        </a>
+      </span>
+    </figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>A Slack App Can Return a Preview After a Link Is Shared.</strong>
+  </p>
+
+  <aside class="notes">
+    Use Slack as one concrete example of how a link preview can be generated,
+    not as the subject of the project. When a message contains a link
+    associated with an installed app, Slack sends the app a
+    <code>link_shared</code> event. The app handles that event and can call
+    <code>chat.unfurl</code>; Slack then renders the returned content in the
+    original message. This is neither a universal preview architecture nor
+    the only preview mechanism Slack supports, and it does not establish that
+    the app fetches the linked page. Transition by contrasting it with the
+    next slide by abstracting away the Slack-specific details and examining a
+    simple server-side preview topology: the preview service itself fetches
+    the submitted URL.
+  </aside>
+</section>

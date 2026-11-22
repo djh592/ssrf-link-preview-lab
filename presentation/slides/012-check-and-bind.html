@@ -1,0 +1,207 @@
+<section class="content-slide fetch-policy-slide">
+  <p class="eyebrow">System | Fetch policy</p>
+  <h2>How Does a Check Govern the Connection?</h2>
+
+  <figure class="fetch-policy-figure">
+    <svg
+      class="fetch-policy-pipeline"
+      viewBox="0 0 1320 470"
+      role="img"
+      aria-labelledby="fetch-policy-title fetch-policy-description"
+    >
+      <title id="fetch-policy-title">
+        Check-and-bind request pipeline with per-hop redirect handling
+      </title>
+      <desc id="fetch-policy-description">
+        The current URL is resolved and authorized. An approved address is
+        bound to a one-hop libcurl request, and the observed HTTP peer is
+        verified against it. A redirect location becomes the next current URL
+        and passes through the same process again. A denied address stops
+        before transport.
+      </desc>
+
+      <defs>
+        <marker
+          id="fetch-arrow-accent-12"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="fetch-arrowhead fetch-arrowhead--accent" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="fetch-arrow-muted-12"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="fetch-arrowhead fetch-arrowhead--muted" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="fetch-arrow-risk-12"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="fetch-arrowhead fetch-arrowhead--risk" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <path
+        class="fetch-redirect-loop"
+        d="M1160 178V84H160V178"
+        marker-end="url(#fetch-arrow-muted-12)"
+      />
+      <text class="fetch-loop-title" x="660" y="57" text-anchor="middle">
+        3xx Location becomes the next hop
+      </text>
+
+      <path
+        class="fetch-main-arrow"
+        d="M270 235H365"
+        marker-end="url(#fetch-arrow-accent-12)"
+      />
+      <path
+        class="fetch-main-arrow"
+        d="M580 235H710"
+        marker-end="url(#fetch-arrow-accent-12)"
+      />
+      <text class="fetch-connector-label" x="645" y="213" text-anchor="middle">
+        Approved IP
+      </text>
+      <path
+        class="fetch-main-arrow"
+        d="M930 235H1035"
+        marker-end="url(#fetch-arrow-accent-12)"
+      />
+      <text class="fetch-connector-label" x="982" y="213" text-anchor="middle">
+        One request
+      </text>
+
+      <path
+        class="fetch-block-path"
+        d="M390 304C348 325 330 355 330 382"
+        marker-end="url(#fetch-arrow-risk-12)"
+      />
+      <g class="fetch-blocked" transform="translate(330 407)">
+        <circle cx="0" cy="0" r="19" />
+        <path d="M-9 -9 9 9M9 -9 -9 9" />
+        <text x="0" y="42" text-anchor="middle">Denied addresses stop before transport</text>
+      </g>
+
+      <g class="fetch-stage fetch-stage--target" transform="translate(160 235)">
+        <rect class="fetch-browser" x="-110" y="-61" width="220" height="122" rx="10" />
+        <line class="fetch-browser-rule" x1="-110" y1="-27" x2="110" y2="-27" />
+        <circle class="fetch-browser-dot" cx="-88" cy="-44" r="4" />
+        <circle class="fetch-browser-dot" cx="-74" cy="-44" r="4" />
+        <circle class="fetch-browser-dot" cx="-60" cy="-44" r="4" />
+        <rect class="fetch-address-bar" x="-83" y="-7" width="166" height="31" rx="6" />
+        <text class="fetch-address-text" x="0" y="14" text-anchor="middle">
+          https://host/path
+        </text>
+        <text class="fetch-stage-title" x="0" y="102" text-anchor="middle">
+          Current URL
+        </text>
+        <text class="fetch-stage-detail" x="0" y="129" text-anchor="middle">
+          Initial or redirected target
+        </text>
+      </g>
+
+      <g class="fetch-stage fetch-stage--policy" transform="translate(472 235)">
+        <rect class="fetch-policy-sheet" x="-98" y="-87" width="196" height="174" rx="10" />
+        <text class="fetch-policy-host" x="-69" y="-53">host</text>
+        <line class="fetch-policy-rule" x1="-69" y1="-35" x2="69" y2="-35" />
+
+        <circle class="fetch-policy-check" cx="-66" cy="-6" r="11" />
+        <path class="fetch-policy-checkmark" d="M-72 -6 -67 -1 -59 -11" />
+        <text class="fetch-policy-address" x="-43" y="0">allowed IP A</text>
+
+        <circle class="fetch-policy-check" cx="-66" cy="31" r="11" />
+        <path class="fetch-policy-checkmark" d="M-72 31 -67 36 -59 26" />
+        <text class="fetch-policy-address" x="-43" y="37">allowed IP B</text>
+
+        <path class="fetch-policy-selected" d="M-69 59H69" />
+        <text class="fetch-policy-output" x="0" y="76" text-anchor="middle">
+          Select approved address
+        </text>
+        <text class="fetch-stage-title" x="0" y="128" text-anchor="middle">
+          Resolve &amp; Authorize
+        </text>
+        <text class="fetch-stage-detail" x="0" y="155" text-anchor="middle">
+          Apply policy before transport
+        </text>
+      </g>
+
+      <g class="fetch-stage fetch-stage--transport" transform="translate(820 235)">
+        <circle class="fetch-transport-halo" cx="0" cy="0" r="105" />
+        <rect class="fetch-transport-server" x="-68" y="-55" width="136" height="42" rx="7" />
+        <rect class="fetch-transport-server" x="-68" y="-4" width="136" height="42" rx="7" />
+        <circle class="fetch-transport-status" cx="45" cy="-34" r="5" />
+        <circle class="fetch-transport-status" cx="45" cy="17" r="5" />
+        <path class="fetch-transport-detail" d="M-43 -34H18M-43 17H18" />
+
+        <g class="fetch-binding" transform="translate(0 72)">
+          <rect x="-92" y="-19" width="184" height="38" rx="19" />
+          <text x="0" y="6" text-anchor="middle">CHECK &amp; BIND</text>
+        </g>
+        <text class="fetch-stage-title" x="0" y="127" text-anchor="middle">
+          Send One Hop
+        </text>
+        <text class="fetch-stage-detail" x="0" y="154" text-anchor="middle">
+          Hostname retained; IP pinned
+        </text>
+      </g>
+
+      <g class="fetch-stage fetch-stage--response" transform="translate(1160 235)">
+        <rect class="fetch-response-server" x="-93" y="-75" width="186" height="150" rx="10" />
+        <path class="fetch-response-header" d="M-93 -35H93" />
+        <circle class="fetch-response-dot" cx="-69" cy="-55" r="5" />
+        <circle class="fetch-response-dot" cx="-51" cy="-55" r="5" />
+        <text class="fetch-response-status" x="-65" y="-7">HTTP 2xx / 3xx</text>
+        <text class="fetch-response-label" x="-65" y="24">OBSERVED PEER</text>
+        <text class="fetch-response-peer" x="-65" y="52">= approved IP</text>
+        <text class="fetch-stage-title" x="0" y="116" text-anchor="middle">
+          Observe Response
+        </text>
+        <text class="fetch-stage-detail" x="0" y="143" text-anchor="middle">
+          Record status, Location &amp; peer
+        </text>
+      </g>
+    </svg>
+
+    <figcaption>
+      Address binding:
+      <a href="https://curl.se/libcurl/c/CURLOPT_RESOLVE.html">
+        libcurl <code>CURLOPT_RESOLVE</code>
+      </a>
+    </figcaption>
+  </figure>
+
+  <p class="slide-takeaway">
+    <strong>The Approved Address Must Be Used and Verified on Every Request Hop.</strong>
+  </p>
+
+  <aside class="notes">
+    Each iteration begins with one current URL, either the submitted URL or a
+    redirect target. The address policy resolves that target and records its
+    decision before transport begins. Check and bind passes the selected
+    address into libcurl through CURLOPT_RESOLVE, retaining the hostname while
+    pinning the connection to the approved IP. The transport sends exactly one
+    hop because automatic redirect following is disabled. It then records
+    CURLINFO_PRIMARY_IP and rejects a peer that differs from the binding. A
+    3xx Location is validated and becomes the next current URL, so the policy
+    runs again. Other experiment policies intentionally omit either later-hop
+    checks or connection binding. Transition with: "Now let's follow one
+    request through these controls and the path the testbed actually
+    observed."
+  </aside>
+</section>
