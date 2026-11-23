@@ -1,0 +1,436 @@
+<section class="content-slide destination-sequence-slide">
+  <p class="eyebrow">Motivation | Destination changes</p>
+  <h2>URL Approval ≠ Connection Identity</h2>
+
+  <div
+    class="destination-sequence"
+    role="group"
+    aria-label="Animated sequence diagrams for HTTP redirect and DNS rebinding"
+  >
+    <figure class="destination-sequence-figure">
+      <svg
+        viewBox="0 -70 1450 720"
+        role="img"
+        aria-labelledby="destination-sequence-title destination-sequence-description"
+      >
+        <title id="destination-sequence-title">
+          HTTP redirect and DNS rebinding request sequences
+        </title>
+        <desc id="destination-sequence-description">
+          The first sequence shows an attacker submitting a public redirect URL
+          that leads the preview service to an internal report. The second
+          sequence shows the same hostname returning a public address during
+          policy validation and a private address during connection setup.
+        </desc>
+        <defs>
+          <marker
+            id="sequence-arrow-blue"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path class="destination-sequence-arrow--blue" d="M0 0 10 5 0 10Z" />
+          </marker>
+          <marker
+            id="sequence-arrow-red"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path class="destination-sequence-arrow--red" d="M0 0 10 5 0 10Z" />
+          </marker>
+        </defs>
+
+        <g
+          class="destination-sequence-common fragment fade-in"
+          data-fragment-index="0"
+          transform="translate(0 -30)"
+        >
+          <g class="destination-sequence-actor destination-sequence-actor--attacker">
+            <rect x="15" y="40" width="210" height="78" rx="8" />
+            <circle cx="45" cy="70" r="8" />
+            <path d="M30 101c2-12 9-18 15-18s13 6 15 18" />
+            <text x="75" y="84">Attacker</text>
+          </g>
+
+          <g class="destination-sequence-actor destination-sequence-actor--preview">
+            <rect x="270" y="40" width="290" height="78" rx="8" />
+            <rect x="295" y="64" width="38" height="9" rx="2" />
+            <rect x="295" y="81" width="38" height="9" rx="2" />
+            <circle cx="324" cy="68" r="2" />
+            <circle cx="324" cy="85" r="2" />
+            <text x="360" y="84">Preview Service</text>
+          </g>
+
+          <g class="destination-sequence-actor destination-sequence-actor--report">
+            <rect x="580" y="40" width="250" height="78" rx="8" />
+            <path d="M603 62h18l8 8v26h-26Z" />
+            <path d="M621 62v8h8" />
+            <line x1="610" y1="80" x2="622" y2="80" />
+            <line x1="610" y1="87" x2="619" y2="87" />
+            <text x="642" y="84">Internal Report</text>
+          </g>
+
+          <g class="destination-sequence-lifelines" aria-hidden="true">
+            <line x1="120" y1="118" x2="120" y2="680" />
+            <line class="destination-sequence-lifeline--system" x1="415" y1="118" x2="415" y2="680" />
+            <line class="destination-sequence-lifeline--system" x1="705" y1="118" x2="705" y2="680" />
+          </g>
+        </g>
+
+        <g
+          class="destination-sequence-http fragment fade-out"
+          data-fragment-index="6"
+          transform="translate(0 -30)"
+        >
+          <g class="destination-sequence-method-heading fragment fade-in" data-fragment-index="0">
+            <text class="destination-sequence-method-index" x="15" y="-10">Method 01</text>
+            <text class="destination-sequence-mode" x="155" y="-10">HTTP Redirect</text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="1">
+            <path
+              class="destination-sequence-message destination-sequence-message--blue"
+              d="M120 160H405"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="262" y="146" text-anchor="middle">
+              Submit https://redirect.lab/start
+            </text>
+
+            <g class="destination-sequence-status" transform="translate(435 207)">
+              <circle r="10" />
+              <path d="M-4 0l3 3 6-7" />
+              <text x="18" y="5">Initial URL allowed</text>
+            </g>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="2">
+            <g class="destination-sequence-actor destination-sequence-actor--mechanism">
+              <rect x="1000" y="40" width="280" height="78" rx="8" />
+              <circle cx="1030" cy="77" r="14" />
+              <ellipse cx="1030" cy="77" rx="6" ry="14" />
+              <line x1="1017" y1="72" x2="1043" y2="72" />
+              <line x1="1017" y1="82" x2="1043" y2="82" />
+              <text x="1055" y="74">Redirect Server</text>
+              <text class="destination-sequence-actor-detail" x="1055" y="98">
+                Attacker controlled
+              </text>
+            </g>
+            <line class="destination-sequence-lifeline" x1="1140" y1="118" x2="1140" y2="680" />
+
+            <path
+              class="destination-sequence-message destination-sequence-message--blue"
+              d="M425 270H1130"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="778" y="256" text-anchor="middle">
+              GET /start
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="3">
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M1140 345H425"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="782"
+              y="331"
+              text-anchor="middle"
+            >
+              302 Location: http://internal-report/report
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="4">
+            <path
+              class="destination-sequence-message destination-sequence-message--red"
+              d="M425 430H695"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="560"
+              y="416"
+              text-anchor="middle"
+            >
+              GET /report
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="5">
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M705 505H425"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="565"
+              y="491"
+              text-anchor="middle"
+            >
+              200 OK · Private report
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M415 575H130"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="272"
+              y="561"
+              text-anchor="middle"
+            >
+              Report preview returned
+            </text>
+          </g>
+        </g>
+
+        <g
+          class="destination-sequence-dns fragment fade-in"
+          data-fragment-index="6"
+          transform="translate(0 -30)"
+        >
+          <g class="destination-sequence-method-heading">
+            <text class="destination-sequence-method-index" x="15" y="-10">Method 02</text>
+            <text class="destination-sequence-mode" x="155" y="-10">DNS Rebinding</text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="7">
+            <path
+              class="destination-sequence-message destination-sequence-message--blue"
+              d="M120 160H405"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="262" y="146" text-anchor="middle">
+              Submit http://rebind.lab/report
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="8">
+            <g class="destination-sequence-actor destination-sequence-actor--mechanism">
+              <rect x="850" y="40" width="290" height="78" rx="8" />
+              <circle cx="880" cy="77" r="14" />
+              <path d="M870 77h20M880 67c5 6 5 14 0 20M880 67c-5 6-5 14 0 20" />
+              <text x="905" y="74">Recursive Resolver</text>
+              <text class="destination-sequence-actor-detail" x="905" y="98">System resolver</text>
+            </g>
+            <line class="destination-sequence-lifeline" x1="995" y1="118" x2="995" y2="680" />
+
+            <g class="destination-sequence-actor destination-sequence-actor--mechanism">
+              <rect x="1160" y="40" width="280" height="78" rx="8" />
+              <circle cx="1190" cy="77" r="14" />
+              <ellipse cx="1190" cy="77" rx="6" ry="14" />
+              <line x1="1177" y1="72" x2="1203" y2="72" />
+              <line x1="1177" y1="82" x2="1203" y2="82" />
+              <text x="1215" y="74">Authoritative DNS</text>
+              <text class="destination-sequence-actor-detail" x="1215" y="98">
+                Attacker controlled
+              </text>
+            </g>
+            <line class="destination-sequence-lifeline" x1="1300" y1="118" x2="1300" y2="680" />
+
+            <path
+              class="destination-sequence-message destination-sequence-message--blue"
+              d="M415 200H985"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="560" y="186" text-anchor="middle">
+              Resolve for policy
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--blue"
+              d="M995 250H1290"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="1142" y="236" text-anchor="middle">
+              Query rebind.lab
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="9">
+            <path
+              class="destination-sequence-message destination-sequence-message--blue destination-sequence-message--response"
+              d="M1300 295H1005"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="1152" y="281" text-anchor="middle">
+              Public address
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--blue destination-sequence-message--response"
+              d="M995 340H425"
+              marker-end="url(#sequence-arrow-blue)"
+            />
+            <text class="destination-sequence-message-label" x="850" y="326" text-anchor="middle">
+              Public address
+            </text>
+
+            <g class="destination-sequence-status" transform="translate(435 372)">
+              <circle r="10" />
+              <path d="M-4 0l3 3 6-7" />
+              <text x="18" y="5">Address allowed</text>
+            </g>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="10">
+            <path
+              class="destination-sequence-message destination-sequence-message--red"
+              d="M415 415H985"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="560"
+              y="401"
+              text-anchor="middle"
+            >
+              Resolve for connection
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--red"
+              d="M995 460H1290"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="1142"
+              y="446"
+              text-anchor="middle"
+            >
+              Query rebind.lab
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="11">
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M1300 500H1005"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="1152"
+              y="486"
+              text-anchor="middle"
+            >
+              Private address
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M995 540H425"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="850"
+              y="526"
+              text-anchor="middle"
+            >
+              Private address
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="12">
+            <path
+              class="destination-sequence-message destination-sequence-message--red"
+              d="M425 590H695"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="560"
+              y="576"
+              text-anchor="middle"
+            >
+              GET /report
+            </text>
+          </g>
+
+          <g class="fragment fade-in" data-fragment-index="13">
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M705 625H425"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="565"
+              y="611"
+              text-anchor="middle"
+            >
+              200 OK · Private report
+            </text>
+
+            <path
+              class="destination-sequence-message destination-sequence-message--red destination-sequence-message--response"
+              d="M415 665H130"
+              marker-end="url(#sequence-arrow-red)"
+            />
+            <text
+              class="destination-sequence-message-label destination-sequence-message-label--red"
+              x="272"
+              y="651"
+              text-anchor="middle"
+            >
+              Report preview returned
+            </text>
+          </g>
+        </g>
+      </svg>
+    </figure>
+
+  </div>
+
+  <p class="destination-sequence-source fragment fade-in" data-fragment-index="0">
+    Mechanisms:
+    <a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">
+      OWASP SSRF Prevention Cheat Sheet
+    </a>
+  </p>
+
+  <div class="destination-sequence-conclusion fragment fade-in" data-fragment-index="14">
+    <p class="slide-takeaway">
+      A Destination Can Change After It Is Approved.
+    </p>
+  </div>
+
+  <aside class="notes">
+    Start with the title only. Advance once to show Method 01 and the three
+    participants. Advance again: the attacker submits a public redirect URL,
+    which the preview service allows. Next, the service requests the redirect
+    server. The server returns a private Location. The service then requests
+    the internal report without revalidating the new target. Finally, the
+    report returns through the preview service to the attacker. Advance to
+    clear the first sequence and introduce Method 02 with the same three base
+    participants. The attacker submits rebind.lab. The preview service then
+    resolves it for policy validation, introducing the recursive resolver and
+    attacker-controlled authoritative DNS server. Their public response passes
+    the address check. During connection setup, a second query returns a
+    private address. The service requests the internal report, which returns
+    through the preview service to the attacker. Cache state, TTL, resolver
+    behavior, and the HTTP client's connection path determine whether this
+    sequence succeeds in practice. These are conceptual mechanisms, not
+    project results. Advance once more for the common conclusion: the
+    destination can change after the initial approval, whether a redirect
+    replaces the URL or a later DNS answer changes its address.
+    Transition: "Can we stop private access without destroying useful public
+    previews?"
+  </aside>
+</section>

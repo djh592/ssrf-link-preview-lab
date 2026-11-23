@@ -1,0 +1,46 @@
+<section class="content-slide evidence-scope-slide">
+  <p class="eyebrow">Limitations | Evidence scope</p>
+  <h2>Where the Evidence Stops</h2>
+
+  <div class="evidence-scope-list">
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="0">
+      <div class="evidence-scope-label"><span>01</span><strong>Redirects</strong></div>
+      <div class="evidence-scope-copy">
+        <p>We tested direct requests and chains of 1 or 3 redirects in controlled HTTP fixtures.</p>
+      </div>
+    </div>
+
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="1">
+      <div class="evidence-scope-label"><span>02</span><strong>DNS rebinding</strong></div>
+      <div class="evidence-scope-copy">
+        <p>Four single probes cannot establish a success rate across TTL and cache conditions.</p>
+        <small>In the TTL 1, primed-cache probe, the each-hop policy stayed on the external address.</small>
+      </div>
+    </div>
+
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="2">
+      <div class="evidence-scope-label"><span>03</span><strong>Broader coverage</strong></div>
+      <div class="evidence-scope-copy">
+        <p>We evaluated one HTTP client stack and selected IPv4 scenarios; HTTPS and IPv6 were not measured.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="3">
+    Our Findings Apply to the Tested Scenarios and Environment.
+  </p>
+
+  <aside class="notes">
+    Our repeated HTTP comparison covers the specific direct and redirect
+    fixtures shown, including chains of one and three redirects. It does not
+    establish behavior for all redirect chains. Our DNS evidence consists of
+    four single probes through an Unbound caching resolver, not repeated rate
+    measurements. In the each-hop probe with TTL 1 and a primed cache, the
+    connection stayed at the external service, so the attack did not reach the
+    internal report. This is a single observation, not a general claim about
+    cached rebinding. The measurements use Python and PycURL/libcurl with
+    selected IPv4 and HTTP fixtures; HTTPS, IPv6, connection reuse, other clients,
+    and production network controls remain outside the evaluated conditions.
+    Transition: "These boundaries suggest three concrete next steps."
+  </aside>
+</section>

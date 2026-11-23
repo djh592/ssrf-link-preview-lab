@@ -1,0 +1,186 @@
+<section class="content-slide preview-boundary-slide">
+  <p class="eyebrow">Motivation | Security boundary</p>
+  <h2>Link Preview as a Network Boundary</h2>
+
+  <div class="preview-boundary">
+    <div class="preview-boundary-copy">
+      <div
+        class="preview-boundary-stage preview-boundary-stage--expected fragment fade-in"
+        data-fragment-index="0"
+      >
+        <span>Expected</span>
+        <strong>Preview fetches public pages.</strong>
+      </div>
+
+      <div
+        class="preview-boundary-stage preview-boundary-stage--blocked fragment fade-in"
+        data-fragment-index="1"
+      >
+        <span>Network boundary</span>
+        <strong>The browser cannot directly reach the internal report.</strong>
+      </div>
+
+      <div
+        class="preview-boundary-stage preview-boundary-stage--risk fragment fade-in"
+        data-fragment-index="2"
+      >
+        <span>Privileged fetcher</span>
+        <strong>The Preview Service Can Reach What the User Cannot.</strong>
+      </div>
+
+      <div class="preview-boundary-evidence fragment fade-in" data-fragment-index="3">
+        <p>
+          A documented Synology Chat link-preview vulnerability allowed
+          authenticated users to access intranet resources.
+        </p>
+        <p>
+          <a href="https://www.synology.com/en-global/support/security/Synology_SA_17_38_Chat">
+            CVE-2017-11148
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="https://cwe.mitre.org/data/definitions/918.html">CWE-918</a>
+        </p>
+      </div>
+    </div>
+
+    <figure class="preview-boundary-topology">
+      <svg
+        viewBox="0 0 760 500"
+        role="img"
+        aria-labelledby="preview-boundary-title preview-boundary-description"
+      >
+        <title id="preview-boundary-title">Link preview service at a network boundary</title>
+        <desc id="preview-boundary-description">
+          The browser, preview service, and public website form a horizontal
+          request path. The protected internal report sits below the preview
+          service inside the same private network. The browser's direct request
+          stops at the network boundary, while the preview service has a path
+          to the report.
+        </desc>
+        <defs>
+          <marker
+            id="preview-boundary-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path class="preview-boundary-arrow--normal" d="M0 0 10 5 0 10Z" />
+          </marker>
+          <marker
+            id="preview-boundary-risk-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path class="preview-boundary-arrow--risk" d="M0 0 10 5 0 10Z" />
+          </marker>
+        </defs>
+
+        <g class="preview-boundary-zone fragment fade-in" data-fragment-index="1">
+          <rect x="275" y="95" width="195" height="390" rx="8" />
+          <text x="372" y="122" text-anchor="middle">PRIVATE NETWORK</text>
+        </g>
+
+        <g class="preview-boundary-public-layer fragment fade-in" data-fragment-index="0">
+          <g class="preview-workflow-links">
+            <path d="M155 180H305" marker-end="url(#preview-boundary-arrow)" />
+            <path d="M425 180H590" marker-end="url(#preview-boundary-arrow)" />
+          </g>
+          <g class="preview-workflow-link-labels">
+            <text x="210" y="156" text-anchor="middle">Submit URL</text>
+            <text x="555" y="156" text-anchor="middle">Fetch public page</text>
+          </g>
+
+          <g class="preview-workflow-node" transform="translate(95 205)">
+            <rect x="-52" y="-43" width="104" height="72" rx="6" />
+            <line x1="-52" y1="-22" x2="52" y2="-22" />
+            <circle class="preview-workflow-detail" cx="-37" cy="-32" r="3" />
+            <circle class="preview-workflow-detail" cx="-26" cy="-32" r="3" />
+            <line x1="0" y1="29" x2="0" y2="46" />
+            <line x1="-26" y1="46" x2="26" y2="46" />
+          </g>
+          <g
+            class="preview-workflow-node preview-workflow-node--service"
+            transform="translate(365 205)"
+          >
+            <rect x="-52" y="-49" width="104" height="27" rx="4" />
+            <rect x="-52" y="-14" width="104" height="27" rx="4" />
+            <rect x="-52" y="21" width="104" height="27" rx="4" />
+            <circle class="preview-workflow-detail" cx="34" cy="-35" r="4" />
+            <circle class="preview-workflow-detail" cx="34" cy="0" r="4" />
+            <circle class="preview-workflow-detail" cx="34" cy="35" r="4" />
+          </g>
+          <g class="preview-workflow-node" transform="translate(650 205)">
+            <circle r="50" />
+            <ellipse rx="23" ry="50" />
+            <line x1="-47" y1="-16" x2="47" y2="-16" />
+            <line x1="-47" y1="16" x2="47" y2="16" />
+          </g>
+          <g class="preview-workflow-node-labels">
+            <text x="95" y="290" text-anchor="middle">User / Browser</text>
+            <text x="365" y="290" text-anchor="middle">Preview Service</text>
+            <text x="650" y="290" text-anchor="middle">Public Website</text>
+          </g>
+        </g>
+
+        <g class="preview-boundary-private-layer fragment fade-in" data-fragment-index="1">
+          <path class="preview-boundary-blocked-path" d="M145 245H195V400H260" />
+          <text class="preview-boundary-blocked-label" x="115" y="374" text-anchor="middle">
+            Direct request
+          </text>
+          <g class="preview-boundary-block" transform="translate(275 400)">
+            <circle r="14" />
+            <path d="M-5-5 5 5M5-5-5 5" />
+          </g>
+
+          <g class="preview-boundary-report" transform="translate(365 400)">
+            <rect x="-38" y="-32" width="76" height="65" rx="6" />
+            <path d="M-14 -18H12L22 -8V21H-14Z" />
+            <path d="M12 -18V-8H22" />
+            <line x1="-5" y1="3" x2="13" y2="3" />
+            <line x1="-5" y1="11" x2="9" y2="11" />
+          </g>
+          <text class="preview-boundary-report-label" x="365" y="472" text-anchor="middle">
+            Internal Report
+          </text>
+        </g>
+
+        <g class="preview-boundary-risk-layer fragment fade-in" data-fragment-index="2">
+          <path
+            class="preview-boundary-risk-path"
+            d="M418 245H455V400H416"
+            marker-end="url(#preview-boundary-risk-arrow)"
+          />
+          <text class="preview-boundary-risk-label" x="475" y="340">
+            Server-side request
+          </text>
+        </g>
+      </svg>
+    </figure>
+  </div>
+
+  <p class="slide-takeaway preview-boundary-takeaway fragment fade-in" data-fragment-index="4">
+    Is checking the submitted URL enough to control every connection that follows?
+  </p>
+
+  <aside class="notes">
+    Start with the normal behavior: the browser submits a URL and the preview
+    service fetches a public page. Advance to add the protected network. The
+    browser has no direct route to the internal report, so its attempted path
+    stops at the boundary. Advance again: the preview service occupies a more
+    privileged network position and may be induced to make the internal
+    request. The red preview-to-report path is an illustrative request, not a
+    measured run or proof of disclosure. Advance again for the real-product
+    evidence: Synology's advisory documents a failed link-preview boundary,
+    but does not establish a redirect or DNS mechanism. Advance once more and
+    ask: "Is checking the submitted URL enough to control every connection
+    that follows?" The next slide shows how a destination can change after
+    approval.
+  </aside>
+</section>

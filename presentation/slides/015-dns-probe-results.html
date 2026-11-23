@@ -1,6 +1,6 @@
 <section class="content-slide dns-results-slide">
   <p class="eyebrow">Evaluation | Recursive DNS evidence</p>
-  <h2>Did the Client Use the Address It Checked?</h2>
+  <h2>Per-Hop Validation Checked One Address but Connected to Another</h2>
 
   <figure class="dns-results-figure">
     <p class="dns-results-condition">
@@ -158,13 +158,9 @@
     </svg>
 
     <figcaption>
-      Evidence complete: authority events · resolver logs · recorded HTTP peer · service logs
+      Two single probes · authority answers, resolver logs, HTTP peers, and service logs · no rate estimate
     </figcaption>
   </figure>
-
-  <p class="slide-takeaway">
-    <strong>Per-Hop Validation Checked the External IP but Connected to the Internal IP; Binding Kept Them the Same.</strong>
-  </p>
 
   <aside class="notes">
     These are two separate single probes under the same rebinding, TTL-zero,

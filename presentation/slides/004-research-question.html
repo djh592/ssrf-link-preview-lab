@@ -1,0 +1,52 @@
+<section class="content-slide research-question-slide">
+  <p class="eyebrow">Research question | Two goals</p>
+  <h2>Can We Block Private Access Without Breaking Public Previews?</h2>
+
+  <div class="research-question-goals" role="group" aria-label="The two goals of the evaluation">
+    <article class="research-goal-row research-goal-row--security fragment fade-in" data-fragment-index="0">
+      <div class="research-goal-heading">
+        <h3>Security</h3>
+      </div>
+      <div class="research-goal-purpose">
+        <strong>Keep private resources unreachable.</strong>
+        <p>Block requests to the internal report and prevent its protected marker from returning.</p>
+      </div>
+      <div class="research-goal-measures">
+        <span>What we measure</span>
+        <strong>Internal request reached?</strong>
+        <strong>Protected marker returned?</strong>
+      </div>
+    </article>
+
+    <article class="research-goal-row research-goal-row--utility fragment fade-in" data-fragment-index="1">
+      <div class="research-goal-heading">
+        <h3>Preview utility</h3>
+      </div>
+      <div class="research-goal-purpose">
+        <strong>Keep legitimate previews useful.</strong>
+        <p>Preserve successful direct and allowed redirected previews while measuring added latency.</p>
+      </div>
+      <div class="research-goal-measures">
+        <span>What we measure</span>
+        <strong>Preview success</strong>
+        <strong>Median / P95 latency</strong>
+      </div>
+    </article>
+  </div>
+
+  <p class="slide-takeaway research-question-takeaway fragment fade-in" data-fragment-index="2">
+    A useful defense must satisfy both goals.
+  </p>
+
+  <aside class="notes">
+    This question has two equally important sides. First, security: a protected
+    internal report must not receive the request, and its marker must not be
+    disclosed. Second, preview utility: legitimate direct and allowed redirected
+    previews should still work, while the policy's added latency remains visible.
+    Rejecting every outbound request would make the feature useless, so the
+    evaluation must measure both outcomes. Reveal the takeaway only after both
+    goals are visible. The exact policies come later, after the testbed is
+    introduced. Transition: "To answer both sides, we needed a working preview
+    environment and evidence beyond the preview response itself."
+  </aside>
+</section>

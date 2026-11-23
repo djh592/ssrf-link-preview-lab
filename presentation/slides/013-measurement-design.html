@@ -1,165 +1,77 @@
 <section class="content-slide evaluation-design-slide">
-  <p class="eyebrow">Evaluation | Measurement design</p>
-  <h2>How Do We Judge Each Trial?</h2>
+  <p class="eyebrow">Evaluation | Controlled comparison</p>
+  <h2>How Did We Evaluate the Defenses?</h2>
 
-  <figure class="evaluation-design-figure">
-    <svg
-      class="evaluation-design"
-      viewBox="0 0 1320 450"
-      role="img"
-      aria-labelledby="evaluation-design-title evaluation-design-description"
-    >
-      <title id="evaluation-design-title">
-        Scenario and policy conditions feed separate security and utility outcomes
-      </title>
-      <desc id="evaluation-design-description">
-        The evaluation crosses scenario groups with fetch policies. Each trial
-        then contributes separate security and preview-utility outcomes. DNS
-        probe evidence is kept separate from the browser demo's modeled DNS
-        sequence.
-      </desc>
+  <div class="evaluation-design">
+    <div class="evaluation-setup" aria-label="Five policies, each run 50 times per HTTP scenario">
+      <strong>Five policies</strong>
+      <svg class="evaluation-brace" viewBox="0 0 24 160" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M22 2C6 2 13 28 10 56C9 72 6 78 2 80C6 82 9 88 10 104C13 132 6 158 22 158" />
+      </svg>
+      <ul>
+        <li>No check</li>
+        <li>Initial URL</li>
+        <li>Each hop</li>
+        <li>Check &amp; bind</li>
+        <li>No redirects</li>
+      </ul>
+      <span class="evaluation-setup-arrow" aria-hidden="true">→</span>
+      <p>50 trials per scenario and policy</p>
+    </div>
 
-      <defs>
-        <marker
-          id="evaluation-arrow-accent-13"
-          viewBox="0 0 10 10"
-          refX="9"
-          refY="5"
-          markerWidth="7"
-          markerHeight="7"
-          orient="auto"
-        >
-          <path class="evaluation-arrowhead evaluation-arrowhead--accent" d="M0 0 10 5 0 10Z" />
-        </marker>
-        <marker
-          id="evaluation-arrow-risk-13"
-          viewBox="0 0 10 10"
-          refX="9"
-          refY="5"
-          markerWidth="7"
-          markerHeight="7"
-          orient="auto"
-        >
-          <path class="evaluation-arrowhead evaluation-arrowhead--risk" d="M0 0 10 5 0 10Z" />
-        </marker>
-      </defs>
+    <div class="evaluation-cases" aria-label="Repeated HTTP experiments">
+      <article class="evaluation-case fragment fade-in" data-fragment-index="0">
+        <h3>Normal previews</h3>
+        <p class="evaluation-question">Do legitimate previews still work?</p>
+        <p>Test a direct page and pages with 1 or 3 redirects.</p>
+        <p>Measure preview success and latency.</p>
+        <strong>750 HTTP trials</strong>
+      </article>
 
-      <g class="evaluation-conditions">
-        <text class="evaluation-section-title" x="42" y="44">TRIAL CONDITIONS</text>
-        <line class="evaluation-rule" x1="42" y1="62" x2="635" y2="62" />
+      <article class="evaluation-case evaluation-case--attack fragment fade-in" data-fragment-index="1">
+        <h3>SSRF attacks</h3>
+        <p class="evaluation-question">Can an attacker reach the internal report?</p>
+        <p>Test a private IP or name, and 1 or 3 redirects.</p>
+        <p>Measure internal access and marker disclosure.</p>
+        <strong>1,000 HTTP trials</strong>
+      </article>
+    </div>
 
-        <text class="evaluation-row-label" x="42" y="105">NORMAL</text>
-        <text class="evaluation-row-detail" x="178" y="105">
-          750 trials · 3 scenarios × 5 policies × 50
-        </text>
-        <line class="evaluation-row-rule" x1="42" y1="124" x2="635" y2="124" />
+    <p class="evaluation-dns fragment fade-in" data-fragment-index="2">
+      <strong>DNS rebinding:</strong> 4 individual traces show the mechanism, not an attack rate.
+    </p>
+  </div>
 
-        <text class="evaluation-row-label" x="42" y="166">HTTP ATTACK</text>
-        <text class="evaluation-row-detail" x="178" y="166">
-          1,000 trials · 4 scenarios × 5 policies × 50
-        </text>
-        <line class="evaluation-row-rule" x1="42" y1="185" x2="635" y2="185" />
-
-        <text class="evaluation-row-label" x="42" y="227">DNS PROBES*</text>
-        <text class="evaluation-row-detail" x="178" y="227">
-          4 verified single runs · recursive DNS evidence
-        </text>
-
-        <text class="evaluation-section-title evaluation-policy-heading" x="42" y="286">
-          FETCH POLICY
-        </text>
-        <line class="evaluation-rule" x1="42" y1="304" x2="635" y2="304" />
-        <g class="evaluation-policy-list">
-          <text x="67" y="338">No check</text>
-          <text x="176" y="338">Initial URL</text>
-          <text x="292" y="338">Each hop</text>
-          <text x="398" y="338">Check &amp; bind</text>
-          <text x="542" y="338">No redirects</text>
-        </g>
-      </g>
-
-      <path
-        class="evaluation-flow evaluation-flow--first"
-        d="M640 205H699"
-        marker-end="url(#evaluation-arrow-accent-13)"
-      />
-
-      <g class="evaluation-trial-record" transform="translate(758 205)">
-        <circle cx="0" cy="0" r="63" />
-        <path class="evaluation-record-mark" d="M-24 -28H24V27H-24ZM-14 -15H14M-14 -2H14M-14 11H6" />
-        <text class="evaluation-trial-label" x="0" y="83" text-anchor="middle">
-          ONE RESOLVED TRIAL
-        </text>
-        <text class="evaluation-trial-detail" x="0" y="108" text-anchor="middle">
-          Trace + service evidence agree
-        </text>
-        <text class="evaluation-trial-detail" x="0" y="132" text-anchor="middle">
-          Unresolved trials stay separate
-        </text>
-      </g>
-
-      <path
-        class="evaluation-flow evaluation-flow--security"
-        d="M821 175H865V120H900"
-        marker-end="url(#evaluation-arrow-risk-13)"
-      />
-      <path
-        class="evaluation-flow evaluation-flow--utility"
-        d="M821 235H865V283H900"
-        marker-end="url(#evaluation-arrow-accent-13)"
-      />
-
-      <g class="evaluation-outcome evaluation-outcome--security">
-        <rect x="900" y="60" width="378" height="128" rx="12" />
-        <text class="evaluation-outcome-title" x="928" y="96">SECURITY</text>
-        <text class="evaluation-outcome-label" x="928" y="127">Internal access</text>
-        <text class="evaluation-outcome-detail" x="1110" y="127">
-          matching internal-report event
-        </text>
-        <text class="evaluation-outcome-label" x="928" y="160">Disclosure</text>
-        <text class="evaluation-outcome-detail" x="1110" y="160">
-          marker + matching response identity
-        </text>
-      </g>
-
-      <g class="evaluation-outcome evaluation-outcome--utility">
-        <rect x="900" y="222" width="378" height="128" rx="12" />
-        <text class="evaluation-outcome-title" x="928" y="258">PREVIEW UTILITY</text>
-        <text class="evaluation-outcome-label" x="928" y="289">Normal success</text>
-        <text class="evaluation-outcome-detail" x="1110" y="289">
-          expected metadata within timeout
-        </text>
-        <text class="evaluation-outcome-label" x="928" y="322">Latency</text>
-        <text class="evaluation-outcome-detail" x="1110" y="322">
-          median / P95 of successful tasks
-        </text>
-      </g>
-
-      <text class="evaluation-footnote" x="900" y="390">
-        * Mechanism evidence—not a repeated-rate measurement.
-      </text>
-    </svg>
-  </figure>
-
-  <p class="slide-takeaway">
-    <strong>Security and Preview Utility Are Measured Separately Under the Same Fetch Policies.</strong>
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="3">
+    We measure both security and the usefulness of normal previews.
   </p>
 
   <aside class="notes">
-    The demo showed individual paths. The repeated evaluation contains 750
-    normal trials and 1,000 HTTP attack trials: 50 repetitions of every
-    scenario-policy condition. The four recursive-DNS probes are kept separate
-    because they are verified mechanism evidence, not a repeated-rate study.
-    Every result remains tied to one trial ID.
-    An internal access is counted only when internal-report logs show the
-    matching request. Disclosure additionally requires the synthetic marker in
-    the returned metadata and a matching internal response identity. A normal
-    preview succeeds only when it returns the expected metadata within the
-    task timeout; latency is summarized among successful normal tasks. Keep
-    unresolved attempts separate from blocked attempts. The DNS probe has its
-    own resolver and peer evidence, so it must not be merged with the GUI's
-    application-modeled DNS sequence.
-    Transition with: "With those definitions, we can first ask whether an
-    attacker-controlled request reached the protected service."
+    The Web UI showed individual explanatory runs through the testbed. Those
+    runs illustrate the mechanisms; they are not the repeated measurements.
+    We now define the controlled comparison behind the findings.
+
+    We compare five policies in the same preview pipeline. For each HTTP
+    scenario, we run each policy 50 times.
+
+    First, do the defenses preserve normal previews? We test a direct page,
+    a one-redirect page, and a three-redirect page. Three scenarios times five
+    policies times fifty repetitions give 750 trials. A normal preview succeeds
+    when the expected title and description return within the timeout. We report
+    success and median and P95 latency for successful previews.
+
+    Second, can an attacker cause an internal request? Four scenarios test a
+    direct private IP, a stable private service name, and one- and three-hop
+    redirects to the report. Four times five times fifty gives 1,000 trials.
+    We distinguish report access from marker disclosure. All 1,750 HTTP trials
+    have complete evidence.
+
+    Separately, four individual recursive-DNS probes connect DNS answers to the
+    HTTP peer and report-service events. They illustrate behavior under the
+    tested TTL and cache conditions, not an attack rate. The browser demo uses
+    individual explanatory runs and is not included in the trial counts.
+
+    Transition: "With the scenarios and repetition counts defined, we can now
+    compare the five policies."
   </aside>
 </section>

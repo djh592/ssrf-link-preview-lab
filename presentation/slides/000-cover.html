@@ -1,11 +1,115 @@
-<section class="title-slide">
-  <p class="eyebrow">DASE7508 | Final Project</p>
-  <h1>SSRF Link Preview Lab</h1>
-  <p class="subtitle">
-    A controlled testbed for studying server-side request forgery in link preview services.
-  </p>
+<section class="title-slide cover-slide">
+  <div class="cover-layout">
+    <div class="cover-copy">
+      <p class="eyebrow">DASE7508 · Security of Intelligent Systems</p>
+      <h1>SSRF Link Preview Lab</h1>
+      <p class="subtitle">
+        An Instrumented Testbed for Attacks and Defenses in Link Preview Services
+      </p>
+    </div>
+
+    <svg
+      class="cover-motif"
+      viewBox="0 0 500 350"
+      role="img"
+      aria-labelledby="cover-motif-title cover-motif-description"
+    >
+      <title id="cover-motif-title">A preview worker with two possible destinations</title>
+      <desc id="cover-motif-description">
+        A submitted URL enters a preview worker. One path reaches the public web and
+        another path reaches an internal service.
+      </desc>
+      <defs>
+        <marker
+          id="cover-arrow-accent"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="cover-arrowhead cover-arrowhead--accent" d="M0 0 10 5 0 10Z" />
+        </marker>
+        <marker
+          id="cover-arrow-risk"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto"
+        >
+          <path class="cover-arrowhead cover-arrowhead--risk" d="M0 0 10 5 0 10Z" />
+        </marker>
+      </defs>
+
+      <g class="cover-url" transform="translate(118 18)">
+        <rect width="264" height="54" rx="27" />
+        <circle cx="29" cy="27" r="6" />
+        <text x="49" y="34">User-submitted URL</text>
+      </g>
+
+      <path
+        class="cover-path cover-path--accent"
+        d="M250 73V116"
+        marker-end="url(#cover-arrow-accent)"
+      />
+
+      <g class="cover-worker" transform="translate(181 124)">
+        <rect width="138" height="98" rx="12" />
+        <rect x="27" y="15" width="84" height="44" rx="5" />
+        <line x1="42" y1="30" x2="96" y2="30" />
+        <line x1="42" y1="43" x2="82" y2="43" />
+      </g>
+      <text class="cover-node-label" x="250" y="211" text-anchor="middle">
+        Preview Worker
+      </text>
+
+      <path
+        class="cover-path cover-path--accent"
+        d="M204 220C189 250 153 266 118 277"
+        marker-end="url(#cover-arrow-accent)"
+      />
+      <path
+        class="cover-path cover-path--risk"
+        d="M296 220C311 250 347 266 382 277"
+        marker-end="url(#cover-arrow-risk)"
+      />
+
+      <g class="cover-destination cover-destination--public" transform="translate(53 282)">
+        <circle cx="55" cy="0" r="38" />
+        <ellipse cx="55" cy="0" rx="17" ry="38" />
+        <line x1="17" y1="0" x2="93" y2="0" />
+      </g>
+      <text class="cover-destination-label" x="108" y="338" text-anchor="middle">
+        Public Web
+      </text>
+
+      <g class="cover-destination cover-destination--internal" transform="translate(337 254)">
+        <rect width="90" height="66" rx="9" />
+        <path d="M31 18H58L67 27V50H31Z" />
+        <path d="M58 18V28H67" />
+        <line x1="39" y1="36" x2="58" y2="36" />
+        <line x1="39" y1="44" x2="54" y2="44" />
+      </g>
+      <text class="cover-destination-label cover-destination-label--risk" x="382" y="338" text-anchor="middle">
+        Internal Service
+      </text>
+    </svg>
+  </div>
+
+  <div class="cover-team" aria-label="Project team">
+    <p><strong>Junhui Ding</strong><span>3030150122</span></p>
+    <p><strong>Yingshu Li</strong><span>3036094514</span></p>
+    <p><strong>Jiayi Zhong</strong><span>3036802105</span></p>
+  </div>
+
   <aside class="notes">
-    Introduce the project as a controlled testbed for studying SSRF in services
-    that fetch user-submitted URLs to generate link previews.
+    Introduce the project directly: "Our project is SSRF Link Preview Lab, an
+    instrumented testbed for studying attacks and defenses in link-preview
+    services." Introduce the three team members without explaining the final
+    security finding on the cover. Transition with: "First, what is a link
+    preview, and what normal behavior are these defenses trying to preserve?"
   </aside>
 </section>

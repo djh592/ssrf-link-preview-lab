@@ -1,0 +1,106 @@
+<section class="content-slide preview-workflow-slide">
+  <p class="eyebrow">Background | Normal workflow</p>
+  <h2>Link Previews in Everyday Use</h2>
+
+  <div class="preview-workflow">
+    <figure class="preview-workflow-example fragment fade-in" data-fragment-index="0">
+      <figcaption>What the user sees</figcaption>
+      <img
+        src="assets/slack-link-preview-example.png"
+        alt="A Slack message containing a URL and a preview card with the page title, description, and image"
+        width="720"
+        height="478"
+      />
+      <p class="preview-workflow-caption">Slack link preview · illustrative example</p>
+    </figure>
+
+    <figure class="preview-workflow-topology fragment fade-in" data-fragment-index="1">
+      <figcaption>What the service does</figcaption>
+      <svg
+        viewBox="0 0 700 470"
+        role="img"
+        aria-labelledby="preview-workflow-title preview-workflow-description"
+      >
+        <title id="preview-workflow-title">Server-side link preview workflow</title>
+        <desc id="preview-workflow-description">
+          The browser submits a URL to the preview service. The preview service
+          requests the public website, receives page content, and returns a
+          preview card to the browser.
+        </desc>
+        <defs>
+          <marker
+            id="preview-workflow-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="8"
+            markerHeight="8"
+            orient="auto"
+          >
+            <path d="M0 0 10 5 0 10Z" />
+          </marker>
+        </defs>
+
+        <g class="preview-workflow-links">
+          <path d="M150 150H292" marker-end="url(#preview-workflow-arrow)" />
+          <path d="M292 200H150" marker-end="url(#preview-workflow-arrow)" />
+          <path d="M408 150H550" marker-end="url(#preview-workflow-arrow)" />
+          <path d="M550 200H408" marker-end="url(#preview-workflow-arrow)" />
+        </g>
+        <g class="preview-workflow-link-labels">
+          <text x="221" y="127" text-anchor="middle">Submit URL</text>
+          <text x="221" y="231" text-anchor="middle">Preview card</text>
+          <text x="479" y="127" text-anchor="middle">Fetch page</text>
+          <text x="479" y="231" text-anchor="middle">Page content</text>
+        </g>
+
+        <g class="preview-workflow-node" transform="translate(92 175)">
+          <rect x="-52" y="-43" width="104" height="72" rx="6" />
+          <line x1="-52" y1="-22" x2="52" y2="-22" />
+          <circle class="preview-workflow-detail" cx="-37" cy="-32" r="3" />
+          <circle class="preview-workflow-detail" cx="-26" cy="-32" r="3" />
+          <line x1="0" y1="29" x2="0" y2="46" />
+          <line x1="-26" y1="46" x2="26" y2="46" />
+        </g>
+        <g class="preview-workflow-node preview-workflow-node--service" transform="translate(350 175)">
+          <rect x="-52" y="-49" width="104" height="27" rx="4" />
+          <rect x="-52" y="-14" width="104" height="27" rx="4" />
+          <rect x="-52" y="21" width="104" height="27" rx="4" />
+          <circle class="preview-workflow-detail" cx="34" cy="-35" r="4" />
+          <circle class="preview-workflow-detail" cx="34" cy="0" r="4" />
+          <circle class="preview-workflow-detail" cx="34" cy="35" r="4" />
+        </g>
+        <g class="preview-workflow-node" transform="translate(608 175)">
+          <circle r="50" />
+          <ellipse rx="23" ry="50" />
+          <line x1="-47" y1="-16" x2="47" y2="-16" />
+          <line x1="-47" y1="16" x2="47" y2="16" />
+        </g>
+
+        <g class="preview-workflow-node-labels">
+          <text x="92" y="291" text-anchor="middle">User / Browser</text>
+          <text x="350" y="291" text-anchor="middle">Preview Service</text>
+          <text x="608" y="291" text-anchor="middle">Public Website</text>
+        </g>
+      </svg>
+      <p class="preview-workflow-caption">Server-side fetch pattern · simplified topology</p>
+    </figure>
+  </div>
+
+  <p class="slide-takeaway preview-workflow-takeaway fragment fade-in" data-fragment-index="2">
+    A Link Preview Can Make the Server Fetch a User's URL.
+  </p>
+
+  <aside class="notes">
+    Open with the title only: link previews are a familiar part of everyday
+    messaging even when users do not know the technical term. Advance once to
+    reveal what the user sees: a URL expands into a title, description, and
+    image. The Slack screenshot is an illustrative product example. Advance
+    again to reveal the server-side pattern studied here: the browser submits
+    the URL, the preview service contacts the public website, and metadata
+    returns as a card. Different products may implement previews differently.
+    Advance a final time for the takeaway: a link preview can make the server
+    fetch a user's URL. Transition: "That request is made from the preview
+    worker's network position, not the user's."
+  </aside>
+</section>

@@ -45,9 +45,9 @@ async function copyRevealRuntime() {
   );
 }
 
-async function validateSlideManifest() {
+async function validateSlideManifest(manifestName) {
   const slidesDirectory = join(outputDirectory, "slides");
-  const manifestPath = join(slidesDirectory, "manifest.json");
+  const manifestPath = join(slidesDirectory, manifestName);
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   if (
     !manifest ||
@@ -73,6 +73,7 @@ async function validateSlideManifest() {
 
 await copyPresentationSources();
 await copyRevealRuntime();
-await validateSlideManifest();
+await validateSlideManifest("manifest.json");
+await validateSlideManifest("results-backup.json");
 
 console.log(`Built ${join(outputDirectory, "index.html")} successfully.`);

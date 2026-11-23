@@ -1,0 +1,102 @@
+<section class="content-slide comparison-results-slide">
+  <p class="eyebrow">Evaluation | Results</p>
+  <h2>How Did the Five Policies Perform?</h2>
+
+  <div class="comparison-results">
+    <table class="comparison-table">
+      <caption>HTTP: 50 trials per scenario and policy · DNS: individual probes</caption>
+      <thead>
+        <tr>
+          <th scope="col">Test / outcome</th>
+          <th scope="col">No check</th>
+          <th scope="col">Initial URL</th>
+          <th scope="col">Each hop</th>
+          <th
+            scope="col"
+            class="comparison-focus comparison-focus-step fragment"
+            data-fragment-index="4"
+          >Check &amp; bind</th>
+          <th scope="col">No redirects</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="fragment fade-in" data-fragment-index="0">
+          <th scope="row">Direct internal<small>Report reached</small></th>
+          <td class="comparison-risk">100 / 100</td>
+          <td>0 / 100</td>
+          <td>0 / 100</td>
+          <td
+            class="comparison-focus comparison-focus-step fragment"
+            data-fragment-index="4"
+          >0 / 100</td>
+          <td>0 / 100</td>
+        </tr>
+        <tr class="fragment fade-in" data-fragment-index="1">
+          <th scope="row">Redirect to internal<small>Report reached</small></th>
+          <td class="comparison-risk">100 / 100</td>
+          <td class="comparison-risk">100 / 100</td>
+          <td>0 / 100</td>
+          <td
+            class="comparison-focus comparison-focus-step fragment"
+            data-fragment-index="4"
+          >0 / 100</td>
+          <td>0 / 100</td>
+        </tr>
+        <tr class="fragment fade-in" data-fragment-index="2">
+          <th scope="row">DNS rebinding<small>Observed peer</small></th>
+          <td class="comparison-na">Not tested</td>
+          <td class="comparison-na">Not tested</td>
+          <td class="comparison-risk">Internal</td>
+          <td
+            class="comparison-focus comparison-focus-step fragment"
+            data-fragment-index="4"
+          >External</td>
+          <td class="comparison-na">Not tested</td>
+        </tr>
+        <tr class="fragment fade-in" data-fragment-index="3">
+          <th scope="row">Normal previews<small>Successful</small></th>
+          <td>150 / 150</td>
+          <td>150 / 150</td>
+          <td>150 / 150</td>
+          <td
+            class="comparison-focus comparison-focus-step fragment"
+            data-fragment-index="4"
+          >150 / 150</td>
+          <td class="comparison-risk">50 / 150</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="comparison-evidence fragment fade-in" data-fragment-index="3">
+      DNS: one probe per tested policy, TTL 0 / empty cache · Direct-page latency, no check → check &amp; bind: median 5.7 → 6.9 ms; P95 57.6 → 62.5 ms
+    </p>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="5">
+    <strong>Check &amp; bind</strong> closed both observed gaps without sacrificing tested preview behavior.
+  </p>
+
+  <aside class="notes">
+    Each HTTP attack row combines two scenarios, 50 trials per scenario and
+    policy. The direct row combines a private IP and a private service name;
+    the redirect row combines one and three redirects to the internal report.
+    Values count requests reaching the report. Internal access and marker
+    disclosure were measured separately and agreed in all 1,000 attack trials.
+
+    For DNS rebinding, the table shows two individual probes under the same
+    TTL-zero, empty-cache condition. Each hop connected to the internal report;
+    Check and bind stayed on the approved external peer. The other policies
+    were not tested in this condition. These probes illustrate the mechanism
+    and do not estimate an attack rate.
+
+    The normal row covers three scenarios, 50 trials each. The No redirects
+    policy rejected all 100 legitimate redirect tasks. For direct pages, the
+    median worker-side latency was 5.7 ms without a check and 6.9 ms with Check
+    and bind; P95 was 57.6 and 62.5 ms. Each is based on 50 successful trials
+    in the isolated lab, with image fetching disabled.
+
+    Check and bind blocked the repeated HTTP attacks, kept the external peer in
+    the matched DNS probe, and preserved all tested normal previews. These
+    findings apply to the tested cases and environment. Transition: "These
+    results also have clear boundaries."
+  </aside>
+</section>

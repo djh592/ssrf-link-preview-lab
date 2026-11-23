@@ -1,0 +1,49 @@
+<section class="content-slide evidence-scope-slide">
+  <p class="eyebrow">Future Work | Broader evaluation</p>
+  <h2>Next Steps</h2>
+
+  <div class="evidence-scope-list">
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="0">
+      <div class="evidence-scope-label"><span>01</span><strong>Redirects</strong></div>
+      <div class="evidence-scope-copy">
+        <p>Test longer chains, cross-host redirects, and HTTP-to-HTTPS transitions.</p>
+        <small><strong>Assess:</strong> internal access, legitimate preview success, and checks at each hop.</small>
+      </div>
+    </div>
+
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="1">
+      <div class="evidence-scope-label"><span>02</span><strong>DNS rebinding</strong></div>
+      <div class="evidence-scope-copy">
+        <p>Repeat probes with Unbound across TTL and applicable cache conditions.</p>
+        <small><strong>Assess:</strong> access and disclosure rates, DNS answers, connected peers, and service events.</small>
+      </div>
+    </div>
+
+    <div class="evidence-scope-row fragment fade-in" data-fragment-index="2">
+      <div class="evidence-scope-label"><span>03</span><strong>Broader coverage</strong></div>
+      <div class="evidence-scope-copy">
+        <p>Test IPv6 and varied URL forms; compare additional HTTP clients.</p>
+        <small><strong>Assess:</strong> checked versus connected addresses and legitimate preview success.</small>
+      </div>
+    </div>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="3">
+    All Future Experiments Should Be Conducted in a Controlled Environment.
+  </p>
+
+  <aside class="notes">
+    Expand the controlled redirect fixtures to include longer chains, changes
+    of host, and HTTP-to-HTTPS transitions. Check each hop and compare both
+    internal access and legitimate preview success. Repeat DNS rebinding probes
+    using the existing Unbound path for TTL 0, 1, and 60 with applicable empty
+    and primed cache conditions; TTL 0 is not a supported primed-cache condition
+    in the current probe. Record internal access and disclosure across repeated
+    runs, and link authority answers, HTTP peers, and service events. Extend
+    coverage to IPv6 and different URL representations, and compare another
+    HTTP client under equivalent scenarios. Assess whether the approved address
+    matches the connected peer and whether legitimate previews still succeed.
+    Conduct these experiments in a controlled environment. Transition: "We can
+    now summarize what our current evidence supports."
+  </aside>
+</section>

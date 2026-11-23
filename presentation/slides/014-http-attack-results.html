@@ -1,11 +1,11 @@
 <section class="content-slide attack-results-slide">
   <p class="eyebrow">Evaluation | HTTP attack results</p>
-  <h2>Where Did Initial Validation Fail?</h2>
+  <h2>Initial Validation Failed on Every Tested Redirect Attack</h2>
 
   <figure class="attack-results-figure">
     <table class="attack-results-table">
       <caption>
-        <strong>Each cell:</strong> internal access / marker disclosure · 100 resolved trials
+        <strong>Each cell:</strong> share of trials with internal access and marker disclosure · 100 trials
       </caption>
       <thead>
         <tr>
@@ -24,19 +24,19 @@
             <span>IP address + service name</span>
           </th>
           <td class="attack-result attack-result--leaked">
-            <strong>100 / 100</strong>
+            <strong>100%</strong>
           </td>
           <td class="attack-result attack-results-focus">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
         </tr>
         <tr>
@@ -45,44 +45,39 @@
             <span>1 redirect + 3 redirects</span>
           </th>
           <td class="attack-result attack-result--leaked">
-            <strong>100 / 100</strong>
+            <strong>100%</strong>
           </td>
           <td class="attack-result attack-result--leaked attack-results-focus">
-            <strong>100 / 100</strong>
+            <strong>100%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
           <td class="attack-result">
-            <strong>0 / 0</strong>
+            <strong>0%</strong>
           </td>
         </tr>
       </tbody>
     </table>
 
     <figcaption>
-      <span><strong>50 repetitions</strong> per constituent scenario</span>
-      <span><strong>0 unresolved trials</strong></span>
+      <span>Access and disclosure were measured separately and agreed in all <strong>1,000 trials</strong>.</span>
+      <span><strong>0 unresolved</strong></span>
     </figcaption>
   </figure>
 
-  <p class="slide-takeaway">
-    <strong>Initial Validation Blocked Direct Targets, but All 100 Redirect Trials Reached and Disclosed the Report.</strong>
-  </p>
-
   <aside class="notes">
-    The vulnerable baseline reached and disclosed the internal report in every
-    direct and redirect trial. Initial-URL validation blocked both direct
-    conditions, but it trusted the original external target and therefore
-    failed in all 100 redirect trials. Internal access and marker disclosure
-    were measured separately; they happen to agree for every HTTP attack in
-    this run. Each-hop validation, check and bind, and rejecting redirects all
-    stopped these static HTTP attack scenarios, with no unresolved trials.
-    This slide does not yet distinguish each-hop validation from address
-    binding. Transition with: "Per-hop validation solved the redirect problem,
-    but did the client actually connect to the address that passed the check?"
+    Return from the browser with the result rather than another methods slide.
+    The baseline reached and disclosed the report in every direct and redirect
+    trial. Initial-URL validation blocked both direct conditions, but trusted
+    the starting external target and failed in all 100 redirect trials. Each
+    cell combines two scenarios repeated 50 times. Access and disclosure were
+    measured independently and agreed in every HTTP attack trial. Each hop,
+    check and bind, and rejecting redirects stopped these static HTTP attacks.
+    This result does not yet establish that transport used the checked address.
+    Transition: "The matched DNS traces expose exactly that remaining gap."
   </aside>
 </section>

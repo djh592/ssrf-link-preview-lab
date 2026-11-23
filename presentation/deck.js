@@ -121,12 +121,15 @@ const revealConfig = {
 };
 
 async function loadSlideSources() {
-  const manifestResponse = await fetch("slides/manifest.json", {
+  const manifestPath = query.get("deck") === "results-backup"
+    ? "slides/results-backup.json"
+    : "slides/manifest.json";
+  const manifestResponse = await fetch(manifestPath, {
     cache: "no-store",
   });
   if (!manifestResponse.ok) {
     throw new Error(
-      `Could not load slides/manifest.json (HTTP ${manifestResponse.status}).`,
+      `Could not load ${manifestPath} (HTTP ${manifestResponse.status}).`,
     );
   }
 
@@ -137,7 +140,7 @@ async function loadSlideSources() {
     manifest.slides.length === 0 ||
     manifest.slides.some((path) => typeof path !== "string" || path.length === 0)
   ) {
-    throw new Error("slides/manifest.json must contain a non-empty slides array.");
+    throw new Error(`${manifestPath} must contain a non-empty slides array.`);
   }
 
   const sources = await Promise.all(

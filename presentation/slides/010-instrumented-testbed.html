@@ -1,143 +1,73 @@
 <section class="content-slide testbed-contribution-slide">
-  <p class="eyebrow">System | Contribution</p>
-  <h2>How Do We Evaluate Link-Preview Fetch Policies?</h2>
+  <p class="eyebrow">Contributions | Testbed and evidence</p>
+  <h2>What Did This Project Contribute?</h2>
 
-  <figure class="testbed-contribution-figure">
-    <svg
-      class="testbed-contribution"
-      viewBox="0 0 1320 440"
-      role="img"
-      aria-labelledby="testbed-contribution-title testbed-contribution-description"
-    >
-      <title id="testbed-contribution-title">
-        Controlled trials produce linked request-path evidence
-      </title>
-      <desc id="testbed-contribution-description">
-        A controlled scenario and fetch policy enter the same instrumented
-        preview pipeline. One trial identifier links the resulting policy
-        decision, observed HTTP peer, and independent service event.
-      </desc>
+  <div class="contribution-layout">
+    <div class="contribution-list" aria-label="Three project contributions">
+      <article class="contribution-row fragment fade-in" data-fragment-index="0">
+        <span class="contribution-number">01</span>
+        <div class="contribution-copy">
+          <h3>Instrumented testbed</h3>
+          <p>
+            A working link-preview service with controlled redirect, DNS, and
+            protected-report fixtures.
+          </p>
+        </div>
+      </article>
 
-      <defs>
-        <marker
-          id="testbed-arrow-10"
-          viewBox="0 0 10 10"
-          refX="9"
-          refY="5"
-          markerWidth="7"
-          markerHeight="7"
-          orient="auto"
-        >
-          <path class="testbed-arrowhead" d="M0 0 10 5 0 10Z" />
-        </marker>
-      </defs>
+      <article class="contribution-row fragment fade-in" data-fragment-index="1">
+        <span class="contribution-number">02</span>
+        <div class="contribution-copy">
+          <h3>Comparable policies</h3>
+          <p>
+            Five defenses exercised through the same preview pipeline and
+            scenario definitions.
+          </p>
+        </div>
+      </article>
 
-      <g class="testbed-stage-heading" transform="translate(210 38)">
-        <circle cx="-108" cy="0" r="17" />
-        <text class="testbed-stage-number" x="-108" y="6" text-anchor="middle">1</text>
-        <text class="testbed-stage-title" x="-80" y="7">CONTROLLED TRIAL</text>
-      </g>
-      <g class="testbed-stage-heading" transform="translate(660 38)">
-        <circle cx="-128" cy="0" r="17" />
-        <text class="testbed-stage-number" x="-128" y="6" text-anchor="middle">2</text>
-        <text class="testbed-stage-title" x="-100" y="7">INSTRUMENTED FETCH</text>
-      </g>
-      <g class="testbed-stage-heading" transform="translate(1110 38)">
-        <circle cx="-102" cy="0" r="17" />
-        <text class="testbed-stage-number" x="-102" y="6" text-anchor="middle">3</text>
-        <text class="testbed-stage-title" x="-74" y="7">LINKED EVIDENCE</text>
-      </g>
+      <article class="contribution-row fragment fade-in" data-fragment-index="2">
+        <span class="contribution-number">03</span>
+        <div class="contribution-copy">
+          <h3>Trial-linked evidence</h3>
+          <p>
+            Policy decisions, DNS answers, connected peers, and destination
+            events joined by trial ID.
+          </p>
+        </div>
+      </article>
+    </div>
 
-      <g class="testbed-input" transform="translate(210 215)">
-        <rect x="-165" y="-118" width="330" height="236" rx="13" />
-        <text class="testbed-input-title" x="0" y="-70" text-anchor="middle">
-          Scenario × Fetch Policy
-        </text>
-        <line x1="-125" y1="-45" x2="125" y2="-45" />
-        <text class="testbed-input-label" x="-125" y="-12">SCENARIO</text>
-        <text class="testbed-input-value" x="-125" y="19">
-          Direct · Redirect · DNS
-        </text>
-        <text class="testbed-input-label" x="-125" y="61">POLICY</text>
-        <text class="testbed-input-value" x="-125" y="92">
-          Initial URL · Each hop · Check &amp; bind
-        </text>
-      </g>
-
-      <path
-        class="testbed-flow-arrow"
-        d="M395 215H480"
-        marker-end="url(#testbed-arrow-10)"
+    <figure class="contribution-reference">
+      <img
+        src="assets/CWE-918-Diagram.png"
+        alt="CWE-918 diagram showing user-controlled input causing a web server to request an unexpected destination"
       />
+      <figcaption>
+        <strong>Informed by</strong>
+        <a href="https://cwe.mitre.org/data/definitions/918.html">CWE-918</a> ·
+        <a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP SSRF prevention guidance</a>
+      </figcaption>
+    </figure>
+  </div>
 
-      <g class="testbed-pipeline" transform="translate(660 215)">
-        <circle class="testbed-pipeline-halo" cx="0" cy="0" r="142" />
-        <rect class="testbed-server" x="-91" y="-87" width="182" height="52" rx="8" />
-        <rect class="testbed-server" x="-91" y="-26" width="182" height="52" rx="8" />
-        <rect class="testbed-server" x="-91" y="35" width="182" height="52" rx="8" />
-        <circle class="testbed-status" cx="63" cy="-61" r="6" />
-        <circle class="testbed-status" cx="63" cy="0" r="6" />
-        <circle class="testbed-status" cx="63" cy="61" r="6" />
-        <line class="testbed-server-detail" x1="-58" y1="-61" x2="27" y2="-61" />
-        <line class="testbed-server-detail" x1="-58" y1="0" x2="27" y2="0" />
-        <line class="testbed-server-detail" x1="-58" y1="61" x2="27" y2="61" />
-        <text class="testbed-pipeline-title" x="0" y="126" text-anchor="middle">
-          Same Preview Pipeline
-        </text>
-        <text class="testbed-pipeline-detail" x="0" y="153" text-anchor="middle">
-          One observed path per trial
-        </text>
-      </g>
-
-      <path
-        class="testbed-flow-arrow"
-        d="M840 215H925"
-        marker-end="url(#testbed-arrow-10)"
-      />
-
-      <g class="testbed-evidence" transform="translate(1110 215)">
-        <rect x="-165" y="-140" width="330" height="280" rx="13" />
-        <g class="testbed-trial-id" transform="translate(0 -104)">
-          <rect x="-91" y="-19" width="182" height="38" rx="19" />
-          <text x="0" y="6" text-anchor="middle">TRIAL ID</text>
-        </g>
-
-        <line class="testbed-evidence-spine" x1="-112" y1="-59" x2="-112" y2="88" />
-        <g class="testbed-evidence-item" transform="translate(0 -54)">
-          <circle cx="-112" cy="0" r="9" />
-          <text class="testbed-evidence-title" x="-83" y="-2">Policy decision</text>
-          <text class="testbed-evidence-detail" x="-83" y="23">Allowed or blocked—and why</text>
-        </g>
-        <g class="testbed-evidence-item" transform="translate(0 17)">
-          <circle cx="-112" cy="0" r="9" />
-          <text class="testbed-evidence-title" x="-83" y="-2">HTTP peer</text>
-          <text class="testbed-evidence-detail" x="-83" y="23">Address actually contacted</text>
-        </g>
-        <g class="testbed-evidence-item" transform="translate(0 88)">
-          <circle cx="-112" cy="0" r="9" />
-          <text class="testbed-evidence-title" x="-83" y="-2">Service event</text>
-          <text class="testbed-evidence-detail" x="-83" y="23">Independent arrival evidence</text>
-        </g>
-      </g>
-    </svg>
-
-    <figcaption>Implemented with Python, PycURL/libcurl, and Docker Compose.</figcaption>
-  </figure>
-
-  <p class="slide-takeaway">
-    <strong>Our Testbed Links Each Policy Decision to the Request Path Actually Observed.</strong>
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="3">
+    The testbed enables safe, controlled reproduction and like-for-like comparison of link-preview SSRF defenses.
   </p>
 
   <aside class="notes">
-    To answer the research question, we built an instrumented link-preview
-    testbed. Each trial combines a controlled scenario with one fetch policy
-    and runs through the same preview pipeline. A trial identifier links the
-    policy decision to the HTTP peer actually contacted and to independent
-    events from the destination service. This lets us compare what a policy
-    intended to block with what the system actually reached. The contribution
-    is the controlled and observable evaluation environment, not a new
-    general-purpose SSRF defense. Transition with: "To interpret that evidence,
-    we first need to define what the attacker controls and which network
-    boundary the preview service must protect."
+    Our contribution is not a new vulnerability or a new HTTP stack. It has
+    three parts. First, we implemented an instrumented link-preview testbed with
+    controlled redirect, DNS, and protected-report fixtures. Second, we made
+    five policies comparable by exercising them through the same preview
+    pipeline and scenario definitions. Third, each trial links policy decisions,
+    DNS answers, connected peers, and independent destination-service events,
+    so a rendered card is not our only evidence.
+
+    The SSRF model and mitigation principles are informed by CWE-918 and OWASP
+    guidance; we do not claim those mechanisms as contributions. The resulting
+    artifact lets us reproduce the attacks in an isolated environment and
+    compare defenses under equivalent conditions. Transition: "That evidence is
+    meaningful only under a precise threat model."
   </aside>
 </section>

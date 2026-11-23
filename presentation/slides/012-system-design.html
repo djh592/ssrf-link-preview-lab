@@ -1,0 +1,60 @@
+<section class="content-slide system-design-slide">
+  <p class="eyebrow">Design | Three choices</p>
+  <h2>How Is the Testbed Designed?</h2>
+
+  <div class="design-choice-list" aria-label="Three testbed design choices">
+    <article class="design-choice-card fragment fade-in" data-fragment-index="0">
+      <div class="design-choice-heading">
+        <h3>Isolate every target</h3>
+      </div>
+      <p>
+        Redirect, DNS, and internal-report services are synthetic fixtures in a
+        bounded Docker environment.
+      </p>
+      <strong>Safe and repeatable attacks</strong>
+    </article>
+
+    <article class="design-choice-card fragment fade-in" data-fragment-index="1">
+      <div class="design-choice-heading">
+        <h3>Vary only the policy</h3>
+      </div>
+      <p>
+        All five defenses use the same redirect handling, preview parser, and
+        PycURL transport.
+      </p>
+      <strong>Like-for-like comparison</strong>
+    </article>
+
+    <article class="design-choice-card fragment fade-in" data-fragment-index="2">
+      <div class="design-choice-heading">
+        <h3>Observe both ends</h3>
+      </div>
+      <p>
+        Trial IDs join policy decisions and connected peers with independent
+        destination-service events.
+      </p>
+      <strong>Evidence beyond the preview</strong>
+    </article>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="3">
+    The Web UI is a live view of the same instrumented testbed used in our experiments.
+  </p>
+
+  <aside class="notes">
+    The design follows three choices. First, every attack target is synthetic
+    and runs inside a bounded Docker environment, so we can repeat the attacks
+    without touching real private services. Second, the request pipeline stays
+    fixed while only the policy changes. Every policy uses the same redirect
+    handling, metadata parser, and PycURL transport, which makes the comparison
+    meaningful. Third, we observe both sides of a request. The preview trace
+    records decisions and connected peers, while the destination services
+    independently record what arrived; a trial ID joins those observations.
+
+    Reveal the takeaway, then leave the slide deck and open the real Web UI.
+    The demonstration is not another slide and does not add a page number. It
+    shows representative runs through this same testbed. After the demonstration,
+    return to the evaluation slide and distinguish those individual runs from
+    the repeated measurements.
+  </aside>
+</section>

@@ -1,0 +1,47 @@
+<section class="content-slide takeaways-slide">
+  <p class="eyebrow">Takeaways</p>
+  <h2>What Did We Learn?</h2>
+
+  <div class="takeaways-content">
+    <article class="takeaways-card fragment fade-in" data-fragment-index="0">
+      <h3>Supported Answer</h3>
+      <p class="takeaways-answer">
+        Within our tested conditions, <strong>Check &amp; Bind</strong> was the
+        only evaluated policy that met both security and preview goals.
+      </p>
+    </article>
+
+    <article class="takeaways-card fragment fade-in" data-fragment-index="1">
+      <h3>Strongest Evidence</h3>
+      <p class="takeaways-result">
+        None of its <strong>200 HTTP attack trials</strong> reached the internal
+        report; the matched DNS probe stayed on the approved external peer; and
+        all <strong>150 normal previews</strong> succeeded.
+      </p>
+    </article>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="2">
+    For intelligent systems that act on untrusted input, validation must
+    constrain the action that is actually executed.
+  </p>
+
+  <aside class="notes">
+    Our security question asked whether a defense could prevent private access
+    without breaking useful public previews. Within our tested conditions, the
+    answer is yes: Check and Bind was the only evaluated policy that addressed
+    both observed destination-change mechanisms while preserving every normal
+    preview scenario.
+
+    The strongest supporting result combines the security and utility evidence.
+    Across the repeated HTTP experiments, none of the 200 Check and Bind attack
+    trials reached the internal report. In the matched DNS mechanism probe, the
+    transport remained bound to the approved external peer. All 150 normal
+    previews succeeded. The HTTP figures are repeated trial results; the DNS
+    statement describes one matched probe rather than an estimated attack rate.
+
+    The broader lesson applies beyond link previews. When a system acts on
+    untrusted input, validating the input is not enough unless that decision
+    constrains the action the system ultimately executes.
+  </aside>
+</section>

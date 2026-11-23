@@ -1,0 +1,68 @@
+<section class="content-slide policy-synthesis-slide">
+  <p class="eyebrow">Evaluation | Supported comparison</p>
+  <h2>Which Defense Met Both Tested Goals?</h2>
+
+  <div class="policy-synthesis fragment fade-in" data-fragment-index="0" role="table" aria-label="Evidence-backed comparison of the five evaluated policies">
+    <div class="policy-synthesis-row policy-synthesis-header" role="row">
+      <span role="columnheader">Evidence-backed property</span>
+      <span role="columnheader">No check</span>
+      <span role="columnheader">Initial URL</span>
+      <span role="columnheader">Each hop</span>
+      <span class="policy-synthesis-focus-step fragment" data-fragment-index="1" role="columnheader">Check &amp; bind</span>
+      <span role="columnheader">No redirects</span>
+    </div>
+
+    <div class="policy-synthesis-row" role="row">
+      <div class="policy-synthesis-property" role="rowheader">
+        <strong>Repeated direct + redirect attacks</strong>
+        <small>1,000 HTTP trials</small>
+      </div>
+      <span class="policy-result policy-result--fail" role="cell"><b>×</b>Failed</span>
+      <span class="policy-result policy-result--fail" role="cell"><b>×</b>Failed</span>
+      <span class="policy-result policy-result--pass" role="cell"><b>✓</b>Blocked</span>
+      <span class="policy-result policy-result--pass policy-synthesis-focus-step fragment" data-fragment-index="1" role="cell"><b>✓</b>Blocked</span>
+      <span class="policy-result policy-result--pass" role="cell"><b>✓</b>Blocked</span>
+    </div>
+
+    <div class="policy-synthesis-row" role="row">
+      <div class="policy-synthesis-property" role="rowheader">
+        <strong>Matched DNS address-swap probe</strong>
+        <small>Rebinding · TTL 0 · empty cache</small>
+      </div>
+      <span class="policy-result policy-result--na" role="cell">—<small>Not tested</small></span>
+      <span class="policy-result policy-result--na" role="cell">—<small>Not tested</small></span>
+      <span class="policy-result policy-result--fail" role="cell"><b>×</b>Failed</span>
+      <span class="policy-result policy-result--pass policy-synthesis-focus-step fragment" data-fragment-index="1" role="cell"><b>✓</b>Blocked</span>
+      <span class="policy-result policy-result--na" role="cell">—<small>Not tested</small></span>
+    </div>
+
+    <div class="policy-synthesis-row" role="row">
+      <div class="policy-synthesis-property" role="rowheader">
+        <strong>Legitimate preview scenarios</strong>
+        <small>750 normal HTTP trials</small>
+      </div>
+      <span class="policy-result policy-result--pass" role="cell"><b>✓</b>150 / 150</span>
+      <span class="policy-result policy-result--pass" role="cell"><b>✓</b>150 / 150</span>
+      <span class="policy-result policy-result--pass" role="cell"><b>✓</b>150 / 150</span>
+      <span class="policy-result policy-result--pass policy-synthesis-focus-step fragment" data-fragment-index="1" role="cell"><b>✓</b>150 / 150</span>
+      <span class="policy-result policy-result--fail" role="cell"><b>×</b>50 / 150</span>
+    </div>
+  </div>
+
+  <p class="slide-takeaway fragment fade-in" data-fragment-index="2">
+    <strong>Check &amp; bind</strong> closed both observed gaps without sacrificing tested preview behavior.
+  </p>
+
+  <aside class="notes">
+    First, reveal the complete matrix. It combines the three result slides and
+    directly answers the research question. No redirects blocked the repeated HTTP attacks but
+    rejected every legitimate redirect. Each hop preserved normal previews and
+    blocked static redirects, but failed the matched DNS address-swap probe.
+    Check and bind blocked the repeated HTTP attacks, kept the peer external in
+    the matched DNS probe, and preserved all tested normal previews. Not tested
+    is deliberately distinct from failure. The answer is limited to the tested
+    conditions. Next, highlight the check-and-bind column, then reveal the
+    takeaway. Transition: "The edge of that evidence defines the experiments
+    we should run next."
+  </aside>
+</section>

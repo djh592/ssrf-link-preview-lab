@@ -26,6 +26,8 @@ Open <http://127.0.0.1:8767/>. The generated `dist/` directory is ignored by Git
 
 Use the arrow keys or Space to navigate. Press `S` to open Reveal.js speaker notes and `T` to cycle system, light, and dark themes. The theme button in the upper-right does the same. The print button opens a one-slide-per-page print view using the current theme; choose **Save to PDF** in the browser print dialog.
 
+For detailed result tables and traces during questions, open the same presentation URL with `?deck=results-backup`, for example <http://127.0.0.1:8766/?deck=results-backup>. This separate deck contains the detailed HTTP, DNS, utility, and policy comparison slides.
+
 ## GitHub Pages
 
 The presentation workflow builds the site for pull requests and deploys it from `main`. Enable GitHub Pages in the repository settings and select **GitHub Actions** as the deployment source. After the first successful deployment, the site will be available at <https://djh592.github.io/ssrf-link-preview-lab/>. Only the generated `dist/` site is uploaded.
