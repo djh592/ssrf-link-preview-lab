@@ -7,6 +7,7 @@ const themeLabels = {
 const themeStorageKey = "ssrf-link-preview-theme";
 const themeToggle = document.querySelector(".theme-toggle");
 const printToggle = document.querySelector(".print-toggle");
+const speakerNotesScale = "0.85em";
 const query = new URLSearchParams(window.location.search);
 const singleSlidePdf = query.get("pdf-mode") === "slides";
 const autoPrint = query.has("auto-print");
@@ -120,6 +121,16 @@ const revealConfig = {
   plugins: [RevealNotes],
 };
 
+function prepareSpeakerNotes(slides) {
+  for (const notes of slides.querySelectorAll("aside.notes")) {
+    const content = document.createElement("div");
+    // Speaker view copies note HTML into a document that does not load styles.css.
+    content.style.fontSize = speakerNotesScale;
+    content.append(...notes.childNodes);
+    notes.append(content);
+  }
+}
+
 async function loadSlideSources() {
   const manifestPath = "slides/manifest.json";
   const manifestResponse = await fetch(manifestPath, {
@@ -157,6 +168,7 @@ async function loadSlideSources() {
   }
 
   slides.innerHTML = sources.join("\n");
+  prepareSpeakerNotes(slides);
   slides.removeAttribute("aria-busy");
 }
 
