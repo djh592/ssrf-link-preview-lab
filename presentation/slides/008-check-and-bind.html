@@ -35,19 +35,29 @@
   </p>
 
   <aside class="notes">
-    A destination check only protects a request if it constrains where the
-    service actually connects. Consider a request to URL A that returns a
-    redirect to URL B. Approval of A says nothing about B, so we check the new
-    target before sending the next request.
+    From our threat model, we get one central principle: a destination check
+    must control the connection that follows.
 
-    Even when a hostname is checked for that hop, a later DNS answer can be
-    different. If IP A passes the check, we bind the connection to IP A. In our
-    implementation, manual redirects return each Location to the policy and
-    libcurl's CURLOPT_RESOLVE supplies the approved IP while retaining the
-    hostname. Peer recording is evidence after a request, not a preventive step.
+    [Click]
 
-    Reveal the takeaway, then transition: "We implement this invariant through
-    three design choices that keep the testbed controlled, comparable, and
-    observable."
+    First, every new URL needs a new decision. If URL A redirects to URL B,
+    approving URL A tells us nothing about URL B. We must check URL B before
+    following the redirect.
+
+    [Click]
+
+    Second, the connection must use the exact IP address that passed the check.
+    If IP A is approved, we bind the request to IP A instead of resolving the
+    hostname again during the connection. In our implementation, we pass this
+    checked IP directly to libcurl.
+
+    Together, these two rules form our Check and Bind policy: check every new
+    URL, and bind every connection to the approved IP.
+
+    [Click]
+
+    The general lesson is simple: validation must constrain execution. A
+    destination is not protected if the final connection can ignore the earlier
+    check.
   </aside>
 </section>

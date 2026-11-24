@@ -76,27 +76,53 @@
   </p>
 
   <aside class="notes">
-    Each HTTP attack row combines two scenarios, 50 trials per scenario and
-    policy. The direct row combines a private IP and a private service name;
-    the redirect row combines one and three redirects to the internal report.
-    Values count requests reaching the report. Internal access and marker
-    disclosure were measured separately and agreed in all 1,000 attack trials.
+    Here are the results. In the first two rows, the number shows how often the
+    internal report was reached, so zero is the safe result. Each row combines
+    two scenarios, with 50 trials for each scenario and policy.
 
-    For DNS rebinding, the table shows two individual probes under the same
-    TTL-zero, empty-cache condition. Each hop connected to the internal report;
-    Check and bind stayed on the approved external peer. The other policies
-    were not tested in this condition. These probes illustrate the mechanism
-    and do not estimate an attack rate.
+    [Click]
 
-    The normal row covers three scenarios, 50 trials each. The No redirects
-    policy rejected all 100 legitimate redirect tasks. For direct pages, the
-    median worker-side latency was 5.7 ms without a check and 6.9 ms with Check
-    and bind; P95 was 57.6 and 62.5 ms. Each is based on 50 successful trials
-    in the isolated lab, with image fetching disabled.
+    For direct internal targets, No Check reached the report in all 100 trials.
+    Every policy that checked the initial destination blocked all 100 attempts.
 
-    Check and bind blocked the repeated HTTP attacks, kept the external peer in
-    the matched DNS probe, and preserved all tested normal previews. These
-    findings apply to the tested cases and environment. Transition: "These
-    results also have clear boundaries."
+    [Click]
+
+    The result changed when we introduced redirects. Initial URL blocked direct
+    access, but it failed in all 100 redirect trials because it did not check
+    the new destination. Each Hop and Check and Bind blocked every redirect
+    attack. No Redirects also blocked them by refusing to follow the redirect.
+
+    Across all 1,000 repeated attack trials, report access and marker disclosure
+    gave the same result.
+
+    [Click]
+
+    For DNS rebinding, we compare two individual probes under the same
+    TTL-zero and empty-cache condition. Each Hop approved an external address
+    but connected to the internal report. Check and Bind stayed on the approved
+    external peer. These are individual mechanism probes, not attack rates.
+
+    [Click]
+
+    For normal tasks, the first four policies succeeded in all 150 trials. No
+    Redirects succeeded in only 50, because it rejected the 100 legitimate
+    previews that required redirects.
+
+    Check and Bind added a small measured cost. The median direct-page latency
+    increased from 5.7 to 6.9 milliseconds, and P95 increased from 57.6 to 62.5
+    milliseconds.
+
+    [Click]
+
+    This is why we focus on Check and Bind. It blocked the repeated direct and
+    redirect attacks, kept the external peer in the matched DNS probe, and
+    preserved all tested normal previews.
+
+    [Click]
+
+    Within our tested conditions, Check and Bind closed both observed
+    destination-change gaps without sacrificing tested preview behavior.
+
+    However, these results have clear boundaries, which I will explain next.
   </aside>
 </section>

@@ -27,21 +27,27 @@
   </p>
 
   <aside class="notes">
-    Our security question asked whether a defense could prevent private access
-    without breaking useful public previews. Within our tested conditions, the
-    answer is yes: Check and Bind was the only evaluated policy that addressed
-    both observed destination-change mechanisms while preserving every normal
-    preview scenario.
+    Finally, let us return to our main research question.
 
-    The strongest supporting result combines the security and utility evidence.
-    Across the repeated HTTP experiments, none of the 200 Check and Bind attack
-    trials reached the internal report. In the matched DNS mechanism probe, the
-    transport remained bound to the approved external peer. All 150 normal
-    previews succeeded. The HTTP figures are repeated trial results; the DNS
-    statement describes one matched probe rather than an estimated attack rate.
+    [Click]
 
-    The broader lesson applies beyond link previews. When a system acts on
-    untrusted input, validating the input is not enough unless that decision
-    constrains the action the system ultimately executes.
+    Within our tested conditions, the answer is yes. Check and Bind was the
+    only evaluated policy that blocked both observed destination-change attacks
+    while preserving all tested normal previews.
+
+    [Click]
+
+    The strongest evidence is straightforward. None of its 200 HTTP attack
+    trials reached the internal report. The matched DNS probe stayed on the
+    approved external peer, and all 150 normal previews succeeded.
+
+    The HTTP numbers come from repeated trials, while the DNS result is one
+    matched mechanism probe.
+
+    [Click]
+
+    The broader lesson applies beyond link previews. When an intelligent system
+    acts on untrusted input, validating the input alone is not enough.
+    Validation must constrain the action that is actually executed.
   </aside>
 </section>

@@ -1,5 +1,5 @@
 <section class="content-slide threat-model-slide">
-  <p class="eyebrow">System | Threat model</p>
+  <p class="eyebrow">Threat model</p>
   <h2>Our Threat Model</h2>
 
   <figure class="threat-model-figure">
@@ -194,26 +194,37 @@
   </p>
 
   <aside class="notes">
-    Begin with the three roles. The attacker is an untrusted user of the preview
-    feature. The internal report is protected by network isolation, and the
-    attacker has no direct route to it. The preview service, however, has
-    intentional network reach to both external and internal destinations.
+    Before presenting our defense, we need to define our threat model. The
+    attacker is a normal user who is allowed to submit URLs. The preview service
+    and the internal report are trusted, which means the attacker cannot modify
+    them.
 
-    Next reveal the attacker's capabilities: they choose the submitted URL,
-    control HTTP responses and redirects from their external service, and
-    control authoritative DNS answers for their own domain. The preview
-    implementation and protected report remain part of the trusted testbed.
+    [Click]
 
-    Then reveal the attack objective. The attacker tries to turn influence over
-    request inputs into an unauthorized HTTP request from the preview service to
-    the report. We count that request arriving at the report as an attack. We
-    count disclosure separately only when the report's synthetic marker returns
-    in the preview response. The GUI exposes controls for the presenter, but
-    changing a defense is an experimenter action, not an attacker capability.
+    The attacker has no direct route to the internal report. However, the
+    preview service can reach it from inside the private network.
 
-    Finish with the takeaway: the attacker cannot reach the report directly,
-    but can influence a service that can. Transition: "Therefore, approving a
-    URL is not enough. The approved destination must constrain the connection
-    that follows."
+    [Click]
+
+    The attacker can choose the submitted URL, control redirects and HTTP
+    responses from their own server, and control DNS answers for their own
+    domain. The attacker cannot change the preview service or the internal
+    report.
+
+    [Click]
+
+    The attacker's goal is to use these inputs to make the preview service send
+    an unauthorized request to the internal report.
+
+    [Click]
+
+    We measure two outcomes separately. We count an attack when the request
+    reaches the report. We count disclosure only when the protected marker
+    comes back in the preview.
+
+    [Click]
+
+    In short, the attacker cannot reach the report directly, but can influence
+    a service that can.
   </aside>
 </section>

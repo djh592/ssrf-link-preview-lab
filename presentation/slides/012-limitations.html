@@ -1,5 +1,5 @@
 <section class="content-slide evidence-scope-slide">
-  <p class="eyebrow">Limitations | Evidence scope</p>
+  <p class="eyebrow">Limitations</p>
   <h2>Where the Evidence Stops</h2>
 
   <div class="evidence-scope-list">
@@ -31,16 +31,35 @@
   </p>
 
   <aside class="notes">
-    Our repeated HTTP comparison covers the specific direct and redirect
-    fixtures shown, including chains of one and three redirects. It does not
-    establish behavior for all redirect chains. Our DNS evidence consists of
-    four single probes through an Unbound caching resolver, not repeated rate
-    measurements. In the each-hop probe with TTL 1 and a primed cache, the
-    connection stayed at the external service, so the attack did not reach the
-    internal report. This is a single observation, not a general claim about
-    cached rebinding. The measurements use Python and PycURL/libcurl with
-    selected IPv4 and HTTP fixtures; HTTPS, IPv6, connection reuse, other clients,
-    and production network controls remain outside the evaluated conditions.
-    Transition: "These boundaries suggest three concrete next steps."
+    Our results answer the research question within the tested environment, but
+    they do not cover every possible link preview system.
+
+    [Click]
+
+    First, our repeated HTTP experiments cover direct requests and chains of
+    one or three redirects. They do not tell us what happens with longer
+    chains, different hosts, or protocol changes.
+
+    [Click]
+
+    Second, our DNS evidence contains only four individual probes, so we cannot
+    report a general attack success rate.
+
+    In the TTL-one probe with a primed cache, Each Hop stayed on the external
+    address, and the attack did not reach the report. This single observation
+    shows that cache and TTL conditions can change the outcome, but it is not a
+    general conclusion.
+
+    [Click]
+
+    Third, we evaluated one Python and PycURL client stack using selected IPv4
+    and HTTP scenarios. We did not evaluate HTTPS, IPv6, other HTTP clients, or
+    production network controls.
+
+    [Click]
+
+    Therefore, our findings apply to the scenarios and environment that we
+    actually tested. We should not claim that they prove security for every
+    implementation.
   </aside>
 </section>

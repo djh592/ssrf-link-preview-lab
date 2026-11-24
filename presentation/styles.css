@@ -210,9 +210,8 @@ html[data-theme="dark"] .icon-dark {
   min-height: 0;
   align-content: center;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  row-gap: 1.6em;
-  padding: 0.8em 1.4em 4.7em !important;
+  grid-template-rows: minmax(0, 1fr);
+  padding: 0.8em 1.4em !important;
 }
 
 .cover-layout {
@@ -352,35 +351,6 @@ html[data-theme="dark"] .icon-dark {
 
 .cover-destination-label--risk {
   fill: var(--risk);
-}
-
-.cover-team {
-  display: grid;
-  border-top: 1px solid var(--line);
-  padding-top: 0.65em;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 1.4em;
-}
-
-.reveal .cover-team p {
-  display: flex;
-  max-width: none;
-  align-items: baseline;
-  gap: 0.65em;
-  margin: 0;
-  font-size: 0.48em;
-  line-height: 1.3;
-}
-
-.cover-team strong {
-  color: var(--ink);
-  font-weight: 750;
-}
-
-.cover-team span {
-  color: var(--muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.9em;
 }
 
 .content-slide h2 {

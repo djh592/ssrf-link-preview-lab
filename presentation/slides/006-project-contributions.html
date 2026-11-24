@@ -1,5 +1,5 @@
 <section class="content-slide testbed-contribution-slide">
-  <p class="eyebrow">Contributions | Testbed and evidence</p>
+  <p class="eyebrow">Contributions</p>
   <h2>What Did This Project Contribute?</h2>
 
   <div class="contribution-layout">
@@ -56,18 +56,31 @@
   </p>
 
   <aside class="notes">
-    Our contribution is not a new vulnerability or a new HTTP stack. It has
-    three parts. First, we implemented an instrumented link-preview testbed with
-    controlled redirect, DNS, and protected-report fixtures. Second, we made
-    five policies comparable by exercising them through the same preview
-    pipeline and scenario definitions. Third, each trial links policy decisions,
-    DNS answers, connected peers, and independent destination-service events,
-    so a rendered card is not our only evidence.
+    Our design is informed by CWE-918 and the S-S-R-F prevention guidance from
+    OWASP. Based on this guidance, our project makes three main contributions.
 
-    The SSRF model and mitigation principles are informed by CWE-918 and OWASP
-    guidance; we do not claim those mechanisms as contributions. The resulting
-    artifact lets us reproduce the attacks in an isolated environment and
-    compare defenses under equivalent conditions. Transition: "That evidence is
-    meaningful only under a precise threat model."
+    [Click]
+
+    First, we built an instrumented testbed. It contains a working link preview
+    service, together with controlled redirect, DNS, and internal report
+    services. This allows us to reproduce the attacks safely.
+
+    [Click]
+
+    Second, we implemented five defense policies in the same preview pipeline.
+    Every policy uses the same scenarios, so we can compare them under the same
+    conditions.
+
+    [Click]
+
+    Third, we record what happens during every trial. This includes the policy
+    decision, the DNS answer, the actual connected peer, and whether the
+    destination received the request. So we do not rely only on what appears in
+    the preview.
+
+    [Click]
+
+    Together, these contributions allow us to reproduce the attacks safely and
+    compare the defenses directly.
   </aside>
 </section>

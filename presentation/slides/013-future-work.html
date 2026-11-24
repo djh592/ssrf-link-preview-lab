@@ -1,5 +1,5 @@
 <section class="content-slide evidence-scope-slide">
-  <p class="eyebrow">Future Work | Broader evaluation</p>
+  <p class="eyebrow">Future Work</p>
   <h2>Next Steps</h2>
 
   <div class="evidence-scope-list">
@@ -33,17 +33,34 @@
   </p>
 
   <aside class="notes">
-    Expand the controlled redirect fixtures to include longer chains, changes
-    of host, and HTTP-to-HTTPS transitions. Check each hop and compare both
-    internal access and legitimate preview success. Repeat DNS rebinding probes
-    using the existing Unbound path for TTL 0, 1, and 60 with applicable empty
-    and primed cache conditions; TTL 0 is not a supported primed-cache condition
-    in the current probe. Record internal access and disclosure across repeated
-    runs, and link authority answers, HTTP peers, and service events. Extend
-    coverage to IPv6 and different URL representations, and compare another
-    HTTP client under equivalent scenarios. Assess whether the approved address
-    matches the connected peer and whether legitimate previews still succeed.
-    Conduct these experiments in a controlled environment. Transition: "We can
-    now summarize what our current evidence supports."
+    These limitations lead to three concrete next steps.
+
+    [Click]
+
+    First, we should extend the redirect experiments to longer chains,
+    redirects across different hosts, and HTTP-to-HTTPS transitions.
+
+    We would again measure both private access and normal preview success,
+    while verifying that every new hop is checked.
+
+    [Click]
+
+    Second, we should repeat the DNS experiments across different TTL and
+    applicable cache conditions, instead of relying on individual traces.
+
+    Repeated trials would let us estimate access and disclosure rates, while
+    comparing the DNS answers with the peer that actually received the
+    connection.
+
+    [Click]
+
+    Third, we should test IPv6, more URL formats, and additional HTTP clients.
+    For each client, we would check whether the approved address matches the
+    connected peer, and whether normal previews still work.
+
+    [Click]
+
+    Because these experiments intentionally model access to private services,
+    all future work should remain inside a controlled environment.
   </aside>
 </section>

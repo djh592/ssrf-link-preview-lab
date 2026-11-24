@@ -1,5 +1,5 @@
 <section class="content-slide research-question-slide">
-  <p class="eyebrow">Research question | Two goals</p>
+  <p class="eyebrow">Research question</p>
   <h2>Can We Block Private Access Without Breaking Public Previews?</h2>
 
   <div class="research-question-goals" role="group" aria-label="The two goals of the evaluation">
@@ -39,14 +39,25 @@
   </p>
 
   <aside class="notes">
-    This question has two equally important sides. First, security: a protected
-    internal report must not receive the request, and its marker must not be
-    disclosed. Second, preview utility: legitimate direct and allowed redirected
-    previews should still work, while the policy's added latency remains visible.
-    Rejecting every outbound request would make the feature useless, so the
-    evaluation must measure both outcomes. Reveal the takeaway only after both
-    goals are visible. The exact policies come later, after the testbed is
-    introduced. Transition: "To answer both sides, we needed a working preview
-    environment and evidence beyond the preview response itself."
+    This leads to our main research question: can we block private access
+    without breaking normal public previews?
+
+    [Click]
+
+    First, we consider security. We measure whether the internal report
+    receives a request, and whether its protected marker is returned in the
+    preview.
+
+    [Click]
+
+    Second, we consider preview utility. Legitimate direct pages and allowed
+    redirects should still produce previews, and the defense should not add too
+    much latency. Simply blocking everything would stop the attack, but it
+    would also destroy the feature.
+
+    [Click]
+
+    So a useful defense must satisfy both goals: it must block private access
+    while keeping normal previews useful.
   </aside>
 </section>

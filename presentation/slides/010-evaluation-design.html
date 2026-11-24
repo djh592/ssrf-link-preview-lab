@@ -47,31 +47,43 @@
   </p>
 
   <aside class="notes">
-    The Web UI showed individual explanatory runs through the testbed. Those
-    runs illustrate the mechanisms; they are not the repeated measurements.
-    We now define the controlled comparison behind the findings.
+    The Web UI showed individual examples of the attacks and defenses. Those
+    runs explain the mechanisms, but they are not our measurements. For the
+    evaluation, we compared five policies in controlled batch experiments.
 
-    We compare five policies in the same preview pipeline. For each HTTP
-    scenario, we run each policy 50 times.
+    No Check performs no destination validation. Initial URL checks only the
+    submitted URL. Each Hop checks every redirected URL. Check and Bind also
+    binds the connection to the checked IP. No Redirects refuses to follow
+    redirects.
 
-    First, do the defenses preserve normal previews? We test a direct page,
-    a one-redirect page, and a three-redirect page. Three scenarios times five
-    policies times fifty repetitions give 750 trials. A normal preview succeeds
-    when the expected title and description return within the timeout. We report
-    success and median and P95 latency for successful previews.
+    We ran every policy 50 times for each HTTP scenario.
 
-    Second, can an attacker cause an internal request? Four scenarios test a
-    direct private IP, a stable private service name, and one- and three-hop
-    redirects to the report. Four times five times fifty gives 1,000 trials.
-    We distinguish report access from marker disclosure. All 1,750 HTTP trials
-    have complete evidence.
+    [Click]
 
-    Separately, four individual recursive-DNS probes connect DNS answers to the
-    HTTP peer and report-service events. They illustrate behavior under the
-    tested TTL and cache conditions, not an attack rate. The browser demo uses
-    individual explanatory runs and is not included in the trial counts.
+    First, we tested normal previews. We used a direct page, a page with one
+    redirect, and a page with three redirects. A trial succeeds when the
+    expected preview content is returned. We also measure latency.
 
-    Transition: "With the scenarios and repetition counts defined, we can now
-    compare the five policies."
+    Three scenarios, five policies, and 50 repetitions give 750 normal trials.
+
+    [Click]
+
+    Second, we tested S-S-R-F attacks. We used a private IP, a private service
+    name, and attacks with one or three redirects. We measure whether the report
+    receives the request and whether its protected marker is disclosed.
+
+    Four scenarios, five policies, and 50 repetitions give 1,000 attack trials.
+    Together, we ran 1,750 repeated HTTP trials.
+
+    [Click]
+
+    DNS rebinding is reported separately. We recorded four individual traces
+    that connect the DNS answers, the actual HTTP peer, and the report events.
+    These traces show the mechanism, but they do not estimate an attack rate.
+
+    [Click]
+
+    So our evaluation measures both sides of the research question: security
+    against private access, and the usefulness of normal previews.
   </aside>
 </section>

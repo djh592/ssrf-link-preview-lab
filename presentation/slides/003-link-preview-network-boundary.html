@@ -1,5 +1,5 @@
 <section class="content-slide preview-boundary-slide">
-  <p class="eyebrow">Motivation | Security boundary</p>
+  <p class="eyebrow">Motivation</p>
   <h2>Link Preview as a Network Boundary</h2>
 
   <div class="preview-boundary">
@@ -170,17 +170,33 @@
   </p>
 
   <aside class="notes">
-    Start with the normal behavior: the browser submits a URL and the preview
-    service fetches a public page. Advance to add the protected network. The
-    browser has no direct route to the internal report, so its attempted path
-    stops at the boundary. Advance again: the preview service occupies a more
-    privileged network position and may be induced to make the internal
-    request. The red preview-to-report path is an illustrative request, not a
-    measured run or proof of disclosure. Advance again for the real-product
-    evidence: Synology's advisory documents a failed link-preview boundary,
-    but does not establish a redirect or DNS mechanism. Advance once more and
-    ask: "Is checking the submitted URL enough to control every connection
-    that follows?" The next slide shows how a destination can change after
-    approval.
+    Now let us look at the preview service as a network boundary.
+
+    [Click]
+
+    In normal use, the browser submits a URL, and the preview service fetches a
+    public page. This is the expected behavior.
+
+    [Click]
+
+    Now suppose there is an internal report inside the private network. The
+    user cannot access this report directly, so the direct request is blocked.
+
+    [Click]
+
+    However, the preview service is already inside that network. If the user
+    can make the service request the internal report, the user can reach
+    something that should have remained private.
+
+    [Click]
+
+    <!-- This is not only theoretical. A documented vulnerability in Synology Chat
+    allowed authenticated users to use link previews to access intranet
+    resources. -->
+
+    [Click]
+
+    A natural defense is to check the URL before fetching it. But is checking
+    the submitted URL enough to control every connection that follows?
   </aside>
 </section>

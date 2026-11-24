@@ -1,5 +1,5 @@
 <section class="content-slide system-design-slide">
-  <p class="eyebrow">Design | Three choices</p>
+  <p class="eyebrow">Design</p>
   <h2>How Is the Testbed Designed?</h2>
 
   <div class="design-choice-list" aria-label="Three testbed design choices">
@@ -42,19 +42,35 @@
   </p>
 
   <aside class="notes">
-    The design follows three choices. First, every attack target is synthetic
-    and runs inside a bounded Docker environment, so we can repeat the attacks
-    without touching real private services. Second, the request pipeline stays
-    fixed while only the policy changes. Every policy uses the same redirect
-    handling, metadata parser, and PycURL transport, which makes the comparison
-    meaningful. Third, we observe both sides of a request. The preview trace
-    records decisions and connected peers, while the destination services
-    independently record what arrived; a trial ID joins those observations.
+    Earlier, I introduced the testbed as one of our contributions. Here are
+    three design choices that make its experiments safe and comparable.
 
-    Reveal the takeaway, then leave the slide deck and open the real Web UI.
-    The demonstration is not another slide and does not add a page number. It
-    shows representative runs through this same testbed. After the demonstration,
-    return to the evaluation slide and distinguish those individual runs from
-    the repeated measurements.
+    [Click]
+
+    First, every attack target is synthetic and runs inside a bounded Docker
+    environment. We can therefore repeat the attacks without touching any real
+    private service.
+
+    [Click]
+
+    Second, only the defense policy changes. All five policies use the same
+    redirect handling, preview parser, and PycURL transport. This means that any
+    difference in the results comes from the policy, not from a different
+    implementation.
+
+    [Click]
+
+    Third, we observe both ends of every request. The preview service records
+    its policy decision and connected peer, while the destination service
+    independently records whether the request arrived. A trial ID joins these
+    records together.
+
+    This allows us to verify what actually happened, instead of trusting only
+    what appears in the preview.
+
+    [Click]
+
+    The Web UI is not a separate simulation. It is a live view of the same
+    testbed that we use for the experiments.
   </aside>
 </section>

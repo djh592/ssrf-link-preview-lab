@@ -1,5 +1,5 @@
 <section class="content-slide destination-sequence-slide">
-  <p class="eyebrow">Motivation | Destination changes</p>
+  <p class="eyebrow">Motivation</p>
   <h2>URL Approval ≠ Connection Identity</h2>
 
   <div
@@ -412,25 +412,53 @@
   </div>
 
   <aside class="notes">
-    Start with the title only. Advance once to show Method 01 and the three
-    participants. Advance again: the attacker submits a public redirect URL,
-    which the preview service allows. Next, the service requests the redirect
-    server. The server returns a private Location. The service then requests
-    the internal report without revalidating the new target. Finally, the
-    report returns through the preview service to the attacker. Advance to
-    clear the first sequence and introduce Method 02 with the same three base
-    participants. The attacker submits rebind.lab. The preview service then
-    resolves it for policy validation, introducing the recursive resolver and
-    attacker-controlled authoritative DNS server. Their public response passes
-    the address check. During connection setup, a second query returns a
-    private address. The service requests the internal report, which returns
-    through the preview service to the attacker. Cache state, TTL, resolver
-    behavior, and the HTTP client's connection path determine whether this
-    sequence succeeds in practice. These are conceptual mechanisms, not
-    project results. Advance once more for the common conclusion: the
-    destination can change after the initial approval, whether a redirect
-    replaces the URL or a later DNS answer changes its address.
-    Transition: "Can we stop private access without destroying useful public
-    previews?"
+    Checking only the submitted URL is not enough, because the destination can
+    change after that check. Here are two ways this can happen.
+
+    [Click]
+
+    First, consider an HTTP redirect.
+
+    [Click twice]
+
+    The attacker submits a public URL, so the initial check allows it. The
+    preview service then requests the public redirect server.
+
+    [Click]
+
+    The server now redirects the request to the internal report.
+
+    [Click twice]
+
+    If the preview service follows this redirect without checking the new URL,
+    it reaches the private resource and returns its content to the attacker.
+
+    [Click]
+
+    The second method is DNS rebinding.
+
+    [Click three times]
+
+    This time, the URL does not change. The attacker submits a domain name, and
+    its first DNS response gives a public address. That address passes the
+    policy check.
+
+    [Click twice]
+
+    Later, when the service opens the connection, the same domain is resolved
+    again. The attacker now returns a private address.
+
+    [Click twice]
+
+    The request reaches the internal report, and the report preview is returned
+    to the attacker. Whether this works in practice depends on DNS caching and
+    client behavior, but the checked address and the connected address can be
+    different.
+
+    [Click]
+
+    In both cases, the destination changes after it has been approved. A
+    redirect changes the URL, while DNS rebinding changes the address behind
+    the same URL.
   </aside>
 </section>

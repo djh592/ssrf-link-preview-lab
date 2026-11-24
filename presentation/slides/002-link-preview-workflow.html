@@ -1,5 +1,5 @@
 <section class="content-slide preview-workflow-slide">
-  <p class="eyebrow">Background | Normal workflow</p>
+  <p class="eyebrow">Background</p>
   <h2>Link Previews in Everyday Use</h2>
 
   <div class="preview-workflow">
@@ -92,15 +92,23 @@
   </p>
 
   <aside class="notes">
-    Open with the title only: link previews are a familiar part of everyday
-    messaging even when users do not know the technical term. Advance once to
-    reveal what the user sees: a URL expands into a title, description, and
-    image. The Slack screenshot is an illustrative product example. Advance
-    again to reveal the server-side pattern studied here: the browser submits
-    the URL, the preview service contacts the public website, and metadata
-    returns as a card. Different products may implement previews differently.
-    Advance a final time for the takeaway: a link preview can make the server
-    fetch a user's URL. Transition: "That request is made from the preview
-    worker's network position, not the user's."
+    Link previews are something most of us use almost every day.
+
+    [Click]
+
+    When we send a link in a chat application, it often expands into a card
+    like this, with a title, a short description, and an image.
+
+    [Click]
+
+    Behind the scenes, the browser first sends the URL to a preview service.
+    The preview service fetches the public website and reads its page content.
+    It then sends the preview card back to the browser.
+
+    [Click]
+
+    So the key point is that the server fetches a URL chosen by the user. This
+    request comes from the server's network, and that is where the security
+    problem begins.
   </aside>
 </section>
