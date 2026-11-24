@@ -35,29 +35,19 @@
   </p>
 
   <aside class="notes">
-    From our threat model, we get one central principle: a destination check
-    must control the connection that follows.
+    Our central principle is that a check must control the connection.
 
     [Click]
 
-    First, every new URL needs a new decision. If URL A redirects to URL B,
-    approving URL A tells us nothing about URL B. We must check URL B before
-    following the redirect.
+    For redirects, we check every new URL.
 
     [Click]
 
-    Second, the connection must use the exact IP address that passed the check.
-    If IP A is approved, we bind the request to IP A instead of resolving the
-    hostname again during the connection. In our implementation, we pass this
-    checked IP directly to libcurl.
-
-    Together, these two rules form our Check and Bind policy: check every new
-    URL, and bind every connection to the approved IP.
+    For DNS, we bind libcurl to the approved IP. Together, these rules form
+    Check and Bind.
 
     [Click]
 
-    The general lesson is simple: validation must constrain execution. A
-    destination is not protected if the final connection can ignore the earlier
-    check.
+    Validation must constrain the actual connection.
   </aside>
 </section>

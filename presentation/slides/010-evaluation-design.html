@@ -47,9 +47,7 @@
   </p>
 
   <aside class="notes">
-    The Web UI showed individual examples of the attacks and defenses. Those
-    runs explain the mechanisms, but they are not our measurements. For the
-    evaluation, we compared five policies in controlled batch experiments.
+    For the evaluation, we compared five policies in controlled batch experiments.
 
     No Check performs no destination validation. Initial URL checks only the
     submitted URL. Each Hop checks every redirected URL. Check and Bind also
@@ -60,30 +58,21 @@
 
     [Click]
 
-    First, we tested normal previews. We used a direct page, a page with one
-    redirect, and a page with three redirects. A trial succeeds when the
-    expected preview content is returned. We also measure latency.
-
-    Three scenarios, five policies, and 50 repetitions give 750 normal trials.
+    Normal tests covered direct pages and one or three redirects. Across 750
+    trials, we measured success and latency.
 
     [Click]
 
-    Second, we tested S-S-R-F attacks. We used a private IP, a private service
-    name, and attacks with one or three redirects. We measure whether the report
-    receives the request and whether its protected marker is disclosed.
-
-    Four scenarios, five policies, and 50 repetitions give 1,000 attack trials.
-    Together, we ran 1,750 repeated HTTP trials.
+    Attack tests covered direct internal targets and redirects. Across 1,000
+    trials, we measured report access and disclosure.
 
     [Click]
 
-    DNS rebinding is reported separately. We recorded four individual traces
-    that connect the DNS answers, the actual HTTP peer, and the report events.
-    These traces show the mechanism, but they do not estimate an attack rate.
+    Four DNS traces linked answers, connected peers, and report events. They
+    show the mechanism, not an attack rate.
 
     [Click]
 
-    So our evaluation measures both sides of the research question: security
-    against private access, and the usefulness of normal previews.
+    This covers both security and preview utility.
   </aside>
 </section>

@@ -42,35 +42,22 @@
   </p>
 
   <aside class="notes">
-    Earlier, I introduced the testbed as one of our contributions. Here are
-    three design choices that make its experiments safe and comparable.
+    Here are three design choices that make its experiments safe and comparable.
 
     [Click]
 
-    First, every attack target is synthetic and runs inside a bounded Docker
-    environment. We can therefore repeat the attacks without touching any real
-    private service.
+    Synthetic targets are isolated in Docker, so attacks are safe to repeat.
 
     [Click]
 
-    Second, only the defense policy changes. All five policies use the same
-    redirect handling, preview parser, and PycURL transport. This means that any
-    difference in the results comes from the policy, not from a different
-    implementation.
+    Only the policy changes; the preview pipeline stays the same.
 
     [Click]
 
-    Third, we observe both ends of every request. The preview service records
-    its policy decision and connected peer, while the destination service
-    independently records whether the request arrived. A trial ID joins these
-    records together.
-
-    This allows us to verify what actually happened, instead of trusting only
-    what appears in the preview.
+    Trial IDs connect service records with independent destination records.
 
     [Click]
 
-    Next, let us look at the Web UI of our testbed and see how these attacks
-    and defenses work in practice.
+    Now, let us demonstrate the testbed through its Web UI.
   </aside>
 </section>

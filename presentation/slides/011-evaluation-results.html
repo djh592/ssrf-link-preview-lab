@@ -82,47 +82,29 @@
 
     [Click]
 
-    For direct internal targets, No Check reached the report in all 100 trials.
-    Every policy that checked the initial destination blocked all 100 attempts.
+    For direct targets, No Check scored 100. Every checking policy scored zero.
 
     [Click]
 
-    The result changed when we introduced redirects. Initial URL blocked direct
-    access, but it failed in all 100 redirect trials because it did not check
-    the new destination. Each Hop and Check and Bind blocked every redirect
-    attack. No Redirects also blocked them by refusing to follow the redirect.
-
-    Across all 1,000 repeated attack trials, report access and marker disclosure
-    gave the same result.
+    With redirects, Initial URL scored 100. The remaining three policies scored
+    zero.
 
     [Click]
 
-    For DNS rebinding, we compare two individual probes under the same
-    TTL-zero and empty-cache condition. Each Hop approved an external address
-    but connected to the internal report. Check and Bind stayed on the approved
-    external peer. These are individual mechanism probes, not attack rates.
+    In the matched DNS probe, Each Hop connected internally; Check and Bind
+    stayed external.
 
     [Click]
 
-    For normal tasks, the first four policies succeeded in all 150 trials. No
-    Redirects succeeded in only 50, because it rejected the 100 legitimate
-    previews that required redirects.
-
-    Check and Bind added a small measured cost. The median direct-page latency
-    increased from 5.7 to 6.9 milliseconds, and P95 increased from 57.6 to 62.5
-    milliseconds.
+    For normal previews, the first four scored 150; No Redirects scored 50.
 
     [Click]
 
-    This is why we focus on Check and Bind. It blocked the repeated direct and
-    redirect attacks, kept the external peer in the matched DNS probe, and
-    preserved all tested normal previews.
+    Check and Bind blocked 200 HTTP attacks, preserved 150 previews, and added
+    1.2 milliseconds to median latency.
 
     [Click]
 
-    Within our tested conditions, Check and Bind closed both observed
-    destination-change gaps without sacrificing tested preview behavior.
-
-    However, these results have clear boundaries, which I will explain next.
+    It gave the best security and utility balance.
   </aside>
 </section>

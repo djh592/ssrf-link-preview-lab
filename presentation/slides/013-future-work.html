@@ -33,34 +33,22 @@
   </p>
 
   <aside class="notes">
-    These limitations lead to three concrete next steps.
+    These limits define our next steps.
 
     [Click]
 
-    First, we should extend the redirect experiments to longer chains,
-    redirects across different hosts, and HTTP-to-HTTPS transitions.
-
-    We would again measure both private access and normal preview success,
-    while verifying that every new hop is checked.
+    First, test longer, cross-host, and HTTPS redirect chains.
 
     [Click]
 
-    Second, we should repeat the DNS experiments across different TTL and
-    applicable cache conditions, instead of relying on individual traces.
-
-    Repeated trials would let us estimate access and disclosure rates, while
-    comparing the DNS answers with the peer that actually received the
-    connection.
+    Second, repeat DNS trials across TTL and cache conditions.
 
     [Click]
 
-    Third, we should test IPv6, more URL formats, and additional HTTP clients.
-    For each client, we would check whether the approved address matches the
-    connected peer, and whether normal previews still work.
+    Third, test IPv6, more URL formats, and other clients.
 
     [Click]
 
-    Because these experiments intentionally model access to private services,
-    all future work should remain inside a controlled environment.
+    These experiments should remain inside a controlled environment.
   </aside>
 </section>

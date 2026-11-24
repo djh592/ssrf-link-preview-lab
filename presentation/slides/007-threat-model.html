@@ -201,30 +201,23 @@
 
     [Click]
 
-    The attacker has no direct route to the internal report. However, the
-    preview service can reach it from inside the private network.
+    The user cannot reach the report, but the preview service can.
 
     [Click]
 
-    The attacker can choose the submitted URL, control redirects and HTTP
-    responses from their own server, and control DNS answers for their own
-    domain. The attacker cannot change the preview service or the internal
-    report.
+    The attacker controls the URL, redirects, and DNS for their domain.
 
     [Click]
 
-    The attacker's goal is to use these inputs to make the preview service send
-    an unauthorized request to the internal report.
+    Their goal is an unauthorized request to the report.
 
     [Click]
 
-    We measure two outcomes separately. We count an attack when the request
-    reaches the report. We count disclosure only when the protected marker
-    comes back in the preview.
+    A request reaching the report counts as an attack. Its marker returning
+    counts as disclosure.
 
     [Click]
 
-    In short, the attacker cannot reach the report directly, but can influence
-    a service that can.
+    This is indirect access through a trusted service.
   </aside>
 </section>

@@ -56,31 +56,23 @@
   </p>
 
   <aside class="notes">
-    Our design is informed by CWE-918 and the S-S-R-F prevention guidance from
-    OWASP. Based on this guidance, our project makes three main contributions.
+    Guided by CWE-918 and OWASP, we make three contributions.
 
     [Click]
 
-    First, we built an instrumented testbed. It contains a working link preview
-    service, together with controlled redirect, DNS, and internal report
-    services. This allows us to reproduce the attacks safely.
+    First, a controlled testbed for redirect and DNS attacks.
 
     [Click]
 
-    Second, we implemented five defense policies in the same preview pipeline.
-    Every policy uses the same scenarios, so we can compare them under the same
-    conditions.
+    Second, five policies in the same preview pipeline.
 
     [Click]
 
-    Third, we record what happens during every trial. This includes the policy
-    decision, the DNS answer, the actual connected peer, and whether the
-    destination received the request. So we do not rely only on what appears in
-    the preview.
+    Third, trial-linked records of decisions, DNS answers, connected peers, and
+    destination events.
 
     [Click]
 
-    Together, these contributions allow us to reproduce the attacks safely and
-    compare the defenses directly.
+    Together, they support safe reproduction and fair comparison.
   </aside>
 </section>
