@@ -3,6 +3,7 @@ import {
   copyFile,
   cp,
   mkdir,
+  readdir,
   readFile,
   rm,
   stat,
@@ -58,7 +59,22 @@ async function validateSlideManifest(manifestName) {
     throw new Error("slides/manifest.json must contain a non-empty slides array.");
   }
 
-  for (const path of manifest.slides) {
+  const referencedFiles = new Set();
+
+  for (const [index, path] of manifest.slides.entries()) {
+    const expectedPrefix = `${String(index + 1).padStart(3, "0")}-`;
+    const fileName = path.slice("slides/".length);
+    if (!path.startsWith("slides/") || !fileName.startsWith(expectedPrefix)) {
+      throw new Error(
+        `Slide ${index + 1} must use the ${expectedPrefix} filename prefix: ${path}`,
+      );
+    }
+
+    if (referencedFiles.has(fileName)) {
+      throw new Error(`Slide manifest contains a duplicate entry: ${path}`);
+    }
+    referencedFiles.add(fileName);
+
     const slidePath = resolve(outputDirectory, path);
     const relativePath = relative(slidesDirectory, slidePath);
     if (isAbsolute(relativePath) || relativePath.startsWith("..")) {
@@ -69,11 +85,22 @@ async function validateSlideManifest(manifestName) {
       throw new Error(`Slide file does not exist: ${path}`);
     }
   }
+
+  const slideFiles = (await readdir(slidesDirectory))
+    .filter((fileName) => fileName.endsWith(".html"))
+    .sort();
+  const unreferencedFiles = slideFiles.filter(
+    (fileName) => !referencedFiles.has(fileName),
+  );
+  if (unreferencedFiles.length > 0) {
+    throw new Error(
+      `Slide files are not referenced by ${manifestName}: ${unreferencedFiles.join(", ")}`,
+    );
+  }
 }
 
 await copyPresentationSources();
 await copyRevealRuntime();
 await validateSlideManifest("manifest.json");
-await validateSlideManifest("results-backup.json");
 
 console.log(`Built ${join(outputDirectory, "index.html")} successfully.`);

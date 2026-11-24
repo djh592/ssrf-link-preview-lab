@@ -1,19 +1,19 @@
 {
   "slides": [
-    "slides/000-cover.html",
-    "slides/001-preview-workflow.html",
-    "slides/002-preview-network-boundary.html",
-    "slides/003-checked-vs-connected.html",
-    "slides/004-research-question.html",
-    "slides/010-instrumented-testbed.html",
-    "slides/011-threat-model.html",
-    "slides/012-check-and-bind.html",
-    "slides/012-system-design.html",
-    "slides/013-measurement-design.html",
-    "slides/014-comparison-results.html",
-    "slides/018-limitations.html",
-    "slides/018-future-work.html",
-    "slides/019-conclusion.html",
-    "slides/020-thank-you.html"
+    "slides/001-cover.html",
+    "slides/002-link-preview-workflow.html",
+    "slides/003-link-preview-network-boundary.html",
+    "slides/004-url-approval-vs-connection.html",
+    "slides/005-research-question.html",
+    "slides/006-project-contributions.html",
+    "slides/007-threat-model.html",
+    "slides/008-check-and-bind.html",
+    "slides/009-system-design.html",
+    "slides/010-evaluation-design.html",
+    "slides/011-evaluation-results.html",
+    "slides/012-limitations.html",
+    "slides/013-future-work.html",
+    "slides/014-takeaways.html",
+    "slides/015-thank-you.html"
   ]
 }

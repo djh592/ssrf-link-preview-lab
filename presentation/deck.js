@@ -121,9 +121,7 @@ const revealConfig = {
 };
 
 async function loadSlideSources() {
-  const manifestPath = query.get("deck") === "results-backup"
-    ? "slides/results-backup.json"
-    : "slides/manifest.json";
+  const manifestPath = "slides/manifest.json";
   const manifestResponse = await fetch(manifestPath, {
     cache: "no-store",
   });
